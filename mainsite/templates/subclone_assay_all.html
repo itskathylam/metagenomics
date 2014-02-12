@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table border = 1>
+            <tr>
+                <th>Subclone Name</th>
+                <th>Expression Host</th>
+                <th>Substrate</th>
+                <th>Researcher Name</th>
+                <th>Km (mM)</th>
+                <th>Temp Optimum</th>
+                <th>pH Optimum</th>
+                <th>Comments/Observations</th>
+            </tr>
+        {% for subclone_assay in subclone_assay_list %}
+            <tr>
+                <td>{{ subclone_assay.subclone.subclone_name }}</td>
+                <td>{{ subclone_assay.host.host_name}}</td>
+                <td>{{ subclone_assay.substrate.substrate_name }}</td>
+                <td>{{ subclone_assay.researcher.researcher_name }}</td>
+                <td>{{ subclone_assay.subclone_km}}</td>
+                <td>{{ subclone_assay.subclone_ph }}</td>
+                <td>{{ subclone_assay.subclone_temp }}</td>
+                <td>{{ subclone_assay.subclone_comments }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

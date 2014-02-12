@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table border = 1>
+            <tr>
+                <th>Host Name</th>
+            </tr>
+        {% for host in host_list %}
+            <tr>
+                <td>{{ host.host_name }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

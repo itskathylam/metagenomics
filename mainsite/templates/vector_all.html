@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table border = 1>
+            <tr>
+                <th>Vector Name</th>
+                <th>Vector Type</th>
+                <th>NCBI Acession</th>
+                <th>Decription</th>
+            </tr>
+        {% for vector in vector_list %}
+            <tr>
+                <td>{{ vector.vector_name }}</td>
+                <td>{{ vector.vector_type }}</td>
+                <td>{{ vector.vector_accession }}</td>
+                <td>{{ vector.description }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

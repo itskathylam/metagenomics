@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table border = 1>
+            <tr>
+                <th>Pool ID</th>
+                <th>Service Provider</th>
+                <th>NCBI SRA Accession</th>
+            </tr>
+        {% for pooled_sequencing in pooled_sequencing_list %}
+            <tr>
+                <td>{{ pooled_sequencing.id}}</td>
+                <td>{{ pooled_sequencing.service_provider }}</td>
+                <td>{{ pooled_sequencing.ncbi_sra_accession }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

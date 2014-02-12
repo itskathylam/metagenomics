@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="{% url "subclone-assay-add" %}" method="POST">{% csrf_token %}
+        <table border = 1>    
+            {{form}}
+        </table>
+        <input type="submit">
+    </form>
+{% endblock %}

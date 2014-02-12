@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table border = 1>
+            <tr>
+                <th>Researcher Name</th>
+            </tr>
+        {% for researcher in researcher_list %}
+            <tr>
+                <td>{{ researcher.researcher_name }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

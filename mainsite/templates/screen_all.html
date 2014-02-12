@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table border = 1>
+            <tr>
+                <th>Screen Name</th>
+            </tr>
+        {% for screen in screen_list %}
+            <tr>
+                <td>{{ screen.screen_name }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table border = 1>
+            <tr>
+                <th>Substrate Name</th>
+            </tr>
+        {% for substrate in substrate_list %}
+            <tr>
+                <td>{{ substrate.substrate_name }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

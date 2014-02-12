@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table border = 1>
+            <tr>
+                <th>Cosmid Name</th>
+                <th>Expression Host</th>
+                <th>Substrate</th>
+                <th>Researcher Name</th>
+                <th>Km (mM)</th>
+                <th>Temp Optimum</th>
+                <th>pH Optimum</th>
+                <th>Comments/Observations</th>
+            </tr>
+        {% for cosmid_assay in cosmid_assay_list %}
+            <tr>
+                <td>{{ cosmid_assay.cosmid.cosmid_name }}</td>
+                <td>{{ cosmid_assay.host.host_name}}</td>
+                <td>{{ cosmid_assay.substrate.substrate_name }}</td>
+                <td>{{ cosmid_assay.researcher.researcher_name }}</td>
+                <td>{{ cosmid_assay.subclone_km}}</td>
+                <td>{{ cosmid_assay.subclone_ph }}</td>
+                <td>{{ cosmid_assay.subclone_temp }}</td>
+                <td>{{ cosmid_assay.subclone_comments }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table border = 1>
+            <tr>
+                <th>Primer Name</th>
+                <th>Primer Sequence</th>
+            </tr>
+        {% for primer in primer_list %}
+            <tr>
+                <td>{{ primer.primer_name }}</td>
+                <td>{{ primer.primer_sequence }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

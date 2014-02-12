@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table border = 1>
+            <tr>
+                <th>ORF ID</th>
+                <th>ORF Sequence</th>
+                <th>Annotation (Optional)</th>
+            </tr>
+        {% for orf in orf_list %}
+            <tr>
+                <td>{{ orf.id}}</td>
+                <td>{{ orf.orf_sequence}}</td>
+                <td>{{ orf.annotation }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

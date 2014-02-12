@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="{% url "researcher-add" %}" method="POST">{% csrf_token %}
+        <table border = 1>    
+            {{form}}
+        </table>
+        <input type="submit">
+    </form>
+{% endblock %}
