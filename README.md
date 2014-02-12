@@ -1,1 +1,1 @@
-This is a repository of a project for Trevor Charles at the University of Waterloo.
+This is a repository for a metagenomics project for Trevor Charles at the University of Waterloo.
