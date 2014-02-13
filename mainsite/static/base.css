@@ -131,14 +131,11 @@ nav ul ul ul {
 /* style for all paragraph fonts*/
 p {
     font-family: verdana, arial, sans-serif;
-    font-size: 14px;
-    margin-left:;
-    
+    font-size: 14px; 
 }
 
 /*For all table styles*/
 table {
-    margin-left:;
     font-family: verdana;
     font-size: 12px;
     border: 0px;
