@@ -6,9 +6,12 @@ admin.autodiscover()
 from mainsite.views import *
 
 urlpatterns = patterns('',
-    # url(r'^$', 'metagenomics.views.home', name='home'),
-    
+    #Admin and Static Pages (Main, About, and Logging in and Out)
+    url(r'^$', MainPage, name='home'),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^about/', AboutPage, name='about'),
+    #url(r'^login/', ),
+    #url(r'^logout/', ),
     
     # lookup table listviews (Kathy)
     url(r'^primer/', PrimerListView.as_view(), name='primer-list'),
