@@ -5,11 +5,8 @@ admin.autodiscover()
 # for lookup table views
 from mainsite.views import *
 
-
 urlpatterns = patterns('',
-    # Examples:
     # url(r'^$', 'metagenomics.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
     
     url(r'^admin/', include(admin.site.urls)),
     
@@ -32,7 +29,7 @@ urlpatterns = patterns('',
     # multiple-table-based views
     url(r'^cosmid/', CosmidListView.as_view(), name='cosmid-list'), # for cosmid and endtags
     
-    # createviews (Kathy)
+    # createviews (Kathy) Form to add data to database
     url(r'^add/primer/$', PrimerCreateView.as_view(), name='primer-add'),
     url(r'^add/host/$', HostCreateView.as_view(), name='host-add'),
     url(r'^add/screen/$', ScreenCreateView.as_view(), name='screen-add'),

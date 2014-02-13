@@ -1,11 +1,86 @@
 <!DOCTYPE html>
-  
-<html>
-  <head>{% block head %}{% endblock %}
-    <link rel="stylesheet" href="{{ STATIC_URL }}table.css">
-  </head>
+<html lang="en">
+    <head> 
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="{{ STATIC_URL }}base.css" type="text/css" />
+        {% block head %}{% endblock %}
+    </head>
   <body>
-    <!-- <h2>Welcome, {{ user.username }}</h2> -->
-    {% block content %}{% endblock %}
+     <header id="head">
+            <img src="{{ STATIC_URL }}Waterloo_SCI_Biology_rgb.png" height="90" width="200" alt="Waterloo Faculty of Science Department of Biology Logo"/>
+            <h1>Metagenomics Clone Bank</h1>
+            <div id="user">
+                Welcome, Name <br>
+                <a href="">Settings</a> <a href="">Logout</a>
+            </div>
+            
+            <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="">Add</a>
+                    <ul>
+                        <li><a href="">Cosmid</a></li>                  
+                        <li><a href="{% url 'primer-add' %}">Primer</a></li>
+                        <li><a href="{% url 'host-add' %}">Host</a></li>
+                        <li><a href="{% url 'screen-add' %}">Functional Screen</a></li>
+                        <li><a href="{% url 'library-add' %}">Library</a></li>
+                        <li><a href="{% url 'researcher-add' %}">Researcher</a></li>
+                        <li><a href="{% url 'substrate-add' %}">Substrate</a></li>
+                        <li><a href="{% url 'subclone-add' %}">Subclone</a></li>
+                        <li><a href="{% url 'vector-add' %}">Vector</a></li>
+                        <li><a href="{% url 'pool-add' %}">Pooled Sequencing</a></li>
+                        <li><a href="{% url 'subclone-assay-add' %}">Subclone Assay</a></li>
+                        <li><a href="{% url 'cosmid-assay-add' %}">Cosmid Assay</a></li>
+                        <li><a href="">ORF/Contif-ORF</a></li>                        
+                    </ul>
+                </li>
+                <li><a href="/search">Search</a>
+                    <ul>
+                        <li><a href="">Cosmid</a></li>
+                        <li><a href="">Subclone</a></li>
+                        <li><a href="">Assay</a></li>
+                        <li><a href="">ORF</a></li>
+                        <li><a href="">Sequence (Local BLAST)</a></li>
+                        <li><a href="">View All</a>
+                            <ul>
+                                <li><a href="{% url 'primer-list' %}">Primer</a></li>
+                                <li><a href="{% url 'host-list' %}">Host</a></li>
+                                <li><a href="{% url 'screen-list' %}">Functional Screen</a></li>
+                                <li><a href="{% url 'library-list' %}">Library</a></li>
+                                <li><a href="{% url 'researcher-list' %}">Researcher</a></li>
+                                <li><a href="{% url 'substrate-list' %}">Substrate</a></li>
+                                <li><a href="{% url 'vector-list' %}">Vector</a></li>
+                                <li><a href="{% url 'pool-list' %}">Pooled Sequencing</a></li>                                
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="/tools">Tools</a>
+                    <ul>
+                        <li><a href="">Contig Retrieval Tool</a></li>                  
+                        <li><a href="">Pooling Tool</a></li>
+                        <li><a href="">Other?</a></li>                
+                    </ul>
+                </li>
+            </ul>
+            </nav>            
+        </header>
+        
+        <div id="main">
+            {% block content %}{% endblock %}
+        </div>
+        
+        <footer id="footer">
+            <p><a href="/about">About</a>
+                <a href="http://jigsaw.w3.org/css-validator/check/referer">
+                    <img style="border:0;width:88px;height:31px" src="http://jigsaw.w3.org/css-validator/images/vcss-blue" alt="Valid CSS!" />
+                </a>
+                <a href="http://www.w3.org/html/logo/">
+                    <img src="http://www.w3.org/html/logo/badge/html5-badge-h-solo.png" width="63" height="64" alt="HTML5 Powered" title="HTML5 Powered">
+                </a> 
+            </p>
+        </footer>
+        
+
   </body>
 </html>
