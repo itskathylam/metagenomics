@@ -10,8 +10,8 @@ urlpatterns = patterns('',
     url(r'^$', MainPage, name='home'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^about/', AboutPage, name='about'),
-    #url(r'^login/', ),
-    #url(r'^logout/', ),
+    url(r'^login/', 'django.contrib.auth.views.login'),
+    url(r'^logout/', Logout, name='logout'),
     
     # lookup table listviews (Kathy)
     url(r'^primer/', PrimerListView.as_view(), name='primer-list'),

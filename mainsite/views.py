@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.views.generic import ListView, CreateView
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth import logout
+
 
 from mainsite.models import *
 
@@ -13,6 +15,10 @@ def MainPage(request):
 def AboutPage(request):
     template_name = 'about.html'
     return (render(request, 'about.html'))
+
+def Logout(request):
+    logout(request)
+    return HttpResponseRedirect('/login')
 
 
 # List views for lookup tables (Kathy)
