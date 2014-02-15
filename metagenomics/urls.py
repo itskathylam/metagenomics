@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 admin.autodiscover()
 
 # for lookup table views
@@ -12,6 +13,9 @@ urlpatterns = patterns('',
     url(r'^about/', AboutPage, name='about'),
     url(r'^login/', 'django.contrib.auth.views.login'),
     url(r'^logout/', Logout, name='logout'),
+    url(r'^user/settings/', UserSettings, name= 'usersettings'),
+    
+    #login_required( ) - add to all views below
     
     # lookup table listviews (Kathy)
     url(r'^primer/', PrimerListView.as_view(), name='primer-list'),

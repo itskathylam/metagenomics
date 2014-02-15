@@ -3,15 +3,19 @@ from django.views.generic import ListView, CreateView
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 
 
 from mainsite.models import *
 
 #Main, About etc
+
+#@login_required
 def MainPage(request):
     template_name = 'index.html'
     return (render(request, 'index.html'))
 
+#@login_required
 def AboutPage(request):
     template_name = 'about.html'
     return (render(request, 'about.html'))
@@ -20,6 +24,8 @@ def Logout(request):
     logout(request)
     return HttpResponseRedirect('/login')
 
+def UserSettings(request):
+    return (render(request, 'usersettings.html'))
 
 # List views for lookup tables (Kathy)
 class PrimerListView(ListView):
