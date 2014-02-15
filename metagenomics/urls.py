@@ -15,6 +15,10 @@ urlpatterns = patterns('',
     url(r'^logout/', Logout, name='logout'),
     url(r'^user/settings/', UserSettings, name= 'usersettings'),
     
+    
+    url(r'^help/faq', Faq, name='faq'),
+    url(r'^help/userdoc', UserDoc, name='userdoc'),
+    
     #login_required( ) - add to all views below
     
     url(r'^tools/contig', Contig, name='contig'),

@@ -27,6 +27,12 @@ def Logout(request):
 def UserSettings(request):
     return (render(request, 'usersettings.html'))
 
+def Faq(request):
+    return (render(request, 'faq.html'))
+
+def UserDoc(request):
+    return (render(request, 'userdoc.html'))
+
 def Contig(request):
     return (render(request, 'contig.html'))
 

@@ -149,6 +149,7 @@ nav ul ul ul {
     text-align: center;
     line-height: 80px;
     z-index: -1;
+    text-decoration: none;
 }
 
 /* style for all paragraph fonts*/
