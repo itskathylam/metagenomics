@@ -13,6 +13,7 @@ header {
     background-color: #FCD450;
     border-style: solid;
     border-radius: 6px;
+    font-family: verdana, arial, sans-serif;
 }
 
 header img {
@@ -94,7 +95,7 @@ nav ul ul ul {
  
 /* Main content section*/ 
 #main {
-
+    font-family: verdana, arial, sans-serif;
     margin-left: auto;
     margin-right: auto;
     max-width: 75%;
@@ -108,7 +109,7 @@ nav ul ul ul {
 
 /* Login area in the top right of every page*/ 
 #user {
-
+    font-family: verdana, arial, sans-serif;
     position: absolute;
     right: 10px;
     top: 10px;
@@ -122,6 +123,7 @@ nav ul ul ul {
 
 /*Footer at the bottom of every page*/ 
 #footer {
+    font-family: verdana, arial, sans-serif;
     bottom: 0px;
     left: 0px;
     height: 150px;
@@ -141,7 +143,7 @@ p {
 
 /*For all table styles*/
 table {
-    font-family: verdana;
+    font-family: verdana, arial, sans-serif;
     font-size: 12px;
     border: 0px;
     border-spacing:5px;
