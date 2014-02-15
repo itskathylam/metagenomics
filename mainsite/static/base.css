@@ -11,14 +11,15 @@
 /* Header */
 
 header {
-    background-color: #FCD450;
-    font-family: verdana, arial, sans-serif;
-    box-shadow: 0px 8px 6px -6px #888888;
     position: absolute;
     top: 0px;
     left: 0px;
     right: 0px;
     height: 160px;
+    background-color: #FCD450;
+    font-family: verdana, arial, sans-serif;
+    box-shadow: 0px 8px 6px -6px #888888;
+
 }
 
 header img {
@@ -132,7 +133,7 @@ nav ul ul ul {
 /*Footer at the bottom of every page*/ 
 #footer {
     font-family: verdana, arial, sans-serif;
-    position: absolute;
+    position: relative;
     bottom: 0px;
     left: 0px;
     width: 100%;
