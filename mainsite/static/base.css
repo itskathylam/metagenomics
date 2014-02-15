@@ -9,11 +9,16 @@
 
 
 /* Header */
+
 header {
     background-color: #FCD450;
-    border-style: solid;
-    border-radius: 6px;
     font-family: verdana, arial, sans-serif;
+    box-shadow: 0px 8px 6px -6px #888888;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    height: 160px;
 }
 
 header img {
@@ -34,7 +39,6 @@ nav ul ul {
 nav ul {
     background: #000000;
     padding: 0 10px;
-    border-radius: 5px;
     list-style: none;
     position: relative;
     display: inline-table;
@@ -100,10 +104,13 @@ nav ul ul ul {
     margin-right: auto;
     max-width: 75%;
     border-style: solid;
+    border-width: thin;
     padding: 20px;
-    margin-bottom: 20px;
-    margin-top: 20px;
-    border-radius: 6px;
+    margin-top: 170px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    box-shadow: 2px 0px 5px #888888;
+    box-shadow: -2px 0px 5px #888888;
 }
 
 
@@ -117,22 +124,23 @@ nav ul ul ul {
     padding: 10px;
     background-color: #0073CF;
     border-style: solid;
-    border-radius: 6px;
+    border-width: thin;
+    box-shadow: -2px 2px 5px #888888;
 }
 
 
 /*Footer at the bottom of every page*/ 
 #footer {
     font-family: verdana, arial, sans-serif;
+    position: absolute;
     bottom: 0px;
     left: 0px;
-    height: 150px;
-    background-color: #0073CF;
-    border-style: solid;
+    width: 100%;
+    box-shadow: 0px -2px 6px 0px #888888;
+    background-color: #000000;
+    color: #fff;
     text-align: center;
-    overflow: auto;
     line-height: 80px;
-    border-radius: 6px;
 }
 
 /* style for all paragraph fonts*/
