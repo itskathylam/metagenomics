@@ -17,6 +17,9 @@ urlpatterns = patterns('',
     
     #login_required( ) - add to all views below
     
+    url(r'^tools/contig', Contig, name='contig'),
+    url(r'^tools/pooling', Pooling, name='pool'),
+    
     # lookup table listviews (Kathy)
     url(r'^primer/', PrimerListView.as_view(), name='primer-list'),
     url(r'^host/', HostListView.as_view(), name='host-list'),

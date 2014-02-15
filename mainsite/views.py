@@ -27,6 +27,12 @@ def Logout(request):
 def UserSettings(request):
     return (render(request, 'usersettings.html'))
 
+def Contig(request):
+    return (render(request, 'contig.html'))
+
+def Pooling(request):
+    return (render(request, 'pooling.html'))
+
 # List views for lookup tables (Kathy)
 class PrimerListView(ListView):
     model = Primer
