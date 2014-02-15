@@ -24,7 +24,7 @@ urlpatterns = patterns('',
     url(r'^tools/contig', Contig, name='contig'),
     url(r'^tools/pooling', Pooling, name='pool'),
     
-    url(r'^cosmid/(?P<pk>\d)/$', CosmidDetailView.as_view(), name='cosmid-detail'),
+    url(r'^cosmid/(?P<pk>\d+)/$', CosmidDetailView.as_view(), name='cosmid-detail'),
     
     # lookup table listviews (Kathy)
     url(r'^primer/', PrimerListView.as_view(), name='primer-list'),
