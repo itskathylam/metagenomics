@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, DetailView
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import logout
@@ -38,6 +38,11 @@ def Contig(request):
 
 def Pooling(request):
     return (render(request, 'pooling.html'))
+
+class CosmidDetailView(DetailView):
+    model = Cosmid
+    template_name = 'cosmid_detail.html'
+
 
 # List views for lookup tables (Kathy)
 class PrimerListView(ListView):

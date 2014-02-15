@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{{ cosmid.cosmid_name }} <br>
+{{ cosmid.host }}<br>
+{{ cosmid.researcher }}<br>
+{{ cosmid.library }} <br>
+{{ cosmid.screen }}<br>
+{{ cosmid.ec_collection }}<br>
+{{ cosmid.original_media }}<br>
+{{ cosmid.pool }}<br>
+{{ cosmid.lab_book_ref }}<br>
+
+<!--get endtags and display in scrollable box-->
+{{ end_tag.end_tag_sequence  }}
+
+{% endblock %}

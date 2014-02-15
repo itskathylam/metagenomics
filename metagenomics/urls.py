@@ -24,6 +24,8 @@ urlpatterns = patterns('',
     url(r'^tools/contig', Contig, name='contig'),
     url(r'^tools/pooling', Pooling, name='pool'),
     
+    url(r'^cosmid/(?P<pk>\d)/$', CosmidDetailView.as_view(), name='cosmid-detail'),
+    
     # lookup table listviews (Kathy)
     url(r'^primer/', PrimerListView.as_view(), name='primer-list'),
     url(r'^host/', HostListView.as_view(), name='host-list'),
@@ -41,7 +43,7 @@ urlpatterns = patterns('',
     url(r'^orf/', ORFListView.as_view(), name='orf-list'),
     
     # multiple-table-based views
-    url(r'^cosmid/', CosmidListView.as_view(), name='cosmid-list'), # for cosmid and endtags
+    url(r'^cosmid/$', CosmidListView.as_view(), name='cosmid-list'), # for cosmid and endtags
     
     # createviews (Kathy) Form to add data to database
     url(r'^add/primer/$', PrimerCreateView.as_view(), name='primer-add'),
