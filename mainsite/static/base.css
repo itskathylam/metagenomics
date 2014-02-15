@@ -29,6 +29,12 @@ header img {
 
 
 /* Main menu */
+
+nav {
+    width: 100%;
+    background-color: #000000;
+	
+}
 nav ul ul {
     display: none
 }
@@ -39,10 +45,11 @@ nav ul ul {
     
 nav ul {
     background: #000000;
-    padding: 0 10px;
     list-style: none;
     position: relative;
     display: inline-table;
+    margin: 0px;
+    padding: 0;
 }
 
     nav ul:after {
