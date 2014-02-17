@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     url(r'^tools/pooling', Pooling, name='pool'),
     
     url(r'^cosmid/(?P<pk>\d+)/$', CosmidDetailView.as_view(), name='cosmid-detail'),
+    url(r'^assay/subclone/(?P<pk>\d+)/$', SubcloneAssayDetailView.as_view(), name='sublcone-assay-detail'),
     
     # lookup table listviews (Kathy)
     url(r'^primer/', PrimerListView.as_view(), name='primer-list'),
@@ -39,7 +40,7 @@ urlpatterns = patterns('',
     # nonlookup table listviews (Kathy)
     url(r'^subclone/', SubcloneListView.as_view(), name='subclone-list'),
     url(r'^assay/cosmid/', CosmidAssayListView.as_view(), name='cosmid-assay-list'),
-    url(r'^assay/subclone/', SubcloneAssayListView.as_view(), name='subclone-assay-list'),
+    url(r'^assay/subclone/$', SubcloneAssayListView.as_view(), name='subclone-assay-list'),
     url(r'^orf/', ORFListView.as_view(), name='orf-list'),
     
     # multiple-table-based views

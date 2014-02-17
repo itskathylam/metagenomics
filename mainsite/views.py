@@ -43,7 +43,11 @@ class CosmidDetailView(DetailView):
     model = Cosmid
     template_name = 'cosmid_detail.html'
 
-
+class SubcloneAssayDetailView(DetailView):
+    model = Subclone_Assay
+    template_name = 'subclone_assay_detail.html'
+    
+    
 # List views for lookup tables (Kathy)
 class PrimerListView(ListView):
     model = Primer
