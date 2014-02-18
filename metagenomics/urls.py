@@ -6,14 +6,15 @@ admin.autodiscover()
 from mainsite.views import *
 
 urlpatterns = patterns('',
-    #Admin and Static Pages (Main, About, and Logging in and Out)
+    
+    # Admin and Static Pages (Main, About, and Logging in and Out) 
     url(r'^$', MainPage, name='home'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^about/', AboutPage, name='about'),
     url(r'^login/', 'django.contrib.auth.views.login'),
     url(r'^logout/', Logout, name='logout'),
     
-    # lookup table listviews (Kathy)
+    # listviews for lookup tables 
     url(r'^primer/', PrimerListView.as_view(), name='primer-list'),
     url(r'^host/', HostListView.as_view(), name='host-list'),
     url(r'^screen/', ScreenListView.as_view(), name='screen-list'),
@@ -23,16 +24,16 @@ urlpatterns = patterns('',
     url(r'^pool/', PoolListView.as_view(), name='pool-list'),
     url(r'^substrate/', SubstrateListView.as_view(), name='substrate-list'),
     
-    # nonlookup table listviews (Kathy)
+    # listviews for nonlookup tables
     url(r'^subclone/', SubcloneListView.as_view(), name='subclone-list'),
     url(r'^assay/cosmid/', CosmidAssayListView.as_view(), name='cosmid-assay-list'),
     url(r'^assay/subclone/', SubcloneAssayListView.as_view(), name='subclone-assay-list'),
     url(r'^orf/', ORFListView.as_view(), name='orf-list'),
     
-    # multiple-table-based views
-    url(r'^cosmid/', CosmidListView.as_view(), name='cosmid-list'), # for cosmid and endtags
+    # listviews for multiple-table-based views
+    url(r'^cosmid/', CosmidEndTagListView.as_view(), name='cosmid-end-tag-list'), # for cosmid and endtags (Kathy)
     
-    # createviews (Kathy) Form to add data to database
+    # createviews - form to add data to database table
     url(r'^add/primer/$', PrimerCreateView.as_view(), name='primer-add'),
     url(r'^add/host/$', HostCreateView.as_view(), name='host-add'),
     url(r'^add/screen/$', ScreenCreateView.as_view(), name='screen-add'),
@@ -44,4 +45,8 @@ urlpatterns = patterns('',
     url(r'^add/subclone/$', SubcloneCreateView.as_view(), name='subclone-add'),
     url(r'^add/assay/cosmid/$', CosmidAssayCreateView.as_view(), name='cosmid-assay-add'),
     url(r'^add/assay/subclone/$', SubcloneAssayCreateView.as_view(), name='subclone-assay-add'),
+    
+    # createviews for adding data to multiple tables at once
+    url(r'^add/cosmid/$', CosmidCreateView.as_view(), name='cosmid-end-tag-add'),
+    
 )

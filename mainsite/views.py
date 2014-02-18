@@ -3,7 +3,7 @@ from django.views.generic import ListView, CreateView
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import logout
-
+from django.forms import ModelForm
 
 from mainsite.models import *
 
@@ -76,96 +76,78 @@ class ORFListView (ListView):
     
 # List views for multi-table views (Kathy)
 
-class CosmidListView(ListView):
+class CosmidEndTagListView(ListView):
     model = Cosmid
-    template_name = 'cosmid_all.html'
+    template_name = 'cosmid_end_tag_all.html'
     
-
 
 # Create views for adding data to one model (Kathy)
 
 class PrimerCreateView(CreateView):
     model = Primer
-    fields = ['primer_name', 'primer_sequence']
     template_name = 'primer_add.html'
-    
-    def get_success_url(self):
-        return reverse('primer-list')
+    fields = ['primer_name', 'primer_sequence']
+    # without fields specified, Cosmid field shows by default because
+    # Cosmid and Primer tables are linked by End_Tag join table
+    success_url = 'primer-list'
     
 class HostCreateView(CreateView):
     model = Host
     template_name = 'host_add.html'
-    
-    def get_success_url(self):
-        return reverse('host-list')
+    success_url = 'host-list'
     
 class ScreenCreateView(CreateView):
     model = Screen
     template_name = 'screen_add.html'
-    
-    def get_success_url(self):
-        return reverse('screen-list')
+    success_url = 'screen-list'
 
 class ResearcherCreateView(CreateView):
     model = Researcher
     template_name = 'researcher_add.html'
-    
-    def get_success_url(self):
-        return reverse('researcher-list')
+    success_url = 'researcher-list'
     
 class SubstrateCreateView(CreateView):
     model = Substrate
     template_name = 'substrate_add.html'
-    
-    def get_success_url(self):
-        return reverse('substrate-list')
+    success_url = 'substrate-list'
 
 class VectorCreateView(CreateView):
     model = Vector
     template_name = 'vector_add.html'
-    
-    def get_success_url(self):
-        return reverse('vector-list')
+    success_url = 'vector-list'
     
 class PooledSequencingCreateView(CreateView):
     model = Pooled_Sequencing
     template_name = 'pool_add.html'
-    
-    def get_success_url(self):
-        return reverse('pool-list')
+    success_url = 'pool-list'
 
 class LibraryCreateView(CreateView):
     model = Library
     template_name = 'library_add.html'
-    
-    def get_success_url(self):
-        return reverse('library-list')
+    success_url = 'library-list'
     
 class SubcloneCreateView(CreateView):
     model = Subclone
     template_name = 'subclone_add.html'
-    
-    def get_success_url(self):
-        return reverse('subclone-list')
+    success_url = 'subclone-list'
     
 class CosmidAssayCreateView(CreateView):
     model = Cosmid_Assay
     template_name = 'cosmid_assay_add.html'
-    
-    def get_success_url(self):
-        return reverse('cosmid-assay-list')
+    success_url = 'cosmid-assay-list'
 
 class SubcloneAssayCreateView(CreateView):
     model = Subclone_Assay
     template_name = 'subclone_assay_add.html'
-    
-    def get_success_url(self):
-        return reverse('subclone-assay-list')
+    success_url = 'subclone-assay-list'
     
     
-# Create views for adding data to multiple models with the same add form
+# Create views for adding data to multiple models with the same template
 
-
+class CosmidCreateView(CreateView):
+    model = Cosmid
+    template_name = 'cosmid_end_tag_add.html'
+    #success_url = 'cosmid-end-tag-list'
 
 
 

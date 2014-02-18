@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table border = 1>
+            <tr>
+                <th>Cosmid Name</th>
+                <th>Researcher Name</th>
+                <th>Library</th>
+                <th>Screen Expression Host</th>
+                <th>Screen Name</th>
+                <th>E. coli Stock Location</th>
+                <th>Sequencing Pool ID (optional)</th>
+                <th>Lab Book Reference(optional)</th>
+                <th>End Tag 1 (optional)</th>
+                <th>End Tag 2 (optional)</th>
+            </tr>
+        {% for cosmid in cosmid_list %}
+            <tr>
+                <td>{{ cosmid.cosmid_name }}</td>
+                <td>{{ cosmid.researcher.researcher_name }}</td>
+                <td>{{ cosmid.library.library_name }}</td>
+                <td>{{ cosmid.host.host_name }}</td>
+                <td>{{ cosmid.screen.screen_name }}</td>
+                <td>{{ cosmid.ec_collection }}</td>
+                <td>{{ cosmid.pooled_sequencing.id }}</td>
+                <td>{{ cosmid.lab_book_ref }}</td>
+                {% for end_tag in cosmid.end_tag_set.all %}
+                        <td>{{ end_tag.end_tag_sequence }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
