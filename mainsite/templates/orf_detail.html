@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{{ ORF.orf_sequence }} <br>
+{{ ORF.annotation }}<br>
+{{ ORF.contig }}<br>
+
+<a href="/edit{% url 'orf-list' %}{{ ORF.pk }}">Edit</a>
+{% endblock %}

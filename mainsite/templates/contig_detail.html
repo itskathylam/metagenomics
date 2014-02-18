@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{{ contig.pool }} <br>
+{{ contig.contig_name }}<br>
+{{ contig.contig_sequence }}<br>
+{{ contig.cosmid }} <br>
+{{ contig.contig_accession }}<br>
+
+
+<a href="/edit{% url 'contig-list' %}{{ contig.pk }}">Edit</a>
+{% endblock %}

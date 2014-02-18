@@ -16,7 +16,7 @@
             </tr>
         {% for cosmid in cosmid_list %}
             <tr>
-                <td>{{ cosmid.cosmid_name }}</td>
+                <td><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.pk}}">{{ cosmid.cosmid_name }}</a></td>
                 <td>{{ cosmid.researcher.researcher_name }}</td>
                 <td>{{ cosmid.library.library_name }}</td>
                 <td>{{ cosmid.host.host_name }}</td>
