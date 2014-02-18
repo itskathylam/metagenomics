@@ -1,17 +1,20 @@
 from django.shortcuts import render
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import logout
 from django.forms import ModelForm
-
+from django.contrib.auth.decorators import login_required
 from mainsite.models import *
 
 #Main, About etc
+
+#@login_required
 def MainPage(request):
     template_name = 'index.html'
     return (render(request, 'index.html'))
 
+#@login_required
 def AboutPage(request):
     template_name = 'about.html'
     return (render(request, 'about.html'))
@@ -20,6 +23,34 @@ def Logout(request):
     logout(request)
     return HttpResponseRedirect('/login')
 
+def UserSettings(request):
+    return (render(request, 'usersettings.html'))
+
+def Faq(request):
+    return (render(request, 'faq.html'))
+
+def UserDoc(request):
+    return (render(request, 'userdoc.html'))
+
+def Contig(request):
+    return (render(request, 'contig.html'))
+
+def Pooling(request):
+    return (render(request, 'pooling.html'))
+
+#detail views
+class CosmidDetailView(DetailView):
+    model = Cosmid
+    template_name = 'cosmid_detail.html'
+
+class SubcloneAssayDetailView(DetailView):
+    model = Subclone_Assay
+    template_name = 'subclone_assay_detail.html'
+  
+#edit views (updateview class)  
+class CosmidEditView(UpdateView):
+    model = Cosmid
+    template_name = 'cosmid_edit.html'
 
 # List views for lookup tables (Kathy)
 class PrimerListView(ListView):

@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 admin.autodiscover()
 
 # for lookup table views
@@ -13,6 +14,24 @@ urlpatterns = patterns('',
     url(r'^about/', AboutPage, name='about'),
     url(r'^login/', 'django.contrib.auth.views.login'),
     url(r'^logout/', Logout, name='logout'),
+    url(r'^user/settings/', UserSettings, name= 'usersettings'),
+    
+    
+    url(r'^help/faq', Faq, name='faq'),
+    url(r'^help/userdoc', UserDoc, name='userdoc'),
+    
+    #login_required( ) - add to all views below
+    
+    url(r'^tools/contig', Contig, name='contig'),
+    url(r'^tools/pooling', Pooling, name='pool'),
+    
+    #Detail views
+    url(r'^cosmid/(?P<pk>\d+)/$', CosmidDetailView.as_view(), name='cosmid-detail'),
+    url(r'^assay/subclone/(?P<pk>\d+)/$', SubcloneAssayDetailView.as_view(), name='sublcone-assay-detail'),
+    
+    #Edit views (Updateviews)
+    url(r'^cosmid/(?P<pk>\d+)/edit$', CosmidEditView.as_view(), name='cosmid-edit'),
+    
     
     # listviews for lookup tables 
     url(r'^primer/', PrimerListView.as_view(), name='primer-list'),
@@ -27,12 +46,12 @@ urlpatterns = patterns('',
     # listviews for nonlookup tables
     url(r'^subclone/', SubcloneListView.as_view(), name='subclone-list'),
     url(r'^assay/cosmid/', CosmidAssayListView.as_view(), name='cosmid-assay-list'),
-    url(r'^assay/subclone/', SubcloneAssayListView.as_view(), name='subclone-assay-list'),
+    url(r'^assay/subclone/$', SubcloneAssayListView.as_view(), name='subclone-assay-list'),
     url(r'^orf/', ORFListView.as_view(), name='orf-list'),
-    
+
     # listviews for multiple-table-based views
     url(r'^cosmid/', CosmidEndTagListView.as_view(), name='cosmid-end-tag-list'), # for cosmid and endtags (Kathy)
-    
+
     # createviews - form to add data to database table
     url(r'^add/primer/$', PrimerCreateView.as_view(), name='primer-add'),
     url(r'^add/host/$', HostCreateView.as_view(), name='host-add'),

@@ -161,3 +161,9 @@ class Subclone_Assay(models.Model):
     class Meta:
         unique_together = ("subclone", "host", "substrate")
 
+#import reversion
+#
+#class Subclone_Assay_Admin(reversion.VersionAdmin):
+#    pass
+#
+#admin.site.register(Subclone_Assay, Subclone_Assay_Admin)

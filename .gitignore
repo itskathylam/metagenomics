@@ -1,0 +1,2 @@
+#Ignore these files when tracking changes since binaries are uneditable anyway for merge conflicts
+*.pyc
