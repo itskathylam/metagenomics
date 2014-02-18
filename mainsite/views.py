@@ -113,50 +113,6 @@ class CosmidEndTagListView(ListView):
     
 
 # Create views for adding data to one model (Kathy)
-
-class PrimerCreateView(CreateView):
-    model = Primer
-    template_name = 'primer_add.html'
-    fields = ['primer_name', 'primer_sequence']
-    # without fields specified, Cosmid field shows by default because
-    # Cosmid and Primer tables are linked by End_Tag join table
-    success_url = 'primer-list'
-    
-class HostCreateView(CreateView):
-    model = Host
-    template_name = 'host_add.html'
-    success_url = 'host-list'
-    
-class ScreenCreateView(CreateView):
-    model = Screen
-    template_name = 'screen_add.html'
-    success_url = 'screen-list'
-
-class ResearcherCreateView(CreateView):
-    model = Researcher
-    template_name = 'researcher_add.html'
-    success_url = 'researcher-list'
-    
-class SubstrateCreateView(CreateView):
-    model = Substrate
-    template_name = 'substrate_add.html'
-    success_url = 'substrate-list'
-
-class VectorCreateView(CreateView):
-    model = Vector
-    template_name = 'vector_add.html'
-    success_url = 'vector-list'
-    
-class PooledSequencingCreateView(CreateView):
-    model = Pooled_Sequencing
-    template_name = 'pool_add.html'
-    success_url = 'pool-list'
-
-class LibraryCreateView(CreateView):
-    model = Library
-    template_name = 'library_add.html'
-    success_url = 'library-list'
-    
 class SubcloneCreateView(CreateView):
     model = Subclone
     template_name = 'subclone_add.html'

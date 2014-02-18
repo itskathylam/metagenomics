@@ -51,16 +51,8 @@ urlpatterns = patterns('',
 
     # listviews for multiple-table-based views
     url(r'^cosmid/', CosmidEndTagListView.as_view(), name='cosmid-end-tag-list'), # for cosmid and endtags (Kathy)
-
-    # createviews - form to add data to database table
-    url(r'^add/primer/$', PrimerCreateView.as_view(), name='primer-add'),
-    url(r'^add/host/$', HostCreateView.as_view(), name='host-add'),
-    url(r'^add/screen/$', ScreenCreateView.as_view(), name='screen-add'),
-    url(r'^add/library/$', LibraryCreateView.as_view(), name='library-add'),
-    url(r'^add/researcher/$', ResearcherCreateView.as_view(), name='researcher-add'),
-    url(r'^add/substrate/$', SubstrateCreateView.as_view(), name='substrate-add'),
-    url(r'^add/vector/$', VectorCreateView.as_view(), name='vector-add'),
-    url(r'^add/pool/$', PooledSequencingCreateView.as_view(), name='pool-add'),
+    
+    # createviews - form to add data to database table  
     url(r'^add/subclone/$', SubcloneCreateView.as_view(), name='subclone-add'),
     url(r'^add/assay/cosmid/$', CosmidAssayCreateView.as_view(), name='cosmid-assay-add'),
     url(r'^add/assay/subclone/$', SubcloneAssayCreateView.as_view(), name='subclone-assay-add'),
