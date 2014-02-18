@@ -10,8 +10,8 @@
             <!--<img src="{{ STATIC_URL }}Waterloo_SCI_Biology_rgb.png" height="90" width="200" alt="Waterloo Faculty of Science Department of Biology Logo"/>-->
             <h1>Metagenomics Clone Bank</h1>
             <div id="user">
-                Welcome, {{ user.first_name}}<br>
-                <a href="/user/settings">Settings</a> <a href="{% url 'logout' %}">Logout</a>
+                {{ user.first_name}}<br>
+                <a href="/user/settings"><img title="Settings" src="{{ STATIC_URL }}gear.png" alt="user settings"/></a> <a href="{% url 'logout' %}"><img title="Logout" src="{{ STATIC_URL }}logout.png" alt="logout"/></a>
             </div>
             
             <nav>
