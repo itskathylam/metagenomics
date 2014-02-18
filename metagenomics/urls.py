@@ -66,6 +66,6 @@ urlpatterns = patterns('',
     url(r'^add/assay/subclone/$', SubcloneAssayCreateView.as_view(), name='subclone-assay-add'),
     
     # createviews for adding data to multiple tables at once
-    url(r'^add/cosmid/$', CosmidCreateView.as_view(), name='cosmid-end-tag-add'),
+    url(r'^add/cosmid/$', CosmidEndTagCreate, name='cosmid-end-tag-add'),
     
 )

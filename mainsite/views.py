@@ -1,11 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import logout
-from django.forms import ModelForm
 from django.contrib.auth.decorators import login_required
+
 from mainsite.models import *
+from mainsite.forms import *
 
 #Main, About etc
 
@@ -175,10 +176,10 @@ class SubcloneAssayCreateView(CreateView):
     
 # Create views for adding data to multiple models with the same template
 
-class CosmidCreateView(CreateView):
+def CosmidEndTagCreate(CreateView):
     model = Cosmid
     template_name = 'cosmid_end_tag_add.html'
-    #success_url = 'cosmid-end-tag-list'
+    success_url = 'cosmid-end-tag-list'
 
 
 
