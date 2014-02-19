@@ -48,6 +48,22 @@ class CosmidDetailView(DetailView):
 class SubcloneAssayDetailView(DetailView):
     model = Subclone_Assay
     template_name = 'subclone_assay_detail.html'
+    
+class CosmidAssayDetailView(DetailView):
+    model = Cosmid_Assay
+    template_name = 'cosmid_assay_detail.html'
+
+class SubcloneDetailView(DetailView):
+    model = Subclone
+    template_name = 'subclone_detail.html'
+    
+class ContigDetailView(DetailView):
+    model = Contig
+    template_name = 'contig_detail.html'
+    
+class ContigOrfDetailView(DetailView):
+    model = ORF
+    template_name = 'orf_detail.html'
   
 #edit views (updateview class)  
 class CosmidEditView(UpdateView):

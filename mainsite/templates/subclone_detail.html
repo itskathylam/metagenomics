@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{{ subclone.subclone_name }} <br>
+{{ subclone.cosmid }}<br>
+{{ subclone.orf }}<br>
+{{ subclone.vector }} <br>
+{{ subclone.researcher }}<br>
+{{ subclone.ec_collection }}<br>
+
+<a href="/edit{% url 'subclone-list' %}{{ subclone.pk }}">Edit</a>
+{% endblock %}

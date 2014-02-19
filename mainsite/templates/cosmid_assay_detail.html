@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{{ cosmid_assay.cosmid }} <br>
+{{ cosmid_assay.host }}<br>
+{{ cosmid_assay.substrate}}<br>
+{{ cosmid_assay.researcher }} <br>
+{{ cosmid_assay.cosmid_km }}<br>
+{{ cosmid_assay.cosmid_temp }}<br>
+{{ cosmid_assay.cosmid_ph }}<br>
+{{ cosmid_assay.cosmid_comments }}<br>
+
+
+<a href="/edit{% url 'cosmid-assay-list' %}{{ cosmid_assay.pk }}">Edit</a>
+{% endblock %}

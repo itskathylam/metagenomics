@@ -8,4 +8,6 @@
 {{ subclone_assay.subclone_temp }}<br>
 {{ subclone_assay.subclone_ph}}<br>
 {{ subclone_assay.subclone_comments }}<br>
+
+<a href="/edit{% url 'subclone-assay-list' %}{{ subclone_assay.pk }}">Edit</a>
 {% endblock %}
