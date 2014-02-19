@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form action="{% url 'cosmid-list' %}{{ cosmid.pk }}/" method="POST">
+    <form action="{% url 'cosmid-end-tag-list' %}{{ cosmid.pk }}/" method="POST">
     {% csrf_token %}
         <table border = 1>    
             {{form}}

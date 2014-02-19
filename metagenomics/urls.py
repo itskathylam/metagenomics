@@ -6,7 +6,6 @@ admin.autodiscover()
 from mainsite.views import *
 
 urlpatterns = patterns('',
-
     # Admin and Static Pages (Main, About, and Logging in and Out) 
     url(r'^$', MainPage, name='home'),
     url(r'^admin/', include(admin.site.urls)),
@@ -32,7 +31,13 @@ urlpatterns = patterns('',
     url(r'^contig-orf/(?P<pk>\d+)/$', ContigOrfDetailView.as_view(), name='contig-orf-detail'),
     
     #Edit views (Updateviews)
-    url(r'^cosmid/(?P<pk>\d+)/edit$', CosmidEditView.as_view(), name='cosmid-edit'),
+    url(r'^edit/cosmid/(?P<pk>\d+)$', CosmidEditView.as_view(), name='cosmid-edit'),
+    
+    #Search views
+    #url(r'^search/cosmid/$', CosmidSearchView),
+    #url(r'^search/Subclone/$', SubcloneSearchView),
+    #url(r'^search/Assay/$', AssaySearchView),
+    #url(r'^search/ORF/$', ORFSearchView),
     
     # listviews for lookup tables 
     url(r'^primer/', PrimerListView.as_view(), name='primer-list'),
@@ -49,7 +54,6 @@ urlpatterns = patterns('',
     url(r'^assay/cosmid/$', CosmidAssayListView.as_view(), name='cosmid-assay-list'),
     url(r'^assay/subclone/$', SubcloneAssayListView.as_view(), name='subclone-assay-list'),
     url(r'^orf/$', ORFListView.as_view(), name='orf-list'),
-
     # listviews for multiple-table-based views
     url(r'^cosmid/$', CosmidEndTagListView.as_view(), name='cosmid-end-tag-list'), # for cosmid and endtags (Kathy)
     

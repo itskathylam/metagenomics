@@ -39,6 +39,9 @@ class Library(models.Model):
     
     def __unicode__(self):
         return self.library_name
+    
+    class Meta:
+        verbose_name_plural = 'Libraries'
 
 class Researcher(models.Model):
     researcher_name = models.CharField(max_length=100, unique=True)
@@ -55,6 +58,9 @@ class Pooled_Sequencing(models.Model):
 
     def __unicode__(self):
         return self.pk
+    
+    class Meta:
+        verbose_name_plural = 'Sequencing Pools'
 
 class Cosmid(models.Model):
     cosmid_name = models.CharField(max_length=50)
@@ -103,6 +109,9 @@ class ORF(models.Model):
 
     def __unicode__(self):
         return self.id
+    
+    class Meta:
+        verbose_name_plural = 'ORFs'
 
 class Contig_ORF_Join(models.Model):
     contig = models.ForeignKey(Contig)
@@ -147,6 +156,7 @@ class Cosmid_Assay(models.Model):
     
     class Meta:
         unique_together = ("cosmid", "host", "substrate")
+        verbose_name_plural = 'Cosmid Assays'
     
 class Subclone_Assay(models.Model):
     subclone = models.ForeignKey(Subclone)
@@ -160,6 +170,7 @@ class Subclone_Assay(models.Model):
     
     class Meta:
         unique_together = ("subclone", "host", "substrate")
+        verbose_name_plural = 'Subclone Assays'
 
 #import reversion
 #
