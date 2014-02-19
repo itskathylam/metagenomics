@@ -2,7 +2,6 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 admin.autodiscover()
-# for lookup table views
 from mainsite.views import *
 
 urlpatterns = patterns('',
@@ -38,9 +37,9 @@ urlpatterns = patterns('',
     url(r'^edit/contig-orf/(?P<pk>\d+)$', ContigORFEditView.as_view(), name='contig-orf-edit'),
     #Search views
     #url(r'^search/cosmid/$', CosmidSearchView),
-    #url(r'^search/Subclone/$', SubcloneSearchView),
-    #url(r'^search/Assay/$', AssaySearchView),
-    #url(r'^search/ORF/$', ORFSearchView),
+    #url(r'^search/subclone/$', SubcloneSearchView),
+    #url(r'^search/assay/$', AssaySearchView),
+    #url(r'^search/orf/$', ORFSearchView),
     
     # listviews for lookup tables 
     url(r'^primer/', PrimerListView.as_view(), name='primer-list'),
@@ -57,6 +56,7 @@ urlpatterns = patterns('',
     url(r'^assay/cosmid/$', CosmidAssayListView.as_view(), name='cosmid-assay-list'),
     url(r'^assay/subclone/$', SubcloneAssayListView.as_view(), name='subclone-assay-list'),
     url(r'^orf/$', ORFListView.as_view(), name='orf-list'),
+    
     # listviews for multiple-table-based views
     url(r'^cosmid/$', CosmidEndTagListView.as_view(), name='cosmid-end-tag-list'), # for cosmid and endtags (Kathy)
     
@@ -64,6 +64,7 @@ urlpatterns = patterns('',
     url(r'^add/subclone/$', SubcloneCreateView.as_view(), name='subclone-add'),
     url(r'^add/assay/cosmid/$', CosmidAssayCreateView.as_view(), name='cosmid-assay-add'),
     url(r'^add/assay/subclone/$', SubcloneAssayCreateView.as_view(), name='subclone-assay-add'),
+    
     # createviews for adding data to multiple tables at once
     url(r'^add/cosmid/$', CosmidEndTagCreate, name='cosmid-end-tag-add'),
 )
