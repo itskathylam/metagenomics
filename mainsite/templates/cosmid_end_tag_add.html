@@ -3,7 +3,9 @@
 {% block content %}
     <form action="{% url "cosmid-end-tag-add" %}" method="POST">{% csrf_token %}
         <table border = 1>    
-            {{form}}
+            {{cosmid_form}}
+            {{end_tag_form1}}
+            {{end_tag_form2}}
         </table>
         <input type="submit">
     </form>

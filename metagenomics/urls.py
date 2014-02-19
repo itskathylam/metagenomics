@@ -3,7 +3,6 @@ from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 admin.autodiscover()
 
-# for lookup table views
 from mainsite.views import *
 
 urlpatterns = patterns('',

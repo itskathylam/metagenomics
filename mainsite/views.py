@@ -1,9 +1,10 @@
 from django.shortcuts import render, render_to_response
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.template import RequestContext
 
 from mainsite.models import *
 from mainsite.forms import *
@@ -114,6 +115,7 @@ class CosmidEndTagListView(ListView):
     
 
 # Create views for adding data to one model (Kathy)
+
 class SubcloneCreateView(CreateView):
     model = Subclone
     template_name = 'subclone_add.html'
@@ -129,15 +131,28 @@ class SubcloneAssayCreateView(CreateView):
     template_name = 'subclone_assay_add.html'
     success_url = 'subclone-assay-list'
     
-    
+
 # Create views for adding data to multiple models with the same template
 
-def CosmidEndTagCreate(CreateView):
-    model = Cosmid
-    template_name = 'cosmid_end_tag_add.html'
-    success_url = 'cosmid-end-tag-list'
-
-
+def CosmidEndTagCreate(request):
+    if request.method == "POST":
+        cosmidform = CosmidForm(request.POST, instance=Cosmid())
+        endtagform1 = EndTagForm(request.POST, instance=End_Tag())
+        endtagform2 = EndTagForm(request.POST, instance=End_Tag())
+        if cosmidform.is_valid() and endtagform1.is_valid() and endtagform2.is_valid():
+            new_cosmid = cosmidform.save()    
+            new_end_tag_1 = endtagform1.save(commit=False)
+            new_end_tag_2 = endtagform2.save(commit=False) 
+            new_end_tag_1.cosmid = new_cosmid
+            new_end_tag_2.cosmid = new_cosmid
+            new_end_tag_1.save()
+            new_end_tag_2.save()
+            return HttpResponseRedirect('/cosmid/')
+    else:
+        cosmidform = CosmidForm(instance=Cosmid())
+        endtagform1 = EndTagForm(instance=End_Tag())
+        endtagform2 = EndTagForm(instance=End_Tag())
+    return render_to_response('cosmid_end_tag_add.html', {'cosmid_form': cosmidform, 'end_tag_form1': endtagform1, 'end_tag_form2': endtagform2}, context_instance=RequestContext(request))
 
 
 
