@@ -68,6 +68,23 @@ class ContigOrfDetailView(DetailView):
 class CosmidEditView(UpdateView):
     model = Cosmid
     template_name = 'cosmid_edit.html'
+    
+class SubcloneEditView(UpdateView):
+    model = Subclone
+    template_name = 'subclone_edit.html'
+    
+class CosmidAssayEditView(UpdateView):
+    model = Cosmid_Assay
+    template_name = 'cosmid_assay_edit.html'
+
+class SubcloneAssayEditView(UpdateView):
+    model = Subclone_Assay
+    template_name = 'subclone_assay_edit.html'
+    
+class ContigORFEditView(UpdateView):
+    model = ORF
+    template_name = 'contig_orf_edit.html'
+
 
 # List views for lookup tables (Kathy)
 class PrimerListView(ListView):

@@ -32,7 +32,10 @@ urlpatterns = patterns('',
     
     #Edit views (Updateviews)
     url(r'^edit/cosmid/(?P<pk>\d+)$', CosmidEditView.as_view(), name='cosmid-edit'),
-    
+    url(r'^edit/subclone/(?P<pk>\d+)$', SubcloneEditView.as_view(), name='subclone-edit'),
+    url(r'^edit/assay/cosmid/(?P<pk>\d+)$', CosmidAssayEditView.as_view(), name='cosmid-assay-edit'),
+    url(r'^edit/assay/subclone/(?P<pk>\d+)$', SubcloneAssayEditView.as_view(), name='subclone-assay-edit'),
+    url(r'^edit/contig-orf/(?P<pk>\d+)$', ContigORFEditView.as_view(), name='contig-orf-edit'),
     #Search views
     #url(r'^search/cosmid/$', CosmidSearchView),
     #url(r'^search/Subclone/$', SubcloneSearchView),
