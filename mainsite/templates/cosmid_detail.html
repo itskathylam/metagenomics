@@ -2,18 +2,38 @@
 
 {% block content %}
 
-{{ cosmid.cosmid_name }} <br>
-{{ cosmid.host }}<br>
-{{ cosmid.researcher }}<br>
-{{ cosmid.library }} <br>
-{{ cosmid.screen }}<br>
-{{ cosmid.ec_collection }}<br>
-{{ cosmid.original_media }}<br>
-{{ cosmid.pool }}<br>
-{{ cosmid.lab_book_ref }}<br>
+<h3>Cosmid {{ name }}</h3>
+<p>Host: {{ host }}</p>
+<p>Researcher: {{ researcher }}</p>
+<p>Library: {{ library }}</p>
+<p>Screen: {{ screen }}</p>
+<p>Ec Collection: {{ ec_collection }}</p>
+<p>Original Media: {{ media }}</p>
+<p>Pool: {{ pool }}</p>
+<p>Lab Book Reference: {{ lab_book }}</p>
+<!--
+{% for primer in cosmid.end_tag_set.all %}
+    Primer: {{ primer.primer }}<br>
+{% endfor %}
 
-<!--get endtags and display in scrollable box-->
-{{ end_tag.end_tag_sequence  }}
+{% for end_tag in cosmid.end_tag_set.all %}
+    End Tag: <textarea rows="10" cols="80" readonly>{{ end_tag.end_tag_sequence }}</textarea><br>
+    {% endfor %}
+-->
+{% for list in contigs %}
+    Contig: {{ list.contig_name }} <br>
+    Pool: {{ list.pool }}<br>
+    Accession: {{ list.contig_accession }}<br>
+    Sequence: <textarea rows="15" cols="70" readonly=true>{{ list.contig_sequence }}</textarea><br><br>
+{% endfor %}
+
+{% for orf in orfs %}
+    ORF Accession: {{ orf.orf_accession }}<br>
+    Start: {{ orf.start }}<br>
+    Stop: {{ orf.stop }}<br>
+    ORF Annotation: <br>
+    Sequence: <br><br>
+{% endfor %}
 
 <a href="/edit{% url 'cosmid-end-tag-list' %}{{ cosmid.pk }}">Edit</a>
 {% endblock %}

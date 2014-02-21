@@ -18,11 +18,11 @@ urlpatterns = patterns('',
     #login_required( ) - add to all views below
     
     #Tools Views
-    url(r'^tools/contig', Contig, name='contig'),
+    url(r'^tools/contig', ContigTool, name='contig'),
     url(r'^tools/pooling', Pooling, name='pool'),
     
     #Detail views
-    url(r'^cosmid/(?P<pk>\d+)/$', CosmidDetailView.as_view(), name='cosmid-detail'),
+    url(r'^cosmid/(?P<cosmid_name>\w+)/$', CosmidDetail, name='cosmid-detail'),
     url(r'^assay/subclone/(?P<pk>\d+)/$', SubcloneAssayDetailView.as_view(), name='sublcone-assay-detail'),
     url(r'^assay/cosmid/(?P<pk>\d+)/$', CosmidAssayDetailView.as_view(), name='cosmid-assay-detail'),
     url(r'^subclone/(?P<pk>\d+)/$', SubcloneDetailView.as_view(), name='subclone-detail'),

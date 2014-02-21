@@ -95,12 +95,16 @@ class End_Tag(models.Model):
     primer = models.ForeignKey(Primer, blank=True, null=True)
     end_tag_sequence = models.TextField(blank=True, null=True)
 
+
 class Contig(models.Model):
     pool = models.ForeignKey(Pooled_Sequencing)
     contig_name = models.CharField(max_length=200)
     contig_sequence = models.TextField()
     cosmid = models.ManyToManyField(Cosmid)
     contig_accession = models.CharField(max_length=50, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.contig_name
 
 class ORF(models.Model):
     orf_sequence = models.TextField() 
@@ -120,6 +124,10 @@ class Contig_ORF_Join(models.Model):
     stop = models.PositiveIntegerField()
     orf_accession = models.CharField(max_length=50, blank=True, null=True)
     db_generated = models.BooleanField()
+
+    class Meta:
+            verbose_name_plural = 'Contig & ORF Relationships'
+
 
 class Subclone(models.Model):
     subclone_name = models.CharField(max_length=50)
@@ -171,10 +179,3 @@ class Subclone_Assay(models.Model):
     class Meta:
         unique_together = ("subclone", "host", "substrate")
         verbose_name_plural = 'Subclone Assays'
-
-#import reversion
-#
-#class Subclone_Assay_Admin(reversion.VersionAdmin):
-#    pass
-#
-#admin.site.register(Subclone_Assay, Subclone_Assay_Admin)
