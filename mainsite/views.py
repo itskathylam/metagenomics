@@ -10,13 +10,12 @@ from mainsite.models import *
 from mainsite.forms import *
 
 #Main, About etc
-
-#@login_required
+login_required
 def MainPage(request):
     template_name = 'index.html'
     return (render(request, 'index.html'))
 
-#@login_required
+@login_required
 def AboutPage(request):
     template_name = 'about.html'
     return (render(request, 'about.html'))
@@ -34,13 +33,34 @@ def Faq(request):
 def UserDoc(request):
     return (render(request, 'userdoc.html'))
 
-def Contig(request):
+def ContigTool(request):
     return (render(request, 'contig.html'))
 
 def Pooling(request):
     return (render(request, 'pooling.html'))
 
 #detail views
+def CosmidDetail(request, cosmid_name):
+    cosmid = Cosmid.objects.get(cosmid_name=cosmid_name)
+    
+    c_id = cosmid.pk
+    name = cosmid.cosmid_name
+    host = cosmid.host
+    researcher = cosmid.researcher
+    library = cosmid.library
+    screen = cosmid.screen
+    ec_collection = cosmid.ec_collection
+    original_media = cosmid.original_media
+    pool = cosmid.pool
+    lab_book = cosmid.lab_book_ref
+    
+    contigresults = Contig.objects.filter(cosmid=c_id)
+    for c in contigresults:
+        orfresults = Contig_ORF_Join.objects.filter(contig_id=c.id)
+
+    return render_to_response('cosmid_detail.html', {'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book}, context_instance=RequestContext(request))
+ 
+   
 class CosmidDetailView(DetailView):
     model = Cosmid
     template_name = 'cosmid_detail.html'
@@ -85,41 +105,6 @@ class SubcloneAssayEditView(UpdateView):
 class ContigORFEditView(UpdateView):
     model = ORF
     template_name = 'contig_orf_edit.html'
-
-
-# List views for lookup tables (Kathy)
-class PrimerListView(ListView):
-    model = Primer
-    template_name = 'primer_all.html'
-
-class HostListView(ListView):
-    model = Host
-    template_name = 'host_all.html'
-    
-class ScreenListView(ListView):
-    model = Screen
-    template_name = 'screen_all.html'
-    
-class LibraryListView(ListView):
-    model = Library
-    template_name = 'library_all.html'
-    
-class ResearcherListView(ListView):
-    model = Researcher
-    template_name = 'researcher_all.html'
-
-class VectorListView(ListView):
-    model = Vector
-    template_name = 'vector_all.html'
-
-class PoolListView(ListView):
-    model = Pooled_Sequencing
-    template_name = 'pool_all.html'
-    
-class SubstrateListView(ListView):
-    model = Substrate
-    template_name = 'substrate_all.html'
-    
 
 # List views for non-lookup tables (Kathy)
 
@@ -188,16 +173,35 @@ def CosmidEndTagCreate(request):
     return render_to_response('cosmid_end_tag_add.html', {'cosmid_form': cosmidform, 'end_tag_form1': endtagform1, 'end_tag_form2': endtagform2}, context_instance=RequestContext(request))
 
 
+# List views for lookup tables (Kathy)
+class PrimerListView(ListView):
+    model = Primer
+    template_name = 'primer_all.html'
 
+class HostListView(ListView):
+    model = Host
+    template_name = 'host_all.html'
+    
+class ScreenListView(ListView):
+    model = Screen
+    template_name = 'screen_all.html'
+    
+class LibraryListView(ListView):
+    model = Library
+    template_name = 'library_all.html'
+    
+class ResearcherListView(ListView):
+    model = Researcher
+    template_name = 'researcher_all.html'
 
+class VectorListView(ListView):
+    model = Vector
+    template_name = 'vector_all.html'
 
-
-
-
-
-
-
-
-
-
-
+class PoolListView(ListView):
+    model = Pooled_Sequencing
+    template_name = 'pool_all.html'
+    
+class SubstrateListView(ListView):
+    model = Substrate
+    template_name = 'substrate_all.html'
