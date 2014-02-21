@@ -89,22 +89,27 @@ class ContigOrfDetailView(DetailView):
 class CosmidEditView(UpdateView):
     model = Cosmid
     template_name = 'cosmid_edit.html'
+    success_url = 'cosmid-end-tag-list'
     
 class SubcloneEditView(UpdateView):
     model = Subclone
     template_name = 'subclone_edit.html'
+    success_url = 'subclone-list'
     
 class CosmidAssayEditView(UpdateView):
     model = Cosmid_Assay
     template_name = 'cosmid_assay_edit.html'
+    success_url = 'cosmid-assay-list'
 
 class SubcloneAssayEditView(UpdateView):
     model = Subclone_Assay
     template_name = 'subclone_assay_edit.html'
+    success_url = 'subclone-assay-list'
     
-class ContigORFEditView(UpdateView):
+class ORFEditView(UpdateView):
     model = ORF
-    template_name = 'contig_orf_edit.html'
+    template_name = 'orf_edit.html'
+    success_url = 'orf-list'
 
 # List views for non-lookup tables (Kathy)
 
@@ -123,6 +128,7 @@ class SubcloneAssayListView(ListView):
 class ORFListView (ListView):
     model = ORF
     template_name = 'orf_all.html'
+    
   
     
 # List views for multi-table views (Kathy)
