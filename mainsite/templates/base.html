@@ -9,7 +9,7 @@
      <header id="head">
             <h1>Metagenomics Clone Bank</h1>
             <div id="user">
-                {{ user.first_name}}<br>
+                {{ user.first_name }}<br>
                 <a href="/user/settings"><img title="Settings" src="{{ STATIC_URL }}gear.png" alt="user settings"/></a> <a href="{% url 'logout' %}"><img title="Logout" src="{{ STATIC_URL }}logout.png" alt="logout"/></a>
             </div>
             
@@ -27,7 +27,7 @@
                 </li>
                 <li><a href="/search">Search</a>
                     <ul>
-                        <li><a href="">Cosmid</a></li>
+                        <li><a href="{% url 'cosmid-search' %}">Cosmid</a></li>
                         <li><a href="">Subclone</a></li>
                         <li><a href="">Assay</a></li>
                         <li><a href="">ORF</a></li>
