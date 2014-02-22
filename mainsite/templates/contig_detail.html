@@ -11,7 +11,18 @@ Associated Cosmids:
 {% endfor %}
 </ul>
 <label>Sequence <textarea readonly rows="20" cols="70" onclick="this.focus();this.select()">{{ sequence }}</textarea></label><br>
-
+{% for orf in orfresults %}
+    ORF Accession: {{ orf.orf_accession }}<br>
+    Start: {{ orf.start }}<br>
+    Stop: {{ orf.stop }}<br>
+    {% for s in orfseq %}
+        {% if s.id = orf.orf_id %}
+            ORF Annotation: {{ s.annotation }}<br>
+            <label>Sequence: <br>
+            <textarea rows="4" cols"10" readonly=true>{{ s.orf_sequence }}</textarea></label><br><br>
+        {% endif %}
+    {% endfor %}
+{% endfor %}
 
 <a href="">Edit</a>
 {% endblock %}

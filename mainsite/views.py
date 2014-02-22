@@ -102,13 +102,16 @@ def ContigDetail(request, contig_name):
     pool = contig.pool
     seq = contig.contig_sequence
     accession = contig.contig_accession
-
-    
     cosmids = Cosmid.objects.filter(contig=contig.id)
     
+    orfresults = Contig_ORF_Join.objects.filter(contig_id=contig.id)
+    orfids = []
+    for o in orfresults:
+        orfids.append(o.orf_id)
+    orfseq = ORF.objects.filter(id__in=orfids)
     
     
-    return render_to_response('contig_detail.html', {'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name}, context_instance=RequestContext(request))
+    return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name}, context_instance=RequestContext(request))
 
 class SubcloneAssayDetailView(DetailView):
     model = Subclone_Assay
