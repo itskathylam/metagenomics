@@ -54,11 +54,24 @@ def CosmidDetail(request, cosmid_name):
     pool = cosmid.pool
     lab_book = cosmid.lab_book_ref
     
+    etresult = End_Tag.objects.filter(cosmid=c_id)
+    pids = []
+    for p in etresult:
+        pids.append(p.primer_id)  
+    primerresults = Primer.objects.filter(id__in= pids).values
+    
     contigresults = Contig.objects.filter(cosmid=c_id)
+    contigids = []
     for c in contigresults:
-        orfresults = Contig_ORF_Join.objects.filter(contig_id=c.id)
-
-    return render_to_response('cosmid_detail.html', {'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book}, context_instance=RequestContext(request))
+        contigids.append(c.id)
+    
+    orfresults = Contig_ORF_Join.objects.filter(contig_id__in=contigids)
+    orfids = []
+    for o in orfresults:
+        orfids.append(o.orf_id)
+    seq = ORF.objects.filter(id__in=orfids)
+    
+    return render_to_response('cosmid_detail.html', {'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book}, context_instance=RequestContext(request))
  
    
 class CosmidDetailView(DetailView):
