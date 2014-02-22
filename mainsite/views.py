@@ -43,9 +43,6 @@ def Pooling(request):
 def CosmidResults(request):
     cosmid_name = request.GET.get('cosmid_name')
     host = request.GET.get('host')
-    if host == '':
-        host = 0
-    
     researcher= request.GET.get('researcher')
     library = request.GET.get('library')
     screen = request.GET.get('screen')
@@ -53,14 +50,19 @@ def CosmidResults(request):
     original_media = request.GET.get('original_media')
     pool = request.GET.get('pool')
     lab_book_ref = request.GET.get('lab_book_ref')
-    
-    results = Cosmid.objects.filter(cosmid_name__icontains=cosmid_name).filter(host=host)
+    values = { 'cosmid_name__icontains' : cosmid_name, 'researcher' : researcher, 'library': library, 'screen': screen, 'ec_collection__icontains': ec_collection, 'original_media__icontains': original_media, 'pool': pool, 'lab_book_ref__icontains': lab_book_ref}
+    args = {}
+    for k, v in values.items():
+        if v:
+            args[k] = v
+    results = Cosmid.objects.filter(**args)
     return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': results}, context_instance=RequestContext(request))
 
 def CosmidSearchView(request):
     form = CosmidForm
     return render_to_response('cosmid_search.html', {'form': form}, context_instance=RequestContext(request))
-    
+
+#  
 #detail views
 def CosmidDetail(request, cosmid_name):
     cosmid = Cosmid.objects.get(cosmid_name=cosmid_name)
