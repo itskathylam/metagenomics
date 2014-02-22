@@ -27,7 +27,7 @@ urlpatterns = patterns('',
     url(r'^assay/cosmid/(?P<pk>\d+)/$', CosmidAssayDetailView.as_view(), name='cosmid-assay-detail'),
     url(r'^subclone/(?P<pk>\d+)/$', SubcloneDetailView.as_view(), name='subclone-detail'),
     url(r'^contig/(?P<contig_name>[\w-]+)/$', ContigDetail, name='contig-detail'),
-    url(r'^contig-orf/(?P<pk>\d+)/$', ContigOrfDetailView.as_view(), name='contig-orf-detail'),
+    url(r'^orf/(?P<pk>\d+)/$', OrfDetailView.as_view(), name='orf-detail'),
     
     #Edit views (Updateviews)
     url(r'^edit/cosmid/(?P<pk>\d+)$', CosmidEditView.as_view(), name='cosmid-edit'),

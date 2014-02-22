@@ -1,10 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-{{ ORF.orf_sequence }} <br>
-{{ ORF.annotation }}<br>
-{{ ORF.contig }}<br>
+ID: {{ orf.id }} <br>
+<label>Sequence<textarea rows="10" cols="50">{{ orf.orf_sequence }}</textarea></label><br>
+Annotation: {{ orf.annotation }}<br>
 
 <a href="/edit{% url 'orf-list' %}{{ ORF.pk }}">Edit</a>
 {% endblock %}
