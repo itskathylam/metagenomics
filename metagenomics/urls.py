@@ -26,7 +26,7 @@ urlpatterns = patterns('',
     url(r'^assay/subclone/(?P<pk>\d+)/$', SubcloneAssayDetailView.as_view(), name='sublcone-assay-detail'),
     url(r'^assay/cosmid/(?P<pk>\d+)/$', CosmidAssayDetailView.as_view(), name='cosmid-assay-detail'),
     url(r'^subclone/(?P<pk>\d+)/$', SubcloneDetailView.as_view(), name='subclone-detail'),
-    url(r'^contig/(?P<pk>\d+)/$', ContigDetailView.as_view(), name='contig-detail'),
+    url(r'^contig/(?P<contig_name>[\w-]+)/$', ContigDetail, name='contig-detail'),
     url(r'^contig-orf/(?P<pk>\d+)/$', ContigOrfDetailView.as_view(), name='contig-orf-detail'),
     
     #Edit views (Updateviews)

@@ -21,7 +21,7 @@
     <textarea rows="10" cols="80" readonly>{{ endtag.end_tag_sequence }}</textarea></label><br>
 {% endfor %}
 {% for list in contigs %}
-    <h3>Contig: {{ list.contig_name }}</h3><br>
+    <h3>Contig: <a href="/contig/{{ list.contig_name }}">{{ list.contig_name }}</a></h3><br>
     Pool: {{ list.pool }}<br>
     Accession: {{ list.contig_accession }}<br>
     <label>Sequence: <br>

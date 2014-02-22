@@ -43,6 +43,9 @@ def Pooling(request):
 def CosmidResults(request):
     cosmid_name = request.GET.get('cosmid_name')
     host = request.GET.get('host')
+    if host == '':
+        host = 0
+    
     researcher= request.GET.get('researcher')
     library = request.GET.get('library')
     screen = request.GET.get('screen')
@@ -91,11 +94,21 @@ def CosmidDetail(request, cosmid_name):
     seq = ORF.objects.filter(id__in=orfids)
     
     return render_to_response('cosmid_detail.html', {'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book}, context_instance=RequestContext(request))
- 
-   
-class CosmidDetailView(DetailView):
-    model = Cosmid
-    template_name = 'cosmid_detail.html'
+
+def ContigDetail(request, contig_name):
+    contig = Contig.objects.get(contig_name=contig_name)
+    
+    name = contig.contig_name
+    pool = contig.pool
+    seq = contig.contig_sequence
+    accession = contig.contig_accession
+
+    
+    cosmids = Cosmid.objects.filter(contig=contig.id)
+    
+    
+    
+    return render_to_response('contig_detail.html', {'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name}, context_instance=RequestContext(request))
 
 class SubcloneAssayDetailView(DetailView):
     model = Subclone_Assay
@@ -109,10 +122,7 @@ class SubcloneDetailView(DetailView):
     model = Subclone
     template_name = 'subclone_detail.html'
     
-class ContigDetailView(DetailView):
-    model = Contig
-    template_name = 'contig_detail.html'
-    
+
 class ContigOrfDetailView(DetailView):
     model = ORF
     template_name = 'orf_detail.html'
