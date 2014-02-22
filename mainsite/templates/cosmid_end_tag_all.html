@@ -25,7 +25,9 @@
                 <td>{{ cosmid.pooled_sequencing.id }}</td>
                 <td>{{ cosmid.lab_book_ref }}</td>
                 {% for end_tag in cosmid.end_tag_set.all %}
-                        <td>{{ end_tag.end_tag_sequence }}</td>
+                        {% if end_tag.end_tag_sequence|length > 0 %}
+                        <td>Yes</td>
+                        {% endif %}
                 {% endfor %}
             </tr>
         {% endfor %}
