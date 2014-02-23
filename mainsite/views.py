@@ -9,6 +9,8 @@ from django.template import RequestContext
 from mainsite.models import *
 from mainsite.forms import *
 
+#import pdb
+
 #Main, About etc
 
 login_required
@@ -217,12 +219,12 @@ def CosmidEndTagCreate(request):
             #do not commit new cosmid input until end tag form inputs have been checked 
             new_cosmid = cosmid_form.save(commit=False)
             end_tag_formset = EndTagFormSet(request.POST, instance=new_cosmid)
-            
+
             #validation for the two primers chosen: primers cannot be the same (defined in the model)  
             if end_tag_formset.is_valid():
-                    new_cosmid.save()
-                    end_tag_formset.save
-                    return HttpResponseRedirect('/cosmid/') 
+                new_cosmid.save()
+                end_tag_formset.save()
+                return HttpResponseRedirect('/cosmid/') 
         
     else:
         cosmid_form = CosmidForm(instance=Cosmid())

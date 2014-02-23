@@ -27,9 +27,8 @@
                 <td>{{ cosmid.pooled_sequencing.id }}</td>
                 <td>{{ cosmid.lab_book_ref }}</td>
                 {% for end_tag in cosmid.end_tag_set.all %}
-                        {% if end_tag.end_tag_sequence|length > 0 %}
-                        <td>Yes</td>
-                        {% endif %}
+                        <td><textarea rows="5" cols="50" readonly=true>{{ end_tag.end_tag_sequence }}</textarea></td>
+                        
                 {% endfor %}
             </tr>
         {% endfor %}

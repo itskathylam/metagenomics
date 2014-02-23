@@ -96,6 +96,9 @@ class End_Tag(models.Model):
     primer = models.ForeignKey(Primer)
     end_tag_sequence = models.TextField()
     
+    def __unicode__(self):
+        return self.end_tag_sequence
+    
     class Meta:
         unique_together = ("cosmid", "primer")
 
