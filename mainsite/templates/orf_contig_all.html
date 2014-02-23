@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table border = 1>
+            <tr>
+                <th>Contig Name</th>
+                <th>ORF ID</th>
+                <th>ORF Annotation (RefSeq)</th>
+                <th>ORF Start</th>
+                <th>ORF Stop</th>
+                <th>ORF Accession</th>
+                <th>Contig Sequence</th>
+                <th>ORF Seqeunce</th>
+
+            </tr>
+        {% for contig_orf_join in contig_orf_join_list %}
+            <tr>
+                <td>{{ contig_orf_join.contig.contig_name }}</td>
+                <td>{{ contig_orf_join.orf_id }}</td>
+                <td>{{ contig_orf_join.orf.annotation }}</td>
+                <td>{{ contig_orf_join.start }}</td>
+                <td>{{ contig_orf_join.stop }}</td>
+                <td>{{ contig_orf_join.orf_accession }}</td>
+                <td>{{ contig_orf_join.contig.contig_sequence }}</td>
+                <td>{{ contig_orf_join.orf.orf_sequence }}</td>
+
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -92,8 +92,11 @@ class Primer(models.Model):
 
 class End_Tag(models.Model):
     cosmid = models.ForeignKey(Cosmid)
-    primer = models.ForeignKey(Primer, blank=True, null=True)
-    end_tag_sequence = models.TextField(blank=True, null=True)
+    primer = models.ForeignKey(Primer)
+    end_tag_sequence = models.TextField()
+    
+    class Meta:
+        unique_together = ("cosmid", "primer")
 
 class Contig(models.Model):
     pool = models.ForeignKey(Pooled_Sequencing)
@@ -101,6 +104,9 @@ class Contig(models.Model):
     contig_sequence = models.TextField()
     cosmid = models.ManyToManyField(Cosmid)
     contig_accession = models.CharField(max_length=50, blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.contig_name
 
 class ORF(models.Model):
     orf_sequence = models.TextField() 

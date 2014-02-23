@@ -42,14 +42,14 @@ urlpatterns = patterns('',
     #url(r'^search/orf/$', ORFSearchView),
     
     # listviews for lookup tables 
-    url(r'^primer/', PrimerListView.as_view(), name='primer-list'),
-    url(r'^host/', HostListView.as_view(), name='host-list'),
-    url(r'^screen/', ScreenListView.as_view(), name='screen-list'),
-    url(r'^library/', LibraryListView.as_view(), name='library-list'),
-    url(r'^researcher/', ResearcherListView.as_view(), name='researcher-list'),
-    url(r'^vector/', VectorListView.as_view(), name='vector-list'),
-    url(r'^pool/', PoolListView.as_view(), name='pool-list'),
-    url(r'^substrate/', SubstrateListView.as_view(), name='substrate-list'),
+    url(r'^primer/$', PrimerListView.as_view(), name='primer-list'),
+    url(r'^host/$', HostListView.as_view(), name='host-list'),
+    url(r'^screen/$', ScreenListView.as_view(), name='screen-list'),
+    url(r'^library/$', LibraryListView.as_view(), name='library-list'),
+    url(r'^researcher/$', ResearcherListView.as_view(), name='researcher-list'),
+    url(r'^vector/$', VectorListView.as_view(), name='vector-list'),
+    url(r'^pool/$', PoolListView.as_view(), name='pool-list'),
+    url(r'^substrate/$', SubstrateListView.as_view(), name='substrate-list'),
     
     # listviews for nonlookup tables
     url(r'^subclone/$', SubcloneListView.as_view(), name='subclone-list'),
@@ -59,6 +59,7 @@ urlpatterns = patterns('',
     
     # listviews for multiple-table-based views
     url(r'^cosmid/$', CosmidEndTagListView.as_view(), name='cosmid-end-tag-list'), # for cosmid and endtags (Kathy)
+    url(r'^orfcontig/$', ORFContigListView.as_view(), name='orf-contig-list'), # not a useful view; may remove (Kathy)
     
     # createviews - form to add data to database table  
     url(r'^add/subclone/$', SubcloneCreateView.as_view(), name='subclone-add'),
@@ -67,4 +68,5 @@ urlpatterns = patterns('',
     
     # createviews for adding data to multiple tables at once
     url(r'^add/cosmid/$', CosmidEndTagCreate, name='cosmid-end-tag-add'),
+    url(r'^add/orfcontig/$', ORFContigCreate, name='orf-contig-add'),
 )
