@@ -2,18 +2,45 @@
 
 {% block content %}
 
-{{ cosmid.cosmid_name }} <br>
-{{ cosmid.host }}<br>
-{{ cosmid.researcher }}<br>
-{{ cosmid.library }} <br>
-{{ cosmid.screen }}<br>
-{{ cosmid.ec_collection }}<br>
-{{ cosmid.original_media }}<br>
-{{ cosmid.pool }}<br>
-{{ cosmid.lab_book_ref }}<br>
-
-<!--get endtags and display in scrollable box-->
-{{ end_tag.end_tag_sequence  }}
-
-<a href="/edit{% url 'cosmid-end-tag-list' %}{{ cosmid.pk }}">Edit</a>
+<h2>Cosmid {{ name }}</h2>
+<p>Host: {{ host }}</p>
+<p>Researcher: {{ researcher }}</p>
+<p>Library: {{ library }}</p>
+<p>Screen: {{ screen }}</p>
+<p>Ec Collection: {{ ec_collection }}</p>
+<p>Original Media: {{ media }}</p>
+<p>Pool: {{ pool }}</p>
+<p>Lab Book Reference: {{ lab_book }}</p>
+{% for endtag in endtags %}
+    {% for p in primers %}
+        {% if endtag.primer_id = p.id %}
+            Primer: {{ p.primer_name }}<br>
+        {% endif %}
+    {% endfor %}
+    <label>End Tag:<br>
+    <textarea rows="10" cols="80" readonly>{{ endtag.end_tag_sequence }}</textarea></label><br>
+{% endfor %}
+{% for list in contigs %}
+    <h3>Contig: <a href="/contig/{{ list.contig_name }}">{{ list.contig_name }}</a></h3><br>
+    Pool: {{ list.pool }}<br>
+    Accession: {{ list.contig_accession }}<br>
+    <label>Sequence: <br>
+    <textarea rows="15" cols="70" readonly=true>{{ list.contig_sequence }}</textarea></label><br><br>
+    {% for orf in orfs %}
+        {% if orf.contig_id = list.id %}
+            
+            ORF Accession: {{ orf.orf_accession }}<br>
+            Start: {{ orf.start }}<br>
+            Stop: {{ orf.stop }}<br>
+            {% for s in seq %}
+                {% if s.id = orf.orf_id %}
+                    ORF Annotation: {{ s.annotation }}<br>
+                    <label>Sequence: <br>
+                    <textarea rows="4" cols"10" readonly=true>{{ s.orf_sequence }}</textarea></label><br><br>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+<a href="/edit{% url 'cosmid-end-tag-list' %}{{ cosmidpk }}">Edit</a>
 {% endblock %}

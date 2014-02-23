@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="{% url 'cosmid-results' %}" method="get">
+        {{ form }}
+        <input type="submit" value="Search">
+    </form>
+    <a href="{% url 'cosmid-end-tag-list' %}">View All</a>
+    
+{% endblock %}

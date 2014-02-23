@@ -30,5 +30,10 @@ class ORFForm(ModelForm):
 
 class ContigORFJoinForm(ModelForm):
     class Meta:
+<<<<<<< HEAD
         model = Contig_ORF_Join
         exclude = ('db_generated', 'orf', 'start', 'stop')
+=======
+        model = End_Tag
+        exclude = ('cosmid',)
+>>>>>>> 00bad97652bdad2b4ac3fa80afcffb6c3eac279c

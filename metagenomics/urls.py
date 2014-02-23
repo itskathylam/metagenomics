@@ -18,25 +18,27 @@ urlpatterns = patterns('',
     #login_required( ) - add to all views below
     
     #Tools Views
-    url(r'^tools/contig', Contig, name='contig'),
+    url(r'^tools/contig', ContigTool, name='contig'),
     url(r'^tools/pooling', Pooling, name='pool'),
     
     #Detail views
-    url(r'^cosmid/(?P<pk>\d+)/$', CosmidDetailView.as_view(), name='cosmid-detail'),
+    url(r'^cosmid/(?P<cosmid_name>[\w-]+)/$', CosmidDetail, name='cosmid-detail'),
     url(r'^assay/subclone/(?P<pk>\d+)/$', SubcloneAssayDetailView.as_view(), name='sublcone-assay-detail'),
     url(r'^assay/cosmid/(?P<pk>\d+)/$', CosmidAssayDetailView.as_view(), name='cosmid-assay-detail'),
     url(r'^subclone/(?P<pk>\d+)/$', SubcloneDetailView.as_view(), name='subclone-detail'),
-    url(r'^contig/(?P<pk>\d+)/$', ContigDetailView.as_view(), name='contig-detail'),
-    url(r'^contig-orf/(?P<pk>\d+)/$', ContigOrfDetailView.as_view(), name='contig-orf-detail'),
+    url(r'^contig/(?P<contig_name>[\w-]+)/$', ContigDetail, name='contig-detail'),
+    url(r'^orf/(?P<pk>\d+)/$', OrfDetailView.as_view(), name='orf-detail'),
     
     #Edit views (Updateviews)
     url(r'^edit/cosmid/(?P<pk>\d+)$', CosmidEditView.as_view(), name='cosmid-edit'),
     url(r'^edit/subclone/(?P<pk>\d+)$', SubcloneEditView.as_view(), name='subclone-edit'),
     url(r'^edit/assay/cosmid/(?P<pk>\d+)$', CosmidAssayEditView.as_view(), name='cosmid-assay-edit'),
     url(r'^edit/assay/subclone/(?P<pk>\d+)$', SubcloneAssayEditView.as_view(), name='subclone-assay-edit'),
-    url(r'^edit/contig-orf/(?P<pk>\d+)$', ContigORFEditView.as_view(), name='contig-orf-edit'),
+    url(r'^edit/orf/(?P<pk>\d+)$', ORFEditView.as_view(), name='orf-edit'),
+    
     #Search views
-    #url(r'^search/cosmid/$', CosmidSearchView),
+    url(r'^search/cosmid/$', CosmidSearchView, name='cosmid-search'),
+    url(r'^results/cosmid/', CosmidResults, name='cosmid-results'),
     #url(r'^search/subclone/$', SubcloneSearchView),
     #url(r'^search/assay/$', AssaySearchView),
     #url(r'^search/orf/$', ORFSearchView),

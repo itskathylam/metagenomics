@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
+
 {% block content %}
-        {{ debug }}
-    {% if cosmid_list %}
+    {{ results }}
     <table border = 1>
             <tr>
                 <th>Cosmid Name</th>
@@ -34,7 +34,4 @@
             </tr>
         {% endfor %}
     </table>
-    {% else %}
-        <p>0 Cosmids found. <a href="{% url 'cosmid-search' %}">Try another search</a>.</p>
-    {% endif%}
 {% endblock %}
