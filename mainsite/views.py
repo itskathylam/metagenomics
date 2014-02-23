@@ -171,20 +171,18 @@ class SubcloneAssayCreateView(CreateView):
 
 # Add to Cosmid and End_Tag tables (Kathy)
 def CosmidEndTagCreate(request):
-    
     if request.method == "POST":
         cosmid_form = CosmidForm(request.POST)
-    
         if cosmid_form.is_valid():
             
-            #do not commit new cosmid until end tags have been checked 
+            #do not commit new cosmid input until end tag form inputs have been checked 
             new_cosmid = cosmid_form.save(commit=False)
             end_tag_formset = EndTagFormSet(request.POST, instance=new_cosmid)
             
             #validation for the two primers chosen: primers cannot be the same (defined in the model)
             if end_tag_formset.is_valid():
                     new_cosmid.save()
-                    end_tag_formset.save()
+                    end_tag_formset.save
                     return HttpResponseRedirect('/cosmid/') 
         
     else:
