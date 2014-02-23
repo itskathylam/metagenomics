@@ -55,6 +55,7 @@ class Researcher(models.Model):
 class Pooled_Sequencing(models.Model):
     service_provider = models.CharField(max_length=200)
     ncbi_sra_accession = models.CharField(max_length=100, blank=True, null=True)
+    max_number = models.PositiveIntegerField()
 
     def __unicode__(self):
         return self.pk

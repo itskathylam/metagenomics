@@ -218,7 +218,7 @@ def CosmidEndTagCreate(request):
             new_cosmid = cosmid_form.save(commit=False)
             end_tag_formset = EndTagFormSet(request.POST, instance=new_cosmid)
             
-            #validation for the two primers chosen: primers cannot be the same (defined in the model)
+            #validation for the two primers chosen: primers cannot be the same (defined in the model)  
             if end_tag_formset.is_valid():
                     new_cosmid.save()
                     end_tag_formset.save
@@ -230,7 +230,7 @@ def CosmidEndTagCreate(request):
     return render_to_response('cosmid_end_tag_add.html', {'cosmid_form': cosmid_form, 'end_tag_formset': end_tag_formset}, context_instance=RequestContext(request))
 
     
-# Add to ORF and Contig-ORF-Join tables (Kathy)
+# Add to ORF and Contig-ORF-Join tables (Kathy - incomplete)
 def ORFContigCreate(request):
     if request.method == "POST":
         contig_orf_form = ContigORFJoinForm(request.POST, instance=Contig_ORF_Join())
