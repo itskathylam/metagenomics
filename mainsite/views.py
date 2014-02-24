@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
+from django.core.urlresolvers import reverse_lazy
 
 from mainsite.models import *
 from mainsite.forms import *
@@ -44,7 +45,6 @@ def Pooling(request):
     return (render(request, 'pooling.html'))
 
 #search views
-
 def CosmidResults(request):
     cosmid_name = request.GET.get('cosmid_name')
     host = request.GET.get('host')
@@ -55,7 +55,7 @@ def CosmidResults(request):
     original_media = request.GET.get('original_media')
     pool = request.GET.get('pool')
     lab_book_ref = request.GET.get('lab_book_ref')
-    values = { 'cosmid_name__icontains' : cosmid_name, 'researcher' : researcher, 'library': library, 'screen': screen, 'ec_collection__icontains': ec_collection, 'original_media__icontains': original_media, 'pool': pool, 'lab_book_ref__icontains': lab_book_ref}
+    values = { 'cosmid_name__icontains' : cosmid_name, 'host': host, 'researcher' : researcher, 'library': library, 'screen': screen, 'ec_collection__icontains': ec_collection, 'original_media__icontains': original_media, 'pool': pool, 'lab_book_ref__icontains': lab_book_ref}
     args = {}
     for k, v in values.items():
         if v:
@@ -80,7 +80,7 @@ def SubcloneResults(request):
     researcher = request.GET.get('researcher')
     ec_collection = request.GET.get('ec_collection')
     
-    values = { 'subclone_name__icontains' : name, 'cosmid': cosmid, 'researcher' : researcher, 'orf': orf, 'vector': vector, 'ec_collection__icontains': ec_collection}
+    values = { 'subclone_name__icontains' : name, 'cosmid': cosmid, 'researcher' : researcher, 'orf': orf, 'vector': vector, 'researcher': researcher, 'ec_collection__icontains': ec_collection}
     args = {}
     for k, v in values.items():
         if v:
@@ -89,7 +89,6 @@ def SubcloneResults(request):
     return render_to_response('subclone_all.html', {'subclone_list': results}, context_instance=RequestContext(request))
 
 #detail views
-
 def CosmidDetail(request, cosmid_name):
     cosmid = Cosmid.objects.get(cosmid_name=cosmid_name)
     
@@ -157,35 +156,33 @@ class SubcloneDetailView(DetailView):
     template_name = 'subclone_detail.html'
   
 #edit views (updateview class)
-
 class CosmidEditView(UpdateView):
     model = Cosmid
     template_name = 'cosmid_edit.html'
-    success_url = 'cosmid-end-tag-list'
+    success_url = reverse_lazy('cosmid-end-tag-list')
     
 class SubcloneEditView(UpdateView):
     model = Subclone
     template_name = 'subclone_edit.html'
-    success_url = 'subclone-list'
+    success_url = reverse_lazy('subclone-list')
     
 class CosmidAssayEditView(UpdateView):
     model = Cosmid_Assay
     template_name = 'cosmid_assay_edit.html'
-    success_url = 'cosmid-assay-list'
+    success_url = reverse_lazy('cosmid-assay-list')
 
 class SubcloneAssayEditView(UpdateView):
     model = Subclone_Assay
     template_name = 'subclone_assay_edit.html'
-    success_url = 'subclone-assay-list'
+    success_url = reverse_lazy('subclone-assay-list')
     
 class ORFEditView(UpdateView):
     model = ORF
     template_name = 'orf_edit.html'
-    success_url = 'orf-list'
+    success_url = reverse_lazy('orf-list')
 
 
 # List views for non-lookup tables (Kathy)
-
 class SubcloneListView(ListView):
     model = Subclone
     template_name = 'subclone_all.html'
@@ -222,17 +219,17 @@ class ORFContigListView(ListView):
 class SubcloneCreateView(CreateView):
     model = Subclone
     template_name = 'subclone_add.html'
-    success_url = 'subclone-list'
+    success_url = reverse_lazy(''subclone-list')
     
 class CosmidAssayCreateView(CreateView):
     model = Cosmid_Assay
     template_name = 'cosmid_assay_add.html'
-    success_url = 'cosmid-assay-list'
+    success_url = reverse_lazy(''cosmid-assay-list')
 
 class SubcloneAssayCreateView(CreateView):
     model = Subclone_Assay
     template_name = 'subclone_assay_add.html'
-    success_url = 'subclone-assay-list'
+    success_url = reverse_lazy('subclone-assay-list')
     
 # Create views for adding data to multiple models with the same template
 
