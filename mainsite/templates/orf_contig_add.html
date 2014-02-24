@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+     {% for key,value in form_errors.items %}
+        {{ value }}
+    {% endfor %}
+    <form action="{% url "orf-contig-add" %}" method="POST">{% csrf_token %}
+        <table border = 1>    
+            {{contig_orf_form}}
+            {{orf_form}}
+        </table>
+        <input type="submit">
+    </form>
+{% endblock %}

@@ -10,7 +10,7 @@
         {% for orf in orf_list %}
             <tr>
                 <td>{{ orf.id}}</td>
-                <td>{{ orf.orf_sequence|truncatechars:60}}</td>
+                <td><textarea rows="5" cols="50" readonly=true>{{ orf.orf_sequence }}</textarea></td>
                 <td>{{ orf.annotation }}</td>
             </tr>
         {% endfor %}
