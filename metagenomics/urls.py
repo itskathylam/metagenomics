@@ -39,7 +39,8 @@ urlpatterns = patterns('',
     #Search views
     url(r'^search/cosmid/$', CosmidSearchView, name='cosmid-search'),
     url(r'^results/cosmid/', CosmidResults, name='cosmid-results'),
-    #url(r'^search/subclone/$', SubcloneSearchView),
+    url(r'^search/subclone/$', SubcloneSearchView, name='subclone-search'),
+    url(r'^results/subclone/', SubcloneResults, name='subclone-results'),
     #url(r'^search/assay/$', AssaySearchView),
     #url(r'^search/orf/$', ORFSearchView),
     

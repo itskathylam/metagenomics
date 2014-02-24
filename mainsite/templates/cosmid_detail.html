@@ -26,6 +26,7 @@
     Accession: {{ list.contig_accession }}<br>
     <label>Sequence: <br>
     <textarea rows="15" cols="70" readonly=true>{{ list.contig_sequence }}</textarea></label><br><br>
+    <img src="{{ STATIC_URL }}data1.png"><br>
     {% for orf in orfs %}
         {% if orf.contig_id = list.id %}
             

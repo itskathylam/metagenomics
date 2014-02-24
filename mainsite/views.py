@@ -25,8 +25,8 @@ def Logout(request):
     return HttpResponseRedirect('/login')
 
 def UserSettings(request):
-    return (render(request, 'usersettings.html'))
-
+    form = UserForm
+    return render_to_response('usersettings.html', {'form': form}, context_instance=RequestContext(request))
 def Faq(request):
     return (render(request, 'faq.html'))
 
@@ -62,7 +62,26 @@ def CosmidSearchView(request):
     form = CosmidForm
     return render_to_response('cosmid_search.html', {'form': form}, context_instance=RequestContext(request))
 
-#  
+def SubcloneSearchView(request):
+    form = SubcloneForm
+    return render_to_response('subclone_search.html', {'form': form}, context_instance=RequestContext(request))
+
+def SubcloneResults(request):
+    name = request.GET.get('subclone_name')
+    cosmid = request.GET.get('cosmid')
+    orf = request.GET.get('orf')
+    vector = request.GET.get('vector')
+    researcher = request.GET.get('researcher')
+    ec_collection = request.GET.get('ec_collection')
+    
+    values = { 'subclone_name__icontains' : name, 'cosmid': cosmid, 'researcher' : researcher, 'orf': orf, 'vector': vector, 'ec_collection__icontains': ec_collection}
+    args = {}
+    for k, v in values.items():
+        if v:
+            args[k] = v
+    results = Subclone.objects.filter(**args)
+    return render_to_response('subclone_all.html', {'subclone_list': results}, context_instance=RequestContext(request))
+
 #detail views
 def CosmidDetail(request, cosmid_name):
     cosmid = Cosmid.objects.get(cosmid_name=cosmid_name)

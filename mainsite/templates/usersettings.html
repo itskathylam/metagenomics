@@ -5,8 +5,10 @@
 {% endblock %}
 {% block content %}
     <h2>Change User Settings</h2>
+    {{ form }}
     <form action="" method="POST">
         {% csrf_token %}
+        
         <table border = 1>
            <tr>
                 <td><label for="first">First name</label></td>
