@@ -10,13 +10,15 @@ class CosmidForm(ModelForm):
     class Meta:
         model = Cosmid
     
-    EndTagFormSet = inlineformset_factory(Cosmid, 
+EndTagFormSet = inlineformset_factory(Cosmid, 
     End_Tag, 
     can_delete=False,
     extra=2,
     form=CosmidForm)
-    model = End_Tag
-    exclude = ('cosmid',)
+
+    #I dont know where these came from or where the are supposed to go. Sorry, I messed up the merge. -Phil
+    #model = End_Tag
+    #exclude = ('cosmid',)
     
 # For ORF-Contig add
 
