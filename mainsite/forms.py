@@ -32,3 +32,4 @@ class ContigORFJoinForm(ModelForm):
     class Meta:
         model = Contig_ORF_Join
         exclude = ('db_generated', 'orf', 'start', 'stop')
+        

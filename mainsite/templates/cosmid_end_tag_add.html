@@ -1,9 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% for key,value in form_errors.items %}
-        {{ value }}
-    {% endfor %}
     <form action="{% url "cosmid-end-tag-add" %}" method="POST">{% csrf_token %}
         <table border = 1>    
             {{cosmid_form}}

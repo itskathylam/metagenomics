@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% for key,value in form_errors.items %}
+        {{ value }}
+    {% endfor %}
+    <form action="{% url "contig-pool-add" %}" method="POST">{% csrf_token %}
+        <table border = 1>    
+
+        </table>
+        <input type="submit">
+    </form>
+{% endblock %}

@@ -270,7 +270,12 @@ def ORFContigCreate(request):
     return render_to_response('orf_contig_add.html', {'contig_orf_form': contig_orf_form, 'orf_form': orf_form}, context_instance=RequestContext(request))
 
 def ContigPoolCreate(request):
-    pass
+    if request.method == "POST":
+        pass
+    else:
+        pass
+    return render_to_response('contig_pool_add.html', context_instance=RequestContext(request))
+
 
 # List views for lookup tables (Kathy)
 class PrimerListView(ListView):

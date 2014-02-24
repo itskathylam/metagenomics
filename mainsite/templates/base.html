@@ -33,18 +33,19 @@
                         <li><a href="">Assay</a></li>
                         <li><a href="">ORF</a></li>
                         <li><a href="">Sequence (Local BLAST)</a></li>
-                        <li><a href="">View All</a>
-                            <ul>
-                                <li><a href="{% url 'primer-list' %}">Primers</a></li>
-                                <li><a href="{% url 'host-list' %}">Hosts</a></li>
-                                <li><a href="{% url 'screen-list' %}">Functional Screens</a></li>
-                                <li><a href="{% url 'library-list' %}">Libraries</a></li>
-                                <li><a href="{% url 'researcher-list' %}">Researchers</a></li>
-                                <li><a href="{% url 'substrate-list' %}">Substrates</a></li>
-                                <li><a href="{% url 'vector-list' %}">Vectors</a></li>
-                                <li><a href="{% url 'pool-list' %}">Sequencing Pools</a></li>                                
-                            </ul>
-                        </li>
+                    </ul>
+                </li>
+                <li><a href="/viewall">View All</a>
+                    <ul>
+                        <li><a href="{% url 'cosmid-end-tag-list' %}">Cosmids</a></li>
+                        <li><a href="{% url 'primer-list' %}">Primers</a></li>
+                        <li><a href="{% url 'host-list' %}">Hosts</a></li>
+                        <li><a href="{% url 'screen-list' %}">Functional Screens</a></li>
+                        <li><a href="{% url 'library-list' %}">Libraries</a></li>
+                        <li><a href="{% url 'researcher-list' %}">Researchers</a></li>
+                        <li><a href="{% url 'substrate-list' %}">Substrates</a></li>
+                        <li><a href="{% url 'vector-list' %}">Vectors</a></li>
+                        <li><a href="{% url 'pool-list' %}">Sequencing Pools</a></li>
                     </ul>
                 </li>
                 <li><a href="/tools">Tools</a>
