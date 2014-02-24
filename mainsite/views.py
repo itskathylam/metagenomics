@@ -181,6 +181,10 @@ class ORFListView (ListView):
     model = ORF
     template_name = 'orf_all.html'
     
+class ContigListView (ListView):
+    model = Contig
+    template_name = 'contig_all.html'
+    
   
 # List views for multi-table views (Kathy)
 
@@ -235,6 +239,9 @@ def CosmidEndTagCreate(request):
     
 # Add to ORF and Contig-ORF-Join tables (Kathy)
 def ORFContigCreate(request):
+    #track errors with dict
+    form_errors = {}
+    
     if request.method == "POST":
         contig_orf_form = ContigORFJoinForm(request.POST, instance=Contig_ORF_Join())
         orf_form = ORFForm(request.POST, instance=ORF())
@@ -262,19 +269,36 @@ def ORFContigCreate(request):
                 
                 new_contig_orf.save()
                 return HttpResponseRedirect('/orfcontig/')
+            
+            #orf not in contig; return error message
             else:
-                return HttpResponseRedirect('/')
+                form_errors['ORF_not_in_contig'] = u'The specified ORF is not found in chosen Contig.'
     else:
         contig_orf_form = ContigORFJoinForm(instance=Contig_ORF_Join())
         orf_form = ORFForm(instance=ORF())
-    return render_to_response('orf_contig_add.html', {'contig_orf_form': contig_orf_form, 'orf_form': orf_form}, context_instance=RequestContext(request))
+    return render_to_response('orf_contig_add.html', {'contig_orf_form': contig_orf_form, 'orf_form': orf_form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
+
+#Add contigs to a given pool; contigs from FASTA file (Kathy)
 def ContigPoolCreate(request):
     if request.method == "POST":
-        pass
+        contig_upload_form = UploadContigsForm(request.POST, request.FILES)
+        if contig_upload_form.is_valid():
+            
+            #check that uploaded file is FASTA format
+            fasta_file = request.FILES['fasta_file'].read()
+            #code
+            
+            return HttpResponseRedirect('/contig/')
+            
+            #file not FASTA format; return error
+        
     else:
-        pass
-    return render_to_response('contig_pool_add.html', context_instance=RequestContext(request))
+        contig_upload_form = UploadContigsForm()
+        
+        #generate drop down menu of pool_id/service name; include only those for which no contigs have been associated
+        
+    return render_to_response('contig_pool_add.html', {'contig_upload_form': contig_upload_form}, context_instance=RequestContext(request))
 
 
 # List views for lookup tables (Kathy)

@@ -58,6 +58,7 @@ urlpatterns = patterns('',
     url(r'^assay/cosmid/$', CosmidAssayListView.as_view(), name='cosmid-assay-list'),
     url(r'^assay/subclone/$', SubcloneAssayListView.as_view(), name='subclone-assay-list'),
     url(r'^orf/$', ORFListView.as_view(), name='orf-list'),
+    url(r'^contig/$', ContigListView.as_view(), name='contig-list'),
     
     # listviews for multiple-table-based views
     url(r'^cosmid/$', CosmidEndTagListView.as_view(), name='cosmid-end-tag-list'), # for cosmid and endtags (Kathy)
