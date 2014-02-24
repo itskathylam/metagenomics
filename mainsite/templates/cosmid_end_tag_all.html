@@ -12,7 +12,6 @@
                 <th>Screen Name</th>
                 <th>E. coli Stock Location</th>
                 <th>Sequencing Pool ID (optional)</th>
-                <th>Lab Book Reference(optional)</th>
                 <th>End Tag 1 (optional)</th>
                 <th>End Tag 2 (optional)</th>
             </tr>
@@ -25,7 +24,6 @@
                 <td>{{ cosmid.screen.screen_name }}</td>
                 <td>{{ cosmid.ec_collection }}</td>
                 <td>{{ cosmid.pooled_sequencing.id }}</td>
-                <td>{{ cosmid.lab_book_ref }}</td>
                 {% for end_tag in cosmid.end_tag_set.all %}
                         <td><textarea rows="5" cols="50" readonly=true>{{ end_tag.end_tag_sequence }}</textarea></td>
                         

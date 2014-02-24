@@ -71,4 +71,5 @@ urlpatterns = patterns('',
     # createviews for adding data to multiple tables at once
     url(r'^add/cosmid/$', CosmidEndTagCreate, name='cosmid-end-tag-add'),
     url(r'^add/orfcontig/$', ORFContigCreate, name='orf-contig-add'),
+    url(r'^add/contigpool/$', ContigPoolCreate, name='contig-pool-add'),
 )
