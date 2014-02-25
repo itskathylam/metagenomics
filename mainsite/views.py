@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
+from operator import attrgetter
 
 from mainsite.models import *
 from mainsite.forms import *
@@ -172,36 +173,100 @@ def CosmidEndTagCreate(request):
         endtagform2 = EndTagForm(instance=End_Tag())
     return render_to_response('cosmid_end_tag_add.html', {'cosmid_form': cosmidform, 'end_tag_form1': endtagform1, 'end_tag_form2': endtagform2}, context_instance=RequestContext(request))
 
+#force download of input queryset to csv file
+def queryset_export_csv(qs):
+    import csv
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment;filename="export.csv"'
+    writer = csv.writer(response)
+    qs_model = qs.model
+    
+    headers = []
+    for field in qs_model._meta.fields:
+        headers.append(field.name)
+    writer.writerow(headers)
+
+    for obj in qs:
+        row = []
+        for field in headers:
+            val = getattr(obj, field)
+            if callable(val):
+                val = val()
+            if type(val) == unicode:
+                val = val.encode("utf-8")
+            row.append(val)
+        writer.writerow(row)
+    return response
 
 # List views for lookup tables (Kathy)
 class PrimerListView(ListView):
     model = Primer
     template_name = 'primer_all.html'
 
+#retrieve PrimerListView queryset to export as csv
+def primer_queryset(response):
+    qs = Primer.objects.all()
+    return queryset_export_csv(qs)
+
 class HostListView(ListView):
     model = Host
     template_name = 'host_all.html'
     
+#retrieve HostListView queryset to export as csv
+def host_queryset(response):
+    qs = Host.objects.all()
+    return queryset_export_csv(qs)
+
 class ScreenListView(ListView):
     model = Screen
     template_name = 'screen_all.html'
+    
+#retrieve ScreenListView queryset to export as csv
+def screen_queryset(response):
+    qs = Screen.objects.all()
+    return queryset_export_csv(qs)
     
 class LibraryListView(ListView):
     model = Library
     template_name = 'library_all.html'
     
+#retrieve LibraryListView queryset to export as csv
+def library_queryset(response):
+    qs = Library.objects.all()
+    return queryset_export_csv(qs)
+    
 class ResearcherListView(ListView):
     model = Researcher
     template_name = 'researcher_all.html'
+    
+#retrieve ResearcherListView queryset to export as csv
+def researcher_queryset(response):
+    qs = Researcher.objects.all()
+    return queryset_export_csv(qs)
 
 class VectorListView(ListView):
     model = Vector
     template_name = 'vector_all.html'
+    
+#retrieve VectorListView queryset to export as csv
+def vector_queryset(response):
+    qs = Vector.objects.all()
+    return queryset_export_csv(qs)
 
 class PoolListView(ListView):
     model = Pooled_Sequencing
     template_name = 'pool_all.html'
     
+#retrieve PoolListView queryset to export as csv
+def pool_queryset(response):
+    qs = Pooled_Sequencing.objects.all()
+    return queryset_export_csv(qs)
+    
 class SubstrateListView(ListView):
     model = Substrate
     template_name = 'substrate_all.html'
+    
+#retrieve SubstrateListView queryset to export as csv
+def substrate_queryset(response):
+    qs = Substrate.objects.all()
+    return queryset_export_csv(qs)
