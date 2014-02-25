@@ -310,6 +310,7 @@ def CosmidEndTagCreate(request):
 
     
 # Add to ORF and Contig-ORF-Join tables (Kathy)
+@permission_required('mainsite.cosmid.can_add_contig_orf_join')
 def ORFContigCreate(request):
     #track errors with dict
     form_errors = {}
@@ -352,6 +353,7 @@ def ORFContigCreate(request):
 
 
 #Add contigs to a given pool; contigs from FASTA file (Kathy)
+@permission_required('mainsite.cosmid.can_add_contig')
 def ContigPoolCreate(request):
     if request.method == "POST":
         contig_upload_form = UploadContigsForm(request.POST, request.FILES)
