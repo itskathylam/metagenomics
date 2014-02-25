@@ -367,6 +367,7 @@ def ContigPoolCreate(request):
     
     if request.method == "POST":
         contig_upload_form = UploadContigsForm(request.POST, request.FILES)
+        contig_form = ContigForm(request.POST) #must be here as well
         if contig_upload_form.is_valid():
             
             #parse the fasta file using BioPython SeqIO.parse; store each contig-sequence record in a list
@@ -383,10 +384,15 @@ def ContigPoolCreate(request):
             #if file was parsed successfully, add all records to Contig table in database
             else:
                 for item in records:
-                    contig_form = ContigForm(request.POST)
                     if contig_form.is_valid():
+                        contig_form = ContigForm(request.POST)
                         new_contig = contig_form.save(commit=False)
-                        new_contig.contig_name = item.id
+                        
+                        #get the pood id for use in appending to scaffold name, and save record
+                        pool =  str(new_contig.pool.id)
+                        
+                        #save record
+                        new_contig.contig_name = 'pool' + pool + "_" + item.id
                         new_contig.contig_sequence = item.seq
                         new_contig.save()
                 return HttpResponseRedirect('/contig/')          
