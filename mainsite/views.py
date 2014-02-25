@@ -14,7 +14,6 @@ from Bio import SeqIO
 import StringIO
 import pdb
 #pdb.set_trace()
-import re
 
 
 
@@ -67,7 +66,7 @@ def CosmidAssaySearchView(request):
     return render_to_response('cosmid_assay_search.html', {'form': form}, context_instance=RequestContext(request))
 
 def OrfSearchView(request):
-    form = OrfForm
+    form = OrfSearchForm
     return render_to_response('orf_search.html', {'form': form}, context_instance=RequestContext(request))
 
 #search result views
