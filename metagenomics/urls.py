@@ -45,7 +45,8 @@ urlpatterns = patterns('',
     url(r'^results/assay/subclone$', SubcloneAssayResults, name='subclone-assay-results'),
     url(r'^search/assay/cosmid$', CosmidAssaySearchView, name = 'cosmid-assay-search'),
     url(r'^results/assay/cosmid$', CosmidAssayResults, name='cosmid-assay-results'),
-    #url(r'^search/orf/$', ORFSearchView),
+    url(r'^search/orf/$', OrfSearchView, name='orf-search'),
+    url(r'^results/orf/$', OrfResults, name = 'orf-results'),
     
     #listviews for lookup tables 
     url(r'^primer/$', PrimerListView.as_view(), name='primer-list'),

@@ -61,6 +61,10 @@ def CosmidAssaySearchView(request):
     form = CosmidAssayForm
     return render_to_response('cosmid_assay_search.html', {'form': form}, context_instance=RequestContext(request))
 
+def OrfSearchView(request):
+    form = OrfForm
+    return render_to_response('orf_search.html', {'form': form}, context_instance=RequestContext(request))
+
 #search result views
 def CosmidResults(request):
     cosmid_name = request.GET.get('cosmid_name')
@@ -131,6 +135,11 @@ def CosmidAssayResults(request):
             args[k] = v
     results = Cosmid_Assay.objects.filter(**args)
     return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': results}, context_instance=RequestContext(request))
+
+def OrfResults(request):
+    annotation = request.GET.get('annotation')
+    results = ORF.objects.filter(annotation__icontains=annotation)
+    return render_to_response('orf_all.html', {'orf_list': results}, context_instance=RequestContext(request))
 
 #detail views
 def CosmidDetail(request, cosmid_name):

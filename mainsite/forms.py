@@ -38,6 +38,10 @@ class SubcloneForm(ModelForm):
     class Meta:
         model = Subclone
 
+class OrfForm(ModelForm):
+    class Meta:
+        model = ORF
+        exclude = ('orf_sequence', 'contig',)
 
 class SubcloneAssayForm(ModelForm):
     class Meta:
