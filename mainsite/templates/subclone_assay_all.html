@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-        
+
+    {% if subclone_assay_list %}
+
     <table border = 1>
             <tr>
                 <th>Subclone Name</th>
@@ -9,9 +11,9 @@
                 <th>Substrate</th>
                 <th>Researcher Name</th>
                 <th>Km (mM)</th>
-                <th>Temp Optimum</th>
                 <th>pH Optimum</th>
-                <th>Comments/Observations</th>
+                <th>Temperature Optimum</th>
+                <th>Comments & Observations</th>
             </tr>
         {% for subclone_assay in subclone_assay_list %}
             <tr>
@@ -26,4 +28,7 @@
             </tr>
         {% endfor %}
     </table>
+    {% else %}
+        <p>0 Subclone assays found. <a href="{% url 'subclone-assay-search' %}">Try another search</a>.</p>
+    {% endif%}
 {% endblock %}

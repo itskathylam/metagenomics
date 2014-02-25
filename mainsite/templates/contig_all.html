@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table border = 1>
+            <tr>
+                <th>Contig Name</th>
+                <th>Pool ID</th>
+                <th>Contig Sequence</th>
+                <th>Contig NCBI Accession</th>
+            </tr>
+        {% for contig in contig_list %}
+            <tr>
+                <td>{{ contig.contig_name}}</td>
+                <td>{{ contig.pool_id}}</td>
+                <td><textarea rows="5" cols="100" readonly=true>{{ contig.contig_sequence }}</textarea></td>
+                <td>{{ contig.contig_accession }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

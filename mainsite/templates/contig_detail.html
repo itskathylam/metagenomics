@@ -1,13 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h3>Contig {{ name }}</h3>
+Pool: {{ pool }} <br>
+Accession: {{ accession }}<br>
+Associated Cosmids:
+<ul>
+{% for c in cosmids %}
+    <li><a href="{% url 'cosmid-end-tag-list' %}{{ c.cosmid_name }}">{{ c.cosmid_name }}</a></li>
+{% endfor %}
+</ul>
+<label>Sequence:<br>
+<textarea readonly rows="20" cols="70" onclick="this.focus();this.select()">{{ sequence }}</textarea></label><br>
+<img src="{{ STATIC_URL }}data1.png"><br>
+{% for orf in orfresults %}
+    ORF Accession: {{ orf.orf_accession }}<br>
+    Start: {{ orf.start }}<br>
+    Stop: {{ orf.stop }}<br>
+    {% for s in orfseq %}
+        {% if s.id = orf.orf_id %}
+            ID: <a href="{% url 'orf-list' %}{{ s.id }}">{{s.id }}</a><br>
+            Annotation: {{ s.annotation }}<br>
+            <label>Sequence: <br>
+            <textarea rows="4" cols"10" readonly=true>{{ s.orf_sequence }}</textarea></label><br><br>
+        {% endif %}
+    {% endfor %}
+{% endfor %}
 
-{{ contig.pool }} <br>
-{{ contig.contig_name }}<br>
-{{ contig.contig_sequence }}<br>
-{{ contig.cosmid }} <br>
-{{ contig.contig_accession }}<br>
-
-
-<a href="/edit{% url 'contig-list' %}{{ contig.pk }}">Edit</a>
+<a href="">Edit</a>
 {% endblock %}

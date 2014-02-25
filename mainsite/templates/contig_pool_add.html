@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% for key,value in form_errors.items %}
+        {{ value }}
+    {% endfor %}
+    
+    
+    <p>Select a FASTA file of contigs to associate with a sequencing pool.</p>
+    
+    <form action="{% url "contig-pool-add" %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+        <table border = 1>
+            {{ contig_form }}
+            {{ contig_upload_form }}
+        </table>
+        <input type="submit">
+    </form>
+{% endblock %}

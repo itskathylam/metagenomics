@@ -55,6 +55,7 @@ class Researcher(models.Model):
 class Pooled_Sequencing(models.Model):
     service_provider = models.CharField(max_length=200)
     ncbi_sra_accession = models.CharField(max_length=100, blank=True, null=True)
+    max_number = models.PositiveIntegerField()
 
     def __unicode__(self):
         return self.pk
@@ -92,8 +93,14 @@ class Primer(models.Model):
 
 class End_Tag(models.Model):
     cosmid = models.ForeignKey(Cosmid)
-    primer = models.ForeignKey(Primer, blank=True, null=True)
-    end_tag_sequence = models.TextField(blank=True, null=True)
+    primer = models.ForeignKey(Primer)
+    end_tag_sequence = models.TextField()
+    
+    def __unicode__(self):
+        return self.end_tag_sequence
+    
+    class Meta:
+        unique_together = ("cosmid", "primer")
 
 
 class Contig(models.Model):
@@ -102,6 +109,9 @@ class Contig(models.Model):
     contig_sequence = models.TextField()
     cosmid = models.ManyToManyField(Cosmid)
     contig_accession = models.CharField(max_length=50, blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.contig_name
 
     def __unicode__(self):
         return self.contig_name
