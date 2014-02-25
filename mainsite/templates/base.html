@@ -17,7 +17,7 @@
             <ul>
                 <li><a href="/">Home</a></li>
                 {% if perms.mainsite.can_add_cosmid %}
-                <li><a href="">Add</a>
+                <li><a href="/add/">Add</a>
                     <ul>
                         <li><a href="{% url 'cosmid-end-tag-add' %}">Cosmid</a></li>
                         <li><a href="{% url 'subclone-add' %}">Subclone</a></li>
@@ -38,7 +38,7 @@
                         <li><a href="">Sequence (Local BLAST)</a></li>
                     </ul>
                 </li>
-                <li><a href="/viewall">View All</a>
+                <li><a href="/viewall/">View All</a>
                     <ul>
                         <li><a href="{% url 'cosmid-end-tag-list' %}">Cosmids</a></li>
                         <li><a href="{% url 'subclone-list' %}">Subclones</a></li>
