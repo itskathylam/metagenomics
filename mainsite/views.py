@@ -3,8 +3,9 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.template import RequestContext
+from django.core.urlresolvers import reverse_lazy
 
 from mainsite.models import *
 from mainsite.forms import *
@@ -19,7 +20,7 @@ import re
 
 #Main, About etc
 
-login_required
+#login_required
 def MainPage(request):
     template_name = 'index.html'
     return (render(request, 'index.html'))
@@ -34,8 +35,8 @@ def Logout(request):
     return HttpResponseRedirect('/login')
 
 def UserSettings(request):
-    return (render(request, 'usersettings.html'))
-
+    form = UserForm
+    return render_to_response('usersettings.html', {'form': form}, context_instance=RequestContext(request))
 def Faq(request):
     return (render(request, 'faq.html'))
 
@@ -48,8 +49,28 @@ def ContigTool(request):
 def Pooling(request):
     return (render(request, 'pooling.html'))
 
-#search views
+#search forms
+def CosmidSearchView(request):
+    form = CosmidForm
+    return render_to_response('cosmid_search.html', {'form': form}, context_instance=RequestContext(request))
 
+def SubcloneSearchView(request):
+    form = SubcloneForm
+    return render_to_response('subclone_search.html', {'form': form}, context_instance=RequestContext(request))
+
+def SubcloneAssaySearchView(request):
+    form = SubcloneAssayForm
+    return render_to_response('subclone_assay_search.html', {'form': form}, context_instance=RequestContext(request))
+
+def CosmidAssaySearchView(request):
+    form = CosmidAssayForm
+    return render_to_response('cosmid_assay_search.html', {'form': form}, context_instance=RequestContext(request))
+
+def OrfSearchView(request):
+    form = OrfForm
+    return render_to_response('orf_search.html', {'form': form}, context_instance=RequestContext(request))
+
+#search result views
 def CosmidResults(request):
     cosmid_name = request.GET.get('cosmid_name')
     host = request.GET.get('host')
@@ -60,7 +81,7 @@ def CosmidResults(request):
     original_media = request.GET.get('original_media')
     pool = request.GET.get('pool')
     lab_book_ref = request.GET.get('lab_book_ref')
-    values = { 'cosmid_name__icontains' : cosmid_name, 'researcher' : researcher, 'library': library, 'screen': screen, 'ec_collection__icontains': ec_collection, 'original_media__icontains': original_media, 'pool': pool, 'lab_book_ref__icontains': lab_book_ref}
+    values = { 'cosmid_name__icontains' : cosmid_name, 'host': host, 'researcher' : researcher, 'library': library, 'screen': screen, 'ec_collection__icontains': ec_collection, 'original_media__icontains': original_media, 'pool': pool, 'lab_book_ref__icontains': lab_book_ref}
     args = {}
     for k, v in values.items():
         if v:
@@ -68,12 +89,64 @@ def CosmidResults(request):
     results = Cosmid.objects.filter(**args)
     return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': results}, context_instance=RequestContext(request))
 
-def CosmidSearchView(request):
-    form = CosmidForm
-    return render_to_response('cosmid_search.html', {'form': form}, context_instance=RequestContext(request))
+def SubcloneResults(request):
+    name = request.GET.get('subclone_name')
+    cosmid = request.GET.get('cosmid')
+    orf = request.GET.get('orf')
+    vector = request.GET.get('vector')
+    researcher = request.GET.get('researcher')
+    ec_collection = request.GET.get('ec_collection')
+    
+    values = {'subclone_name__icontains' : name, 'cosmid': cosmid, 'researcher' : researcher, 'orf': orf, 'vector': vector, 'researcher': researcher, 'ec_collection__icontains': ec_collection}
+    args = {}
+    for k, v in values.items():
+        if v:
+            args[k] = v
+    results = Subclone.objects.filter(**args)
+    return render_to_response('subclone_all.html', {'subclone_list': results}, context_instance=RequestContext(request))
+
+def SubcloneAssayResults(request):
+    subclone = request.GET.get('subclone')
+    host = request.GET.get('host')
+    substrate = request.GET.get('substrate')
+    researcher = request.GET.get('researcher')
+    subclone_km = request.GET.get('subclone_km')
+    subclone_temp = request.GET.get('subclone_temp')    
+    subclone_ph = request.GET.get('subclone_ph')
+    subclone_comments = request.GET.get('subclone_comments')
+    
+    values = { 'subclone' : subclone, 'host': host, 'researcher' : researcher, 'substrate': substrate, 'subclone_km': subclone_km, 'subclone_temp': subclone_temp, 'subclone_ph': subclone_ph, 'subclone_comments': subclone_comments}
+    args = {}
+    for k, v in values.items():
+        if v:
+            args[k] = v
+    results = Subclone_Assay.objects.filter(**args)
+    return render_to_response('subclone_assay_all.html', {'subclone_assay_list': results}, context_instance=RequestContext(request))
+
+def CosmidAssayResults(request):
+    cosmid = request.GET.get('cosmid')
+    host = request.GET.get('host')
+    substrate = request.GET.get('substrate')
+    researcher = request.GET.get('researcher')
+    cosmid_km = request.GET.get('cosmid_km')
+    cosmid_temp = request.GET.get('cosmid_temp')    
+    cosmid_ph = request.GET.get('cosmid_ph')
+    cosmid_comments = request.GET.get('cosmid_comments')
+    
+    values = {'cosmid': cosmid, 'host': host, 'researcher' : researcher, 'substrate': substrate, 'cosmid_km': cosmid_km, 'cosmid_temp': cosmid_temp, 'cosmid_ph': cosmid_ph, 'cosmid_comments': cosmid_comments}
+    args = {}
+    for k, v in values.items():
+        if v:
+            args[k] = v
+    results = Cosmid_Assay.objects.filter(**args)
+    return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': results}, context_instance=RequestContext(request))
+
+def OrfResults(request):
+    annotation = request.GET.get('annotation')
+    results = ORF.objects.filter(annotation__icontains=annotation)
+    return render_to_response('orf_all.html', {'orf_list': results}, context_instance=RequestContext(request))
 
 #detail views
-
 def CosmidDetail(request, cosmid_name):
     cosmid = Cosmid.objects.get(cosmid_name=cosmid_name)
     
@@ -141,35 +214,33 @@ class SubcloneDetailView(DetailView):
     template_name = 'subclone_detail.html'
   
 #edit views (updateview class)
-
 class CosmidEditView(UpdateView):
     model = Cosmid
     template_name = 'cosmid_edit.html'
-    success_url = 'cosmid-end-tag-list'
+    success_url = reverse_lazy('cosmid-end-tag-list')
     
 class SubcloneEditView(UpdateView):
     model = Subclone
     template_name = 'subclone_edit.html'
-    success_url = 'subclone-list'
+    success_url = reverse_lazy('subclone-list')
     
 class CosmidAssayEditView(UpdateView):
     model = Cosmid_Assay
     template_name = 'cosmid_assay_edit.html'
-    success_url = 'cosmid-assay-list'
+    success_url = reverse_lazy('cosmid-assay-list')
 
 class SubcloneAssayEditView(UpdateView):
     model = Subclone_Assay
     template_name = 'subclone_assay_edit.html'
-    success_url = 'subclone-assay-list'
+    success_url = reverse_lazy('subclone-assay-list')
     
 class ORFEditView(UpdateView):
     model = ORF
     template_name = 'orf_edit.html'
-    success_url = 'orf-list'
+    success_url = reverse_lazy('orf-list')
 
 
 # List views for non-lookup tables (Kathy)
-
 class SubcloneListView(ListView):
     model = Subclone
     template_name = 'subclone_all.html'
@@ -206,21 +277,22 @@ class ORFContigListView(ListView):
 class SubcloneCreateView(CreateView):
     model = Subclone
     template_name = 'subclone_add.html'
-    success_url = 'subclone-list'
+    success_url = reverse_lazy('subclone-list')
     
 class CosmidAssayCreateView(CreateView):
     model = Cosmid_Assay
     template_name = 'cosmid_assay_add.html'
-    success_url = 'cosmid-assay-list'
+    success_url = reverse_lazy('cosmid-assay-list')
 
 class SubcloneAssayCreateView(CreateView):
     model = Subclone_Assay
     template_name = 'subclone_assay_add.html'
-    success_url = 'subclone-assay-list'
+    success_url = reverse_lazy('subclone-assay-list')
     
 # Create views for adding data to multiple models with the same template
 
 # Add to Cosmid and End_Tag tables (Kathy)
+@permission_required('mainsite.cosmid.can_add_cosmid')
 def CosmidEndTagCreate(request):
     if request.method == "POST":
         cosmid_form = CosmidForm(request.POST)
@@ -243,6 +315,7 @@ def CosmidEndTagCreate(request):
 
     
 # Add to ORF and Contig-ORF-Join tables (Kathy)
+@permission_required('mainsite.cosmid.can_add_contig_orf_join')
 def ORFContigCreate(request):
     
     #track errors with dict
@@ -286,6 +359,7 @@ def ORFContigCreate(request):
 
 
 #Add contigs to a given pool; contigs from FASTA file (Kathy)
+@permission_required('mainsite.cosmid.can_add_contig')
 def ContigPoolCreate(request):
     
     #track errors with dict

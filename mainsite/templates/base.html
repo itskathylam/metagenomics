@@ -16,6 +16,7 @@
             <nav>
             <ul>
                 <li><a href="/">Home</a></li>
+                {% if perms.mainsite.can_add_cosmid %}
                 <li><a href="">Add</a>
                     <ul>
                         <li><a href="{% url 'cosmid-end-tag-add' %}">Cosmid</a></li>
@@ -26,12 +27,14 @@
                         <li><a href="{% url 'contig-pool-add' %}">Contigs</a></li>
                     </ul>
                 </li>
+                {% endif %}
                 <li><a href="/search">Search</a>
                     <ul>
                         <li><a href="{% url 'cosmid-search' %}">Cosmid</a></li>
-                        <li><a href="">Subclone</a></li>
-                        <li><a href="">Assay</a></li>
-                        <li><a href="">ORF</a></li>
+                        <li><a href="{% url 'subclone-search' %}">Subclone</a></li>
+                        <li><a href="{% url 'cosmid-assay-search' %}">Cosmid Assay</a></li>
+                        <li><a href="{% url 'subclone-assay-search' %}">Subclone Assay</a></li>
+                        <li><a href="{% url 'orf-search' %}">ORF</a></li>
                         <li><a href="">Sequence (Local BLAST)</a></li>
                     </ul>
                 </li>
@@ -69,7 +72,7 @@
         </div>
         
         <footer id="footer">
-            <p><a href="/about">About</a>
+            <p><a href="/about">About</a> <a href="/admin">Administration</a>
             </p>
         </footer>  
   </body>

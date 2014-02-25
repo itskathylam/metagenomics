@@ -12,6 +12,7 @@ Associated Cosmids:
 </ul>
 <label>Sequence:<br>
 <textarea readonly rows="20" cols="70" onclick="this.focus();this.select()">{{ sequence }}</textarea></label><br>
+<img src="{{ STATIC_URL }}data1.png"><br>
 {% for orf in orfresults %}
     ORF Accession: {{ orf.orf_accession }}<br>
     Start: {{ orf.start }}<br>

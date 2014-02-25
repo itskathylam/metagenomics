@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="{% url 'subclone-results' %}" method="get">
+        {{ form }}
+        <input type="submit" value="Search">
+    </form>
+    <a href="{% url 'subclone-list' %}">View All</a>
+    
+{% endblock %}

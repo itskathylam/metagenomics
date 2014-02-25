@@ -9,7 +9,7 @@
             </tr>
         {% for orf in orf_list %}
             <tr>
-                <td>{{ orf.id}}</td>
+                <td><a href="{% url 'orf-list' %}{{ orf.id }}">{{ orf.id }}</a></td>
                 <td><textarea rows="5" cols="50" readonly=true>{{ orf.orf_sequence }}</textarea></td>
                 <td>{{ orf.annotation }}</td>
             </tr>
