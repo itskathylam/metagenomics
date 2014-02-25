@@ -41,7 +41,10 @@ urlpatterns = patterns('',
     url(r'^results/cosmid/', CosmidResults, name='cosmid-results'),
     url(r'^search/subclone/$', SubcloneSearchView, name='subclone-search'),
     url(r'^results/subclone/', SubcloneResults, name='subclone-results'),
-    #url(r'^search/assay/$', AssaySearchView),
+    url(r'^search/assay/subclone$', SubcloneAssaySearchView, name = 'subclone-assay-search'),
+    url(r'^results/assay/subclone$', SubcloneAssayResults, name='subclone-assay-results'),
+    url(r'^search/assay/cosmid$', CosmidAssaySearchView, name = 'cosmid-assay-search'),
+    url(r'^results/assay/cosmid$', CosmidAssayResults, name='cosmid-assay-results'),
     #url(r'^search/orf/$', ORFSearchView),
     
     #listviews for lookup tables 

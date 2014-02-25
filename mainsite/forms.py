@@ -27,19 +27,36 @@ class ORFForm(ModelForm):
         model = ORF
         exclude = ('contig', 'id',)
 
+
 class ContigORFJoinForm(ModelForm):
     class Meta:
         model = Contig_ORF_Join
         exclude = ('db_generated', 'orf', 'start', 'stop')
 
+
 class SubcloneForm(ModelForm):
     class Meta:
         model = Subclone
-        
+
+
+class SubcloneAssayForm(ModelForm):
+    class Meta:
+        model = Subclone_Assay
+
+class CosmidAssayForm(ModelForm):
+    class Meta:
+        model = Cosmid_Assay
+
+class SubcloneCosmidForm(ModelForm):
+    class Meta:
+        model = Cosmid_Assay
+    
+    
 class UserForm(ModelForm):
     class Meta:
         model = User
         exclude = ('last_login', 'is_superuser', 'username', 'is_staff', 'is_active', 'date_joined', 'group', 'permission',)
+ 
  
 # For Contig-Pool add
 
@@ -47,5 +64,7 @@ class ContigForm(ModelForm):
     class Meta:
         model = Contig
 
+
 class UploadContigsForm(forms.Form):
     fasta_file = forms.FileField(label='Select a FASTA file', help_text=' ')
+    
