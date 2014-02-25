@@ -32,6 +32,7 @@ class ContigORFJoinForm(ModelForm):
 class ContigForm(ModelForm):
     class Meta:
         model = Contig
+        exclude = ('contig_name', 'contig_sequence', 'cosmid', 'contig_accession')
 
 class UploadContigsForm(forms.Form):
     fasta_file = forms.FileField(label='Select a FASTA file', help_text=' ')

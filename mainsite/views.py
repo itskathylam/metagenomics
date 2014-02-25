@@ -9,8 +9,13 @@ from django.template import RequestContext
 from mainsite.models import *
 from mainsite.forms import *
 
+from Bio import SeqIO
+import StringIO
 import pdb
 #pdb.trace()
+import re
+
+
 
 #Main, About etc
 
@@ -239,6 +244,7 @@ def CosmidEndTagCreate(request):
     
 # Add to ORF and Contig-ORF-Join tables (Kathy)
 def ORFContigCreate(request):
+    
     #track errors with dict
     form_errors = {}
     
@@ -281,24 +287,41 @@ def ORFContigCreate(request):
 
 #Add contigs to a given pool; contigs from FASTA file (Kathy)
 def ContigPoolCreate(request):
+    
+    #track errors with dict
+    form_errors = {}
+    
     if request.method == "POST":
         contig_upload_form = UploadContigsForm(request.POST, request.FILES)
         if contig_upload_form.is_valid():
             
-            #check that uploaded file is FASTA format
-            fasta_file = request.FILES['fasta_file'].read()
-            #code
+            #parse the fasta file using BioPython SeqIO.parse; store each contig-sequence record in a list
+            fasta_file = request.FILES['fasta_file']
+            file_name = request.FILES['fasta_file'].name
+            records = []
+            for seq_record in SeqIO.parse(fasta_file, "fasta"):
+                records.append(seq_record)
             
-            return HttpResponseRedirect('/contig/')
+            #return error message if file was not parsed successfully by SeqIO.parse
+            if len(records) == 0:
+                form_errors['file_error'] = 'Uploaded file is not FASTA format: ' + file_name 
             
-            #file not FASTA format; return error
-        
+            #if file was parsed successfully, add all records to Contig table in database
+            else:
+                for item in records:
+                    contig_form = ContigForm(request.POST)
+                    if contig_form.is_valid():
+                        new_contig = contig_form.save(commit=False)
+                        new_contig.contig_name = item.id
+                        new_contig.contig_sequence = item.seq
+                        new_contig.save()
+                return HttpResponseRedirect('/contig/')
+                
     else:
+        contig_form = ContigForm()
         contig_upload_form = UploadContigsForm()
-        
-        #generate drop down menu of pool_id/service name; include only those for which no contigs have been associated
-        
-    return render_to_response('contig_pool_add.html', {'contig_upload_form': contig_upload_form}, context_instance=RequestContext(request))
+         
+    return render_to_response('contig_pool_add.html', {'contig_upload_form': contig_upload_form, 'contig_form': contig_form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
 
 # List views for lookup tables (Kathy)
