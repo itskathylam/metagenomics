@@ -16,6 +16,7 @@
             <nav>
             <ul>
                 <li><a href="/">Home</a></li>
+                {% if perms.mainsite.can_add_cosmid %}
                 <li><a href="">Add</a>
                     <ul>
                         <li><a href="{% url 'cosmid-end-tag-add' %}">Cosmid</a></li>
@@ -26,6 +27,7 @@
                         <li><a href="{% url 'contig-pool-add' %}">Contigs</a></li>
                     </ul>
                 </li>
+                {% endif %}
                 <li><a href="/search">Search</a>
                     <ul>
                         <li><a href="{% url 'cosmid-search' %}">Cosmid</a></li>
@@ -70,7 +72,7 @@
         </div>
         
         <footer id="footer">
-            <p><a href="/about">About</a>
+            <p><a href="/about">About</a> <a href="/admin">Administration</a>
             </p>
         </footer>  
   </body>

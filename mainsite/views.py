@@ -3,7 +3,7 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.template import RequestContext
 from django.core.urlresolvers import reverse_lazy
 
@@ -15,7 +15,7 @@ import pdb
 
 #Main, About etc
 
-login_required
+#login_required
 def MainPage(request):
     template_name = 'index.html'
     return (render(request, 'index.html'))
@@ -287,6 +287,7 @@ class SubcloneAssayCreateView(CreateView):
 # Create views for adding data to multiple models with the same template
 
 # Add to Cosmid and End_Tag tables (Kathy)
+@permission_required('mainsite.cosmid.can_add_cosmid')
 def CosmidEndTagCreate(request):
     if request.method == "POST":
         cosmid_form = CosmidForm(request.POST)
