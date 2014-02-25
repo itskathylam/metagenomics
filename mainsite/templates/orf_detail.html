@@ -5,5 +5,5 @@ ID: {{ orf.id }} <br>
 <label>Sequence<textarea rows="10" cols="50">{{ orf.orf_sequence }}</textarea></label><br>
 Annotation: {{ orf.annotation }}<br>
 
-<a href="/edit{% url 'orf-list' %}{{ ORF.pk }}">Edit</a>
+<a href="/edit{% url 'orf-list' %}{{ orf.id }}">Edit</a>
 {% endblock %}
