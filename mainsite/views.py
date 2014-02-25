@@ -1,5 +1,5 @@
 from django.shortcuts import render, render_to_response, get_object_or_404
-from django.views.generic import ListView, CreateView, DetailView, UpdateView
+from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
@@ -184,6 +184,7 @@ def CosmidDetail(request, cosmid_name):
 def ContigDetail(request, contig_name):
     contig = Contig.objects.get(contig_name=contig_name)
     
+    key = contig.id
     name = contig.contig_name
     pool = contig.pool
     seq = contig.contig_sequence
@@ -195,7 +196,7 @@ def ContigDetail(request, contig_name):
     for o in orfresults:
         orfids.append(o.orf_id)
     orfseq = ORF.objects.filter(id__in=orfids)
-    return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name}, context_instance=RequestContext(request))
+    return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
 
 class OrfDetailView(DetailView):
     model = ORF
@@ -239,6 +240,17 @@ class ORFEditView(UpdateView):
     template_name = 'orf_edit.html'
     success_url = reverse_lazy('orf-list')
 
+class ContigEditView(UpdateView):
+    model = Contig
+    fields = ['contig_accession']
+    template_name = 'contig_edit.html'
+    success_url = reverse_lazy('contig-list')
+    
+#Delete views (Katelyn)
+class ContigORFDeleteView(DeleteView):
+    model=Contig_ORF_Join
+    template_name = 'contig_orf_delete.html'
+    success_url = reverse_lazy('orf-contig-list')
 
 # List views for non-lookup tables (Kathy)
 class SubcloneListView(ListView):
