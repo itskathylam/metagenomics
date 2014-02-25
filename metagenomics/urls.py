@@ -78,4 +78,16 @@ urlpatterns = patterns('',
     url(r'^add/cosmid/$', CosmidEndTagCreate, name='cosmid-end-tag-add'),
     url(r'^add/orfcontig/$', ORFContigCreate, name='orf-contig-add'),
     url(r'^add/contigpool/$', ContigPoolCreate, name='contig-pool-add'),
+    
+    
+    url(r'^export/primer', primer_queryset),
+    url(r'^export/host', host_queryset),
+    url(r'^export/screen', screen_queryset),
+    url(r'^export/library', library_queryset),
+    url(r'^export/researcher', researcher_queryset),
+    url(r'^export/vector', vector_queryset),
+    url(r'^export/pool', pool_queryset),
+    url(r'^export/substrate', substrate_queryset),
+
+
 )
