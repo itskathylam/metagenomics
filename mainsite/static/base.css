@@ -62,7 +62,7 @@ nav ul li {
     float: left;
 }
     nav ul li:hover {
-	background: #4b545f;
+	background: #292e34;
     }
     
 	nav ul li:hover a {
@@ -77,7 +77,7 @@ nav ul li {
     }
     
 nav ul ul {
-    background: #000000;
+    background: #292e34 ;
     border-radius: 0;
     padding: 0;
     position: absolute;
@@ -94,7 +94,7 @@ nav ul ul {
 	    color: #fff;
 	}
 	    nav ul ul li a:hover{
-		background: #4b545f;
+		background: #000000;
 	    }
 
 nav ul ul ul {

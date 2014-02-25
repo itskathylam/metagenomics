@@ -13,7 +13,7 @@ from mainsite.forms import *
 from Bio import SeqIO
 import StringIO
 import pdb
-#pdb.trace()
+#pdb.set_trace()
 import re
 
 
@@ -389,12 +389,10 @@ def ContigPoolCreate(request):
                         new_contig.contig_name = item.id
                         new_contig.contig_sequence = item.seq
                         new_contig.save()
-                return HttpResponseRedirect('/contig/')
-                
+                return HttpResponseRedirect('/contig/')          
     else:
         contig_form = ContigForm()
-        contig_upload_form = UploadContigsForm()
-         
+        contig_upload_form = UploadContigsForm()      
     return render_to_response('contig_pool_add.html', {'contig_upload_form': contig_upload_form, 'contig_form': contig_form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
 
