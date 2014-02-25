@@ -363,7 +363,7 @@ def ORFContigCreate(request):
             
             #orf not in contig; return error message
             else:
-                form_errors['ORF_not_in_contig'] = u'The specified ORF is not found in chosen Contig.'
+                form_errors['ORF_not_in_contig'] = u'Error: The specified ORF is not found in chosen Contig.'
     else:
         contig_orf_form = ContigORFJoinForm(instance=Contig_ORF_Join())
         orf_form = ORFForm(instance=ORF())
@@ -391,7 +391,7 @@ def ContigPoolCreate(request):
             
             #return error message if file was not parsed successfully by SeqIO.parse
             if len(records) == 0:
-                form_errors['file_error'] = 'Uploaded file is not FASTA format: ' + file_name 
+                form_errors['file_error'] = 'Error: uploaded file is not FASTA format: ' + file_name 
             
             #if file was parsed successfully, add all records to Contig table in database
             else:
@@ -413,7 +413,7 @@ def ContigPoolCreate(request):
         contig_upload_form = UploadContigsForm()      
     return render_to_response('contig_pool_add.html', {'contig_upload_form': contig_upload_form, 'contig_form': contig_form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
-#force download of input queryset to csv file
+#force download of input queryset to csv file (Nina)
 def queryset_export_csv(qs):
     import csv
     response = HttpResponse(mimetype='text/csv')
