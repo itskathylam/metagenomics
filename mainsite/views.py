@@ -12,6 +12,7 @@ from mainsite.models import *
 from mainsite.forms import *
 
 from Bio.Blast.Applications import NcbiblastnCommandline
+
 from Bio.Blast import NCBIXML
 from Bio import SeqIO
 import StringIO
@@ -74,6 +75,7 @@ def BlastResults(request):
     ##blast = n #mega, dcmega
     #
     ##run blast command with query, parameters, and created database
+    ##/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin
     #cmd = NcbiblastnCommandLine(query=".fa", db="contigdb", evalue=1, outfmt=5, out=".xml")
     #os.system(str(cmd))
     #

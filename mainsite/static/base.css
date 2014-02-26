@@ -61,6 +61,13 @@ nav ul {
 nav ul li {
     float: left;
 }
+    nav ul li img {
+	margin-right: 5px;
+	padding: 0;
+	position: relative;
+	top: -3px;
+    }
+    
     nav ul li:hover {
 	background: #292e34;
     }
