@@ -11,7 +11,7 @@ from operator import attrgetter
 from mainsite.models import *
 from mainsite.forms import *
 
-from Bio.Blast.Applications import NcbiblastnCommandLine
+from Bio.Blast.Applications import NcbiblastnCommandline
 from Bio.Blast import NCBIXML
 from Bio import SeqIO
 import StringIO
@@ -58,32 +58,32 @@ def BlastSearch(request):
 
 def BlastResults(request):
     #get all sequences in the database and names
-    sequence = Contig.objects.all().contig_sequence
-    name = Contig.objects.all().contig_name
-    
-    #write entries to a fasta file
-    outfh = open("newtempfile.fa", "w")
-    Bio.SeqIO.write(sequence, outfh, "fasta")
-    outfh.close()
-    
-    #makeblastdb to create BLAST database of files from fastafile
-    os.system(str(makeblastdb -in newtempfile.fa -out contigdb))
-    
-    #get query sequence type of blast and parameters
-    seq = request.POST.get('sequence')
-    #blast = n #mega, dcmega
-    
-    #run blast command with query, parameters, and created database
-    cmd = NcbiblastnCommandLine(query=".fa", db="contigdb", evalue=1, outfmt=5, out=".xml")
-    os.system(str(cmd))
-    
-    #have to know when its done to be able to continue?
-    
-    #parse .xml file
-    records = NCBIXML.parse()
-    
-    #results
-    records.next()
+    #sequence = Contig.objects.all().contig_sequence
+    #name = Contig.objects.all().contig_name
+    #
+    ##write entries to a fasta file
+    #outfh = open("newtempfile.fa", "w")
+    #Bio.SeqIO.write(sequence, outfh, "fasta")
+    #outfh.close()
+    #
+    ##makeblastdb to create BLAST database of files from fastafile
+    #os.system(str(makeblastdb -in newtempfile.fa -out contigdb))
+    #
+    ##get query sequence type of blast and parameters
+    #seq = request.POST.get('sequence')
+    ##blast = n #mega, dcmega
+    #
+    ##run blast command with query, parameters, and created database
+    #cmd = NcbiblastnCommandLine(query=".fa", db="contigdb", evalue=1, outfmt=5, out=".xml")
+    #os.system(str(cmd))
+    #
+    ##have to know when its done to be able to continue?
+    #
+    ##parse .xml file
+    #records = NCBIXML.parse()
+    #
+    ##results
+    #records.next()
     
     #make this view a loading page and then redirect to results??
     return render_to_response('blast_results.html', {'sequence': seq}, context_instance=RequestContext(request))
