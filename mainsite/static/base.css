@@ -8,6 +8,21 @@
 /*@import url("reset.css");*/
 
 
+
+/* images */
+img.download {
+    margin: 3px;
+    position: relative;
+    top: 12px;
+}
+
+img.viewall {
+    margin: 5px;
+    position: relative;
+    top: 15px;    
+}
+
+
 /* Header */
 
 header {
