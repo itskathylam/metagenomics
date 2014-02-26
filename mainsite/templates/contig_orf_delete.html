@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    Contig Name: {{contig_orf_join.contig.contig_name}}<br>
+    ORF ID: {{contig_orf_join.orf_id}}<br>
+    <p> Are you sure you want to delete?</p>
+    <form action="{% url 'contig-orf-delete' pk='contig_orf_join.pk'}" method="POST">
+        {% csrf_token %}
+    
+        <input type ="submit">
+    </form>
+    
+{% endblock %}

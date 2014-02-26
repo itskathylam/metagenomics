@@ -1,5 +1,5 @@
 from django.shortcuts import render, render_to_response, get_object_or_404
-from django.views.generic import ListView, CreateView, DetailView, UpdateView
+from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
@@ -224,6 +224,7 @@ def CosmidDetail(request, cosmid_name):
 def ContigDetail(request, contig_name):
     contig = Contig.objects.get(contig_name=contig_name)
     
+    key = contig.id
     name = contig.contig_name
     pool = contig.pool
     seq = contig.contig_sequence
@@ -235,7 +236,7 @@ def ContigDetail(request, contig_name):
     for o in orfresults:
         orfids.append(o.orf_id)
     orfseq = ORF.objects.filter(id__in=orfids)
-    return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name}, context_instance=RequestContext(request))
+    return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
 
 class OrfDetailView(DetailView):
     model = ORF
@@ -279,6 +280,17 @@ class ORFEditView(UpdateView):
     template_name = 'orf_edit.html'
     success_url = reverse_lazy('orf-list')
 
+class ContigEditView(UpdateView):
+    model = Contig
+    fields = ['contig_accession']
+    template_name = 'contig_edit.html'
+    success_url = reverse_lazy('contig-list')
+    
+#Delete views (Katelyn)
+class ContigORFDeleteView(DeleteView):
+    model=Contig_ORF_Join
+    template_name = 'contig_orf_delete.html'
+    success_url = reverse_lazy('orf-contig-list')
 
 # List views for non-lookup tables (Kathy)
 class SubcloneListView(ListView):
@@ -391,7 +403,7 @@ def ORFContigCreate(request):
             
             #orf not in contig; return error message
             else:
-                form_errors['ORF_not_in_contig'] = u'The specified ORF is not found in chosen Contig.'
+                form_errors['ORF_not_in_contig'] = u'Error: The specified ORF is not found in chosen Contig.'
     else:
         contig_orf_form = ContigORFJoinForm(instance=Contig_ORF_Join())
         orf_form = ORFForm(instance=ORF())
@@ -407,6 +419,7 @@ def ContigPoolCreate(request):
     
     if request.method == "POST":
         contig_upload_form = UploadContigsForm(request.POST, request.FILES)
+        contig_form = ContigForm(request.POST) #must be here as well
         if contig_upload_form.is_valid():
             
             #parse the fasta file using BioPython SeqIO.parse; store each contig-sequence record in a list
@@ -418,15 +431,20 @@ def ContigPoolCreate(request):
             
             #return error message if file was not parsed successfully by SeqIO.parse
             if len(records) == 0:
-                form_errors['file_error'] = 'Uploaded file is not FASTA format: ' + file_name 
+                form_errors['file_error'] = 'Error: uploaded file is not FASTA format: ' + file_name 
             
             #if file was parsed successfully, add all records to Contig table in database
             else:
                 for item in records:
-                    contig_form = ContigForm(request.POST)
                     if contig_form.is_valid():
+                        contig_form = ContigForm(request.POST)
                         new_contig = contig_form.save(commit=False)
-                        new_contig.contig_name = item.id
+                        
+                        #get the pood id for use in appending to scaffold name, and save record
+                        pool =  str(new_contig.pool.id)
+                        
+                        #save record
+                        new_contig.contig_name = 'pool' + pool + "_" + item.id
                         new_contig.contig_sequence = item.seq
                         new_contig.save()
                 return HttpResponseRedirect('/contig/')          
@@ -435,7 +453,7 @@ def ContigPoolCreate(request):
         contig_upload_form = UploadContigsForm()      
     return render_to_response('contig_pool_add.html', {'contig_upload_form': contig_upload_form, 'contig_form': contig_form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
-#force download of input queryset to csv file
+#force download of input queryset to csv file (Nina)
 def queryset_export_csv(qs):
     import csv
     response = HttpResponse(mimetype='text/csv')

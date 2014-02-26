@@ -105,7 +105,7 @@ class End_Tag(models.Model):
 
 class Contig(models.Model):
     pool = models.ForeignKey(Pooled_Sequencing)
-    contig_name = models.CharField(max_length=200)
+    contig_name = models.CharField(max_length=200, unique=True)
     contig_sequence = models.TextField()
     cosmid = models.ManyToManyField(Cosmid)
     contig_accession = models.CharField(max_length=50, blank=True, null=True)
@@ -136,7 +136,7 @@ class Contig_ORF_Join(models.Model):
     db_generated = models.BooleanField()
 
     class Meta:
-            verbose_name_plural = 'Contig & ORF Relationships'
+        verbose_name_plural = 'Contig & ORF Relationships'
 
 
 class Subclone(models.Model):

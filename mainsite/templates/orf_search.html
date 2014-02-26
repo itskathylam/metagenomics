@@ -2,7 +2,9 @@
 
 {% block content %}
     <form action="{% url 'orf-results' %}" method="get">
-        {{ form }}
+        <table border = 1> 
+            {{ form }}
+        </table>
         <input type="submit" value="Search">
     </form>
     <a href="{% url 'orf-list' %}">View All</a>

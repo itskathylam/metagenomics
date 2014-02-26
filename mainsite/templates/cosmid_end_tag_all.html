@@ -24,7 +24,7 @@
                 <td>{{ cosmid.host.host_name }}</td>
                 <td>{{ cosmid.screen.screen_name }}</td>
                 <td>{{ cosmid.ec_collection }}</td>
-                <td>{{ cosmid.pooled_sequencing.id }}</td>
+                <td>{{ cosmid.pool.id }}</td>
                 {% for end_tag in cosmid.end_tag_set.all %}
                         <td><textarea rows="5" cols="50" readonly=true>{{ end_tag.end_tag_sequence }}</textarea></td>
                         
