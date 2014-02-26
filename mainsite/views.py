@@ -15,7 +15,11 @@ from Bio.Blast.Applications import NcbiblastnCommandline
 
 from Bio.Blast import NCBIXML
 from Bio import SeqIO
+from Bio.Seq import Seq
+from Bio.Alphabet import generic_dna
+from Bio.SeqRecord import SeqRecord
 import StringIO
+from os import system
 import pdb
 #pdb.set_trace()
 
@@ -59,36 +63,64 @@ def BlastSearch(request):
 
 def BlastResults(request):
     #get all sequences in the database and names
-    #sequence = Contig.objects.all().contig_sequence
-    #name = Contig.objects.all().contig_name
-    #
-    ##write entries to a fasta file
-    #outfh = open("newtempfile.fa", "w")
-    #Bio.SeqIO.write(sequence, outfh, "fasta")
-    #outfh.close()
-    #
-    ##makeblastdb to create BLAST database of files from fastafile
-    #os.system(str(makeblastdb -in newtempfile.fa -out contigdb))
-    #
-    ##get query sequence type of blast and parameters
-    #seq = request.POST.get('sequence')
-    ##blast = n #mega, dcmega
-    #
-    ##run blast command with query, parameters, and created database
-    ##/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin
-    #cmd = NcbiblastnCommandLine(query=".fa", db="contigdb", evalue=1, outfmt=5, out=".xml")
-    #os.system(str(cmd))
-    #
-    ##have to know when its done to be able to continue?
-    #
-    ##parse .xml file
-    #records = NCBIXML.parse()
-    #
-    ##results
-    #records.next()
+    sequence = Contig.objects.all().values('contig_sequence')
+    name = Contig.objects.all().values('contig_name')
     
-    #make this view a loading page and then redirect to results??
-    return render_to_response('blast_results.html', {'sequence': seq}, context_instance=RequestContext(request))
+    #pdb.set_trace()
+    
+    #create sequencerecord object
+    seqrecord = SeqRecord(Seq("ctgaccatcagcgactatgcatgcatgcagtcatccatgcatctcacacagctgtagcatgcatgctagcatgcatcgatcgtacagtcacacgatgcatcgatcatcgatcgtgctgcgatgacatggcatcactagctgtactcagtgctatcatgcatgcatccttcagtcgtacgtacgtacgcgtgagagagagtaaacgagtgtagtatgagcgcgagatatgatactagtgctgtgcatcatgtagttcgtatcttatagtgcttgatatactgcgtacgatcgtagcatcgatcacatgcatgtgctagcagtgttgtgtgcatcgtagctagcttgtgtgatgcatgcatgaggctacgtagctacgtagcatcggctacgtagctacgcaacgcgatgtccgtcgtcgtacgacgccgtacgtacgtcgtggcttccggctcgtagctaacgtgcatgctagctagccgacgtcgtgtcggctggtagcatgcatgcgctctacgtcggctactatgcagtgtatgctatcatgcatgcagctagctgttggtaatggtagtcatacttgtcagcgtcatgca", generic_dna), id="1", name="test")
+    #seqrecord = dict(zip(name, sequence))
+    outfh = open("newtempfile.fa", "w")
+    
+    #write entries to a fasta file
+    SeqIO.write(seqrecord, outfh, "fasta")
+    outfh.close()
+    #
+    #makeblastdb to create BLAST database of files from fastafile
+    system("/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin/makeblastdb -in newtempfile.fa -out contigdb -dbtype nucl")
+    
+    #get query sequence type of blast and parameters
+    seq = request.POST.get('sequence')
+    
+    #write query to file
+    queryseq = SeqRecord(Seq(seq, generic_dna), id="queryid", name="Query", description="testquery")
+    queryfh = open("newquery.fa", "w")
+    SeqIO.write(queryseq, queryfh, "fasta")
+    queryfh.close()
+    ##blast = n #mega, dcmega
+    
+    #run blast command with query, parameters, and created database
+    cmd = NcbiblastnCommandline(query="newquery.fa", db="contigdb", evalue=1, outfmt=5, out="test.xml")
+    #have to set path vars for blastn, to be able to use this. /home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin
+    system(str(cmd))
+    
+    #have to know when its done to be able to continue?
+    #show loading and then display to results??
+    
+    
+    #parse .xml file
+    resultsfh = open("test.xml")     
+    records = NCBIXML.parse(resultsfh)
+    
+    test = records.next()
+    title = ""
+    length = ""
+    evalue = ""
+    qm = ""
+    dm = ""
+    al = ""
+    for align in test.alignments:
+        for hsp in align.hsps:    
+            title = align.title
+            length = align.length
+            evalue = hsp.expect
+            qm = hsp.query
+            dm = hsp.match
+            al = hsp.sbjct
+                
+
+    return render_to_response('blast_results.html', {'qtitle': title, 'qlength': length, 'evalue': evalue, 'qm': qm, 'dm': dm, 'al': al, 'sequence': seqrecord, 'records': records, 'test': test}, context_instance=RequestContext(request))
 
 
 #search forms
