@@ -21,6 +21,9 @@ urlpatterns = patterns('',
     url(r'^tools/contig', ContigTool, name='contig'),
     url(r'^tools/pooling', Pooling, name='pool'),
     
+    url(r'^blast/search', BlastSearch, name='blast'),
+    url(r'^blast/results', BlastResults, name='blast-results'),
+    
     #Detail views
     url(r'^cosmid/(?P<cosmid_name>[\w-]+)/$', CosmidDetail, name='cosmid-detail'),
     url(r'^assay/subclone/(?P<pk>\d+)/$', SubcloneAssayDetailView.as_view(), name='sublcone-assay-detail'),

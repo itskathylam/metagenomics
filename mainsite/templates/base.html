@@ -17,7 +17,7 @@
             <ul>
                 <li><a href="/">Home</a></li>
                 {% if perms.mainsite.can_add_cosmid %}
-                <li><a href="/add/">Add</a>
+                <li><a href="">Add</a>
                     <ul>
                         <li><a href="{% url 'cosmid-end-tag-add' %}">Cosmid</a></li>
                         <li><a href="{% url 'subclone-add' %}">Subclone</a></li>
@@ -35,10 +35,10 @@
                         <li><a href="{% url 'cosmid-assay-search' %}">Cosmid Assay</a></li>
                         <li><a href="{% url 'subclone-assay-search' %}">Subclone Assay</a></li>
                         <li><a href="{% url 'orf-search' %}">ORF</a></li>
-                        <li><a href="">Sequence (Local BLAST)</a></li>
+                        <li><a href="{% url 'blast' %}">Sequence (Local BLAST)</a></li>
                     </ul>
                 </li>
-                <li><a href="/viewall/">View All</a>
+                <li><a href="/viewall">View All</a>
                     <ul>
                         <li><a href="{% url 'cosmid-end-tag-list' %}">Cosmids</a></li>
                         <li><a href="{% url 'subclone-list' %}">Subclones</a></li>
