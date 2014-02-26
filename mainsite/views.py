@@ -1,12 +1,12 @@
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.template import RequestContext
-from django.core.urlresolvers import reverse_lazy
 from operator import attrgetter
+from django.core.files import File
 
 from mainsite.models import *
 from mainsite.forms import *
@@ -44,7 +44,53 @@ def UserDoc(request):
     return (render(request, 'userdoc.html'))
 
 def ContigTool(request):
-    return (render(request, 'contig.html'))
+    return (render(request, 'tool_contig.html'))
+
+def Contig_tool_test(request):
+    pool_id = 1
+    contigs = Contig.objects.filter(pool = pool_id).values_list('contig_name', 'contig_sequence')
+    #forward_tags =
+    #reverse_tags =
+    cosmids = Cosmid.objects.filter(pool = pool_id).values('cosmid_name')
+    p_id = End_Tag.objects.values(cosmid = cosmids.id, 'primer')
+
+    return HttpResponse(write_fasta(cosmids), write_csv(cosmids))
+
+    import subprocess
+    return HttpResponse(subprocess.call(['perl','./endtag.pl', 'csv_test.csv', 'fasta_test.fa']))
+    
+def write_csv(query):
+    import re
+    with open('./csv_test.csv', 'w') as f:
+        csv = File(f)
+        query = re.findall('\'(.+?)\'', str(query))
+        it = iter(query)
+        for entry in it:
+            csv.write(entry)
+            csv.write(',')
+            csv.write(next(it))
+            csv.write(',\r\n')
+        csv.closed
+        f.closed
+
+#writes contigs within quoted string to fasta file(text.fa)    
+def write_fasta(contigs):
+    import re
+    with open('./fasta_test.fa', 'w') as f:
+        fasta = File(f)
+        contigs = re.findall('\'(.+?)\'', str(contigs))
+        it = iter(contigs)
+        for contig in it:
+            fasta.write('>')
+            fasta.write(contig)
+            fasta.write('\r\n')
+            fasta.write(next(it))
+            fasta.write('\r\n')
+        fasta.closed
+        f.closed
+ 
+#pdb.set_trace()
+
 
 def Pooling(request):
     return (render(request, 'pooling.html'))
