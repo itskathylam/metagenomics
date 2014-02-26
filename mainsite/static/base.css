@@ -197,3 +197,8 @@ th {
     color: #FFFFFF;
     border: 0px;
 }
+
+/* style for submit buttons*/
+input[type=submit] {
+    width: 10em;  height: 3em;
+}
