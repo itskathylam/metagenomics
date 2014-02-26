@@ -62,65 +62,63 @@ def BlastSearch(request):
     return render_to_response('blast_search.html', {'blastform': blastform}, context_instance=RequestContext(request))
 
 def BlastResults(request):
-    #get all sequences in the database and names
-    sequence = Contig.objects.all().values('contig_sequence')
-    name = Contig.objects.all().values('contig_name')
+    #get all names and sequences in the database  
+    names = Contig.objects.all().values('contig_name')
+    sequences = Contig.objects.all().values('contig_sequence')
     
-    #pdb.set_trace()
-    
-    #create sequencerecord object
-    seqrecord = SeqRecord(Seq("ctgaccatcagcgactatgcatgcatgcagtcatccatgcatctcacacagctgtagcatgcatgctagcatgcatcgatcgtacagtcacacgatgcatcgatcatcgatcgtgctgcgatgacatggcatcactagctgtactcagtgctatcatgcatgcatccttcagtcgtacgtacgtacgcgtgagagagagtaaacgagtgtagtatgagcgcgagatatgatactagtgctgtgcatcatgtagttcgtatcttatagtgcttgatatactgcgtacgatcgtagcatcgatcacatgcatgtgctagcagtgttgtgtgcatcgtagctagcttgtgtgatgcatgcatgaggctacgtagctacgtagcatcggctacgtagctacgcaacgcgatgtccgtcgtcgtacgacgccgtacgtacgtcgtggcttccggctcgtagctaacgtgcatgctagctagccgacgtcgtgtcggctggtagcatgcatgcgctctacgtcggctactatgcagtgtatgctatcatgcatgcagctagctgttggtaatggtagtcatacttgtcagcgtcatgca", generic_dna), id="1", name="test")
-    #seqrecord = dict(zip(name, sequence))
-    outfh = open("newtempfile.fa", "w")
-    
-    #write entries to a fasta file
-    SeqIO.write(seqrecord, outfh, "fasta")
+    #create seqrecord object for each name-seq pair and write to file
+    outfh = open("blast_contigdb.fa", "w")
+    for i in range(0, len(names)):
+        seqrecord = SeqRecord(Seq(sequences[i]['contig_sequence'], generic_dna), id=names[i]['contig_name'])
+        SeqIO.write(seqrecord, outfh, "fasta")
     outfh.close()
-    #
+    
     #makeblastdb to create BLAST database of files from fastafile
-    system("/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin/makeblastdb -in newtempfile.fa -out contigdb -dbtype nucl")
+    system("/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin/makeblastdb -in blast_contigdb.fa -out contigdb -dbtype nucl")
     
-    #get query sequence type of blast and parameters
+    #get query sequence type of blast and parameters, and write to file
     seq = request.POST.get('sequence')
-    
-    #write query to file
     queryseq = SeqRecord(Seq(seq, generic_dna), id="queryid", name="Query", description="testquery")
-    queryfh = open("newquery.fa", "w")
-    SeqIO.write(queryseq, queryfh, "fasta")
+    queryfh = open("blast_query.fa", "w")
+    SeqIO.write(queryseq, queryfh, "fasta") 
     queryfh.close()
-    ##blast = n #mega, dcmega
     
     #run blast command with query, parameters, and created database
-    cmd = NcbiblastnCommandline(query="newquery.fa", db="contigdb", evalue=1, outfmt=5, out="test.xml")
-    #have to set path vars for blastn, to be able to use this. /home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin
+    #blast options? => blastn, megablast, dcmega...?
+    cmd = NcbiblastnCommandline(query="blast_query.fa", db="contigdb", evalue=1, outfmt=5, out="test.xml")
+    #have to set path vars for blastn, to be able to use this; bash command on next line
+    #export PATH=$PATH:/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin
     system(str(cmd))
     
     #have to know when its done to be able to continue?
     #show loading and then display to results??
     
-    
-    #parse .xml file
+    #parse xml file
     resultsfh = open("test.xml")     
     records = NCBIXML.parse(resultsfh)
-    
     test = records.next()
-    title = ""
-    length = ""
-    evalue = ""
-    qm = ""
-    dm = ""
-    al = ""
-    for align in test.alignments:
-        for hsp in align.hsps:    
-            title = align.title
-            length = align.length
-            evalue = hsp.expect
-            qm = hsp.query
-            dm = hsp.match
-            al = hsp.sbjct
-                
-
-    return render_to_response('blast_results.html', {'qtitle': title, 'qlength': length, 'evalue': evalue, 'qm': qm, 'dm': dm, 'al': al, 'sequence': seqrecord, 'records': records, 'test': test}, context_instance=RequestContext(request))
+    results_list = []
+    for alignment in test.alignments:
+        for hsp in alignment.hsps:
+            result = []
+            list_hit_title = alignment.title.split('|')
+            hit_title = list_hit_title[2]
+            result.append(hit_title)
+            hit_length = alignment.length
+            hit_evalue = hsp.expect
+            result.append(str(hit_length))
+            result.append(str(hit_evalue))
+            hit_hsp = hsp
+            hq = hsp.query
+            hm = hsp.match
+            hs = hsp.sbjct
+            result.append(hq)
+            result.append(hm)
+            result.append(hs)
+            results_list.append(result)
+            
+    #'hit_title': hit_title, 'hit_length': hit_length, 'hit_evalue': hit_evalue, 'qm': qm, 'dm': dm, 'al': al, 'hit_hsp': hit_hsp
+    return render_to_response('blast_results.html', {'results_list': results_list, 'query': seq}, context_instance=RequestContext(request))
 
 
 #search forms

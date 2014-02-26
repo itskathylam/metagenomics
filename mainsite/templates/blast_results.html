@@ -1,12 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-{{ sequence }}<br>
-{{ records }} <br>
-{{ test }}<br>
-{{ qtitle }}<br>
-{{ qlength }}<br>
-{{ evalue }}<br>
-{{ qm }}<br>
-{{ dm }}<br>
-{{ al }}<br>
+<table> 
+<tr>
+    <td>Query: <br>
+    <font face="courier">{{ query }}</font>
+</tr>
+{% for result in results_list %}
+    <tr><td>
+        <font face="courier">
+            {% for item in result %}
+                {{ item }}<br>
+            {% endfor %}
+        </font>
+    </td></tr>
+{% endfor %}
+</table>
 {% endblock %}
