@@ -12,12 +12,12 @@ from mainsite.models import *
 from mainsite.forms import *
 
 from Bio.Blast.Applications import NcbiblastnCommandline
-
 from Bio.Blast import NCBIXML
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 from Bio.SeqRecord import SeqRecord
+
 import StringIO
 from os import system
 import pdb
@@ -62,66 +62,64 @@ def BlastSearch(request):
     return render_to_response('blast_search.html', {'blastform': blastform}, context_instance=RequestContext(request))
 
 def BlastResults(request):
-    #get all sequences in the database and names
-    sequence = Contig.objects.all().values('contig_sequence')
-    name = Contig.objects.all().values('contig_name')
+    #get all names and sequences in the database  
+    names = Contig.objects.all().values('contig_name')
+    sequences = Contig.objects.all().values('contig_sequence')
     
-    #pdb.set_trace()
-    
-    #create sequencerecord object
-    seqrecord = SeqRecord(Seq("ctgaccatcagcgactatgcatgcatgcagtcatccatgcatctcacacagctgtagcatgcatgctagcatgcatcgatcgtacagtcacacgatgcatcgatcatcgatcgtgctgcgatgacatggcatcactagctgtactcagtgctatcatgcatgcatccttcagtcgtacgtacgtacgcgtgagagagagtaaacgagtgtagtatgagcgcgagatatgatactagtgctgtgcatcatgtagttcgtatcttatagtgcttgatatactgcgtacgatcgtagcatcgatcacatgcatgtgctagcagtgttgtgtgcatcgtagctagcttgtgtgatgcatgcatgaggctacgtagctacgtagcatcggctacgtagctacgcaacgcgatgtccgtcgtcgtacgacgccgtacgtacgtcgtggcttccggctcgtagctaacgtgcatgctagctagccgacgtcgtgtcggctggtagcatgcatgcgctctacgtcggctactatgcagtgtatgctatcatgcatgcagctagctgttggtaatggtagtcatacttgtcagcgtcatgca", generic_dna), id="1", name="test")
-    #seqrecord = dict(zip(name, sequence))
-    outfh = open("newtempfile.fa", "w")
-    
-    #write entries to a fasta file
-    SeqIO.write(seqrecord, outfh, "fasta")
+    #create seqrecord object for each name-seq pair and write to file
+    outfh = open("blast_contigdb.fa", "w")
+    for i in range(0, len(names)):
+        seqrecord = SeqRecord(Seq(sequences[i]['contig_sequence'], generic_dna), id=names[i]['contig_name'])
+        SeqIO.write(seqrecord, outfh, "fasta")
     outfh.close()
-    #
+    
     #makeblastdb to create BLAST database of files from fastafile
-    system("/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin/makeblastdb -in newtempfile.fa -out contigdb -dbtype nucl")
+    system("/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin/makeblastdb -in blast_contigdb.fa -out contigdb -dbtype nucl")
     
-    #get query sequence type of blast and parameters
+    #get query sequence type of blast and parameters, and write to file
     seq = request.POST.get('sequence')
-    
-    #write query to file
     queryseq = SeqRecord(Seq(seq, generic_dna), id="queryid", name="Query", description="testquery")
-    queryfh = open("newquery.fa", "w")
-    SeqIO.write(queryseq, queryfh, "fasta")
+    queryfh = open("blast_query.fa", "w")
+    SeqIO.write(queryseq, queryfh, "fasta") 
     queryfh.close()
-    ##blast = n #mega, dcmega
     
     #run blast command with query, parameters, and created database
-    cmd = NcbiblastnCommandline(query="newquery.fa", db="contigdb", evalue=1, outfmt=5, out="test.xml")
-    #have to set path vars for blastn, to be able to use this. /home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin
+    #blast options? => blastn, megablast, dcmega...?
+    cmd = NcbiblastnCommandline(query="blast_query.fa", db="contigdb", evalue=1, outfmt=5, out="test.xml")
+    #have to set path vars for blastn, to be able to use this; bash command on next line
+    #export PATH=$PATH:/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin
     system(str(cmd))
     
     #have to know when its done to be able to continue?
     #show loading and then display to results??
     
-    
-    #parse .xml file
+    #parse xml file
     resultsfh = open("test.xml")     
     records = NCBIXML.parse(resultsfh)
-    
     test = records.next()
-    title = ""
-    length = ""
-    evalue = ""
-    qm = ""
-    dm = ""
-    al = ""
-    for align in test.alignments:
-        for hsp in align.hsps:    
-            title = align.title
-            length = align.length
+    results_list = []
+    for alignment in test.alignments:
+        for hsp in alignment.hsps:
+            result = {}
+            list_title = alignment.title.split('|')
+            title = list_title[2]
+            length = alignment.length
             evalue = hsp.expect
-            qm = hsp.query
-            dm = hsp.match
-            al = hsp.sbjct
-                
-
-    return render_to_response('blast_results.html', {'qtitle': title, 'qlength': length, 'evalue': evalue, 'qm': qm, 'dm': dm, 'al': al, 'sequence': seqrecord, 'records': records, 'test': test}, context_instance=RequestContext(request))
-
+            hsp = hsp
+            hq = hsp.query
+            hm = hsp.match
+            hs = hsp.sbjct
+            result['title'] = title
+            result['length'] = length
+            result['evalue'] = evalue
+            result['hq'] = hq
+            result['hm'] = hm
+            result['hs'] = hs
+            result['hsp'] = hsp
+            results_list.append(result)
+            #pdb.set_trace()
+            
+    return render_to_response('blast_results.html', {'results_list': results_list, 'query': seq}, context_instance=RequestContext(request))
 
 #search forms
 def CosmidSearchView(request):
@@ -254,7 +252,6 @@ def CosmidDetail(request, cosmid_name):
     
     return render_to_response('cosmid_detail.html', {'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book}, context_instance=RequestContext(request))
 
-
 def ContigDetail(request, contig_name):
     contig = Contig.objects.get(contig_name=contig_name)
     
@@ -345,8 +342,7 @@ class ORFListView (ListView):
     
 class ContigListView (ListView):
     model = Contig
-    template_name = 'contig_all.html'
-    
+    template_name = 'contig_all.html' 
   
 # List views for multi-table views (Kathy)
 
@@ -398,7 +394,6 @@ def CosmidEndTagCreate(request):
         cosmid_form = CosmidForm(instance=Cosmid())
         end_tag_formset = EndTagFormSet(instance=Cosmid())
     return render_to_response('cosmid_end_tag_add.html', {'cosmid_form': cosmid_form, 'end_tag_formset': end_tag_formset}, context_instance=RequestContext(request))
-
     
 # Add to ORF and Contig-ORF-Join tables (Kathy)
 @permission_required('mainsite.cosmid.can_add_contig_orf_join')
@@ -442,7 +437,6 @@ def ORFContigCreate(request):
         contig_orf_form = ContigORFJoinForm(instance=Contig_ORF_Join())
         orf_form = ORFForm(instance=ORF())
     return render_to_response('orf_contig_add.html', {'contig_orf_form': contig_orf_form, 'orf_form': orf_form, 'form_errors': form_errors}, context_instance=RequestContext(request))
-
 
 #Add contigs to a given pool; contigs from FASTA file (Kathy)
 @permission_required('mainsite.cosmid.can_add_contig')

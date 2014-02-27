@@ -77,10 +77,10 @@ class UploadContigsForm(forms.Form):
 
 #BLAST Sequence Form
 class BlastForm(forms.Form):
-    sequence = forms.CharField(label='sequence', required=True)
-    maxr = forms.CharField()
-    expectthreshold = forms.CharField()
-    wordsize = forms.CharField()
+    sequence = forms.CharField(label='Sequence', required=True)
+    maxr = forms.CharField(label='Number of returned hits')
+    expectthreshold = forms.CharField(label='E-value cut-off')
+    wordsize = forms.CharField(label='Word size')
     mmscore = forms.Select()
     gapc = forms.Select()
 
