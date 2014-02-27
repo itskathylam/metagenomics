@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <title>
+        {% block pagetitle%}
+        {% endblock %}
+    </title>
+{% endblock %}
+
+{% block content %}
+    {% block title%}
+    {% endblock %}
+    <form action="{% block urlform %}{% endblock %}" {% block otherform %}{% endblock %} method="POST">
+        {% csrf_token %}
+        <table>    
+            {% block form %}
+            {% endblock %}
+        </table>
+        <input type="submit" value="Add">
+    </form>
+    {% block errors %}
+    {% endblock %}
+{% endblock %}
+
+{% block second %}
+    <section id="second">
+        <h3>Quick Links</h3>
+        {% block link %}
+        {% endblock %}
+    </section>
+{% endblock %}

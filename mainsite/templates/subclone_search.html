@@ -1,12 +1,26 @@
-{% extends "base.html" %}
+{% extends "search.html" %}
 
-{% block content %}
-    <form action="{% url 'subclone-results' %}" method="get">
-        <table border = 1>
-            {{ form }}
-        </table>
-        <input type="submit" value="Search">
-    </form>
-    <a href="{% url 'subclone-list' %}">View All</a>
+{% block pagetitle%}
+    Search Subclones
+{% endblock %}
+
+{% block title %}
+    <img src="{{ STATIC_URL }}icons/search64.png"><h2 class="search">Search Subclones</h2>
+{% endblock %}
+
+{% block urlform %}
+    {% url 'subclone-results' %}
+{% endblock %}
+
+{% block methodform %}
+    get
+{% endblock %}
     
+{% block form %}
+    {{ form }}
+{% endblock %}
+
+
+{% block link %}
+<a href="{% url 'subclone-list' %}"><img class="viewall" src="{{ STATIC_URL }}icons/allblack.png" alt="all">View All</a><br>
 {% endblock %}

@@ -1,12 +1,21 @@
-{% extends "base.html" %}
+{% extends "add.html" %}
 
-{% block content %}
-    Add a new cosmid.<br><br>
-    <form action="{% url "cosmid-end-tag-add" %}" method="POST">{% csrf_token %}
-        <table border = 1>    
-            {{cosmid_form}}
-            {{end_tag_formset}}
-        </table>
-        <input type="submit" value="Add">
-    </form>
+{% block pagetitle%}
+    Add Cosmid
+{% endblock %}
+
+{% block title %}
+    <img src="{{ STATIC_URL }}icons/add64.png"><h2 class="add">Add Cosmid</h2>
+{% endblock %}
+
+{% block urlform %}
+    {% url "cosmid-end-tag-add" %}
+{% endblock %}
+
+{% block form %}
+    {{cosmid_form}}
+    {{end_tag_formset}}
+{% endblock %}
+
+{% block link %}
 {% endblock %}

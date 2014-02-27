@@ -1,8 +1,22 @@
-{% extends "base.html" %}
-{% block content %}
-    <form action="{% url 'blast-results' %}" method="post">
-        {% csrf_token %}
-        {{ blastform }}
-        <input type="submit" value="BLAST">
-    </form>    
+{% extends "search.html" %}
+
+{% block pagetitle%}
+    BLAST
+{% endblock %}
+    
+{% block title %}
+    <h2>BLAST</h2>
+{% endblock %}
+
+{% block urlform %}
+    {% url 'blast-results' %}
+{% endblock %}
+    
+{% block methodform %}
+    post
+{% endblock %}
+
+{% block form %}
+    {% csrf_token %}
+    {{ blastform }}
 {% endblock %}

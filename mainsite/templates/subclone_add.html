@@ -1,11 +1,20 @@
-{% extends "base.html" %}
+{% extends "add.html" %}
 
-{% block content %}
-    Add a new subclone.<br><br>
-    <form action="{% url "subclone-add" %}" method="POST">{% csrf_token %}
-        <table border = 1>    
-            {{form}}
-        </table>
-        <input type="submit" value="Add">
-    </form>
+{% block pagetitle%}
+    Add Subclone
+{% endblock %}
+
+{% block title %}
+    <img src="{{ STATIC_URL }}icons/add64.png"><h2 class="add">Add Subclone</h2>
+{% endblock %}
+
+{% block urlform %}
+    {% url "subclone-add" %}
+{% endblock %}
+
+{% block form %}
+    {{form}}
+{% endblock %}
+
+{% block link %}
 {% endblock %}

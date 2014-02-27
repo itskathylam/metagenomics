@@ -38,7 +38,8 @@ class SubcloneForm(ModelForm):
     class Meta:
         model = Subclone
 
-class OrfForm(ModelForm):
+#For ORF Search
+class OrfSearchForm(ModelForm):
     class Meta:
         model = ORF
         exclude = ('orf_sequence', 'contig',)

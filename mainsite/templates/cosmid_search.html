@@ -1,12 +1,25 @@
-{% extends "base.html" %}
+{% extends "search.html" %}
 
-{% block content %}
-    <a href="{% url 'cosmid-end-tag-list' %}"><img class="viewall" src="{{ STATIC_URL }}icons/allblack.png" alt="all">View All</a><br><br>
+{% block pagetitle%}
+    Search Cosmids
+{% endblock %}
+
+{% block title %}
+    <img src="{{ STATIC_URL }}icons/search64.png"><h2 class="search">Search Cosmids</h2>
+{% endblock %}
+
+{% block urlform %}
+    {% url 'cosmid-results' %}
+{% endblock %}
     
-    <form action="{% url 'cosmid-results' %}" method="get">
-        <table border = 1> 
-            {{ form }}
-        </table>
-        <input type="submit" value="Search">
-    </form>
+{% block methodform %}
+    get
+{% endblock %}
+
+{% block form %}
+    {{ form }}
+{% endblock %}
+
+{% block link %}
+<a href="{% url 'cosmid-end-tag-list' %}"><img class="viewall" src="{{ STATIC_URL }}icons/allblack.png" alt="all">View All</a><br>
 {% endblock %}

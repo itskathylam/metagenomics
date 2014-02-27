@@ -1,12 +1,20 @@
-{% extends "base.html" %}
+{% extends "add.html" %}
 
-{% block content %}
-    Add a new assay for a cosmid.<br><br>
-    <form action="{% url "cosmid-assay-add" %}" method="POST">
-        {% csrf_token %}
-        <table border = 1>    
-            {{form}}
-        </table>
-        <input type="submit" value="Add">
-    </form>
+{% block pagetitle%}
+    Add Cosmid Assay
+{% endblock %}
+
+{% block title %}
+    <img src="{{ STATIC_URL }}icons/add64.png"><h2 class="add">Add Cosmid Assay</h2>
+{% endblock %}
+
+{% block urlform %}
+{% url "cosmid-assay-add" %}
+{% endblock %}
+
+{% block form %}
+    {{form}}
+{% endblock %}
+
+{% block link %}
 {% endblock %}

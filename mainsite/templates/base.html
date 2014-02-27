@@ -76,10 +76,16 @@
             </nav>            
         </header>
         
-        <div id="main">
+        <section id="main">
             {% block content %}{% endblock %}
-        </div>
+        </section>
         
+        {% block second %}
+        {% endblock %}
+        
+        {% block third %}
+        {% endblock %}
+ 
         <footer id="footer">
             <p><a href="/about">About</a> <a href="/admin">Administration</a>
             </p>
