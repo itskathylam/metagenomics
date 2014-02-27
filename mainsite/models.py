@@ -82,6 +82,7 @@ class Cosmid(models.Model):
 
 class Primer(models.Model):
     primer_name = models.CharField(max_length=50, unique=True)
+    primer_pair = models.PositiveIntegerField()
     primer_sequence = models.CharField(max_length=200)
     cosmid = models.ManyToManyField(Cosmid, through='End_Tag')
     
