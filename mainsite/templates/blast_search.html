@@ -12,9 +12,7 @@
     {% url 'blast-results' %}
 {% endblock %}
     
-{% block methodform %}
-    post
-{% endblock %}
+{% block methodform %}post{% endblock %}
 
 {% block form %}
     {% csrf_token %}
