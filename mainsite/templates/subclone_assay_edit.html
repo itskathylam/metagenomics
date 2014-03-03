@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <h2><img src="{{ STATIC_URL }}icons/edit64.png" alt="">Edit Subclone Assay</h2>
     <form action="{% url 'subclone-assay-list' %}{{ subclone_assay.pk }}/" method="POST">
     {% csrf_token %}
         <table border = 1>    

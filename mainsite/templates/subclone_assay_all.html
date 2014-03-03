@@ -1,33 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-    {% if subclone_assay_list %}
-
-    <table border = 1>
-            <tr>
-                <th>Subclone Name</th>
-                <th>Expression Host</th>
-                <th>Substrate</th>
-                <th>Researcher Name</th>
-                <th>Km (mM)</th>
-                <th>pH Optimum</th>
-                <th>Temperature Optimum</th>
-                <th>Comments & Observations</th>
-            </tr>
-        {% for subclone_assay in subclone_assay_list %}
-            <tr>
-                <td><a href="{% url 'subclone-assay-list' %}{{ subclone_assay.pk }}">{{ subclone_assay.subclone.subclone_name }}</a></td>
-                <td>{{ subclone_assay.host.host_name}}</td>
-                <td>{{ subclone_assay.substrate.substrate_name }}</td>
-                <td>{{ subclone_assay.researcher.researcher_name }}</td>
-                <td>{{ subclone_assay.subclone_km}}</td>
-                <td>{{ subclone_assay.subclone_ph }}</td>
-                <td>{{ subclone_assay.subclone_temp }}</td>
-                <td>{{ subclone_assay.subclone_comments }}</td>
-            </tr>
-        {% endfor %}
-    </table>
+        {% if subclone_assay_list %}
+                <h2 class="list">Subclone Assays</h2>
+                <p>X number of results OR All records</p>
+                <table class="list">
+                    <tr>
+                        <th>Subclone Name</th>
+                        <th>Expression Host</th>
+                        <th>Substrate</th>
+                        <th>Researcher Name</th>
+                        <th>Km (mM)</th>
+                        <th>pH Optimum</th>
+                        <th>Temperature Optimum</th>
+                        <th>Comments & Observations</th>
+                    </tr>
+                {% for subclone_assay in subclone_assay_list %}
+                    <tr>
+                        <td><a href="{% url 'subclone-assay-list' %}{{ subclone_assay.pk }}">{{ subclone_assay.subclone.subclone_name }}</a></td>
+                        <td>{{ subclone_assay.host.host_name}}</td>
+                        <td>{{ subclone_assay.substrate.substrate_name }}</td>
+                        <td>{{ subclone_assay.researcher.researcher_name }}</td>
+                        <td>{{ subclone_assay.subclone_km}}</td>
+                        <td>{{ subclone_assay.subclone_ph }}</td>
+                        <td>{{ subclone_assay.subclone_temp }}</td>
+                        <td>{{ subclone_assay.subclone_comments }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
     {% else %}
         <p>0 Subclone assays found. <a href="{% url 'subclone-assay-search' %}">Try another search</a>.</p>
     {% endif%}

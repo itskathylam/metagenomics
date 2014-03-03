@@ -7,9 +7,11 @@
     </title>
 {% endblock %}
 
+{% block subtitle %}
+    <img src="{{ STATIC_URL }}icons/add64.png"><h2 class="add">{% block titletext %}{% endblock %}</h2>
+{% endblock %}
+
 {% block content %}
-    {% block title%}
-    {% endblock %}
     <form action="{% block urlform %}{% endblock %}" {% block otherform %}{% endblock %} method="POST">
         {% csrf_token %}
         <table>    

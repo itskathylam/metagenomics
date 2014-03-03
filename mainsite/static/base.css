@@ -149,14 +149,22 @@ nav ul ul ul {
     top: 0;
 }
 /* Main menu end*/
- 
+
+#title {
+    position: relative;
+    top: 125px;
+    display: block;
+    padding: 10px;
+    font-family: verdana, arial, sans-serif;}
  
 /* Main content section*/ 
 #main {
     float: left;
     font-family: verdana, arial, sans-serif;
     margin-left: 10px;
-    padding: 0 20px 20px 20px;
+    margin-right: 0px;
+    max-width:98%; /* added to stop large tables from overflowing past right hand side edge of footer and header. this isnt perfect. effectively the right margin is relative to total width. it should be a fixed size.*/
+    padding: 0;
     margin-top: 132px;
     margin-bottom: 5px;
     overflow: auto;
@@ -165,16 +173,32 @@ nav ul ul ul {
 
 #second {
     float: left;
-    margin-top: 225px;
+    margin-top: 135px;
     font-family: verdana, arial, sans-serif;
     margin-left: 10px;
     margin-bottom: 20px;
-    padding: 20px;
+    padding: 10px;
     border-radius: 4px;
     box-shadow: 3px 3px 5px #888;
     background-color: #eee;
 }
 
+#second a { /*style for links in secondary section
+    /*text-decoration: none;*/
+    color: #000;
+}
+
+#second a img {
+    position: relative;
+    top: 20px;
+    padding: 0;
+    margin-right: 5px;
+            margin-bottom: 10px;
+}
+#second h3 {
+    padding: 0;
+    margin: 0;
+}
 
 /* Login area in the top right of every page*/ 
 #user {
@@ -205,7 +229,12 @@ nav ul ul ul {
     text-align: center;
     line-height: 80px;
     z-index: -1;
+}
+
+#footer a {
     text-decoration: none;
+    color: #fff;
+    margin: 0 10px;
 }
 
 /* style for all paragraph fonts*/
@@ -240,7 +269,6 @@ table.search {
     font-size: 12px;
     border: 0px;
     border-spacing:5px;
-    border-color:#567832;
 }
 
 table.search td{
@@ -253,7 +281,80 @@ table.search th{
     padding:5px;
     border: 0px;
 }
+
+table.list td {
+    text-align: center;
+    padding: 0px; /* if this is set the padding is not a link. if its not there the cell looks to crowded. need to fix */
+    background-color: #EEEEEE;
+    border: 0px;
+    vertical-align: middle;
+}
+
+table.list td a {
+    display: inline-block;
+    width:100%;
+    height:100%;
+    text-decoration: none;
+    color: #000;
+}
+
+table.list tr:hover td {
+    background-color: #ddd;
+}
 /* style for submit buttons*/
 input[type=submit] {
-    width: 10em;  height: 3em;
+    width: 10em;
+    height: 3em;
+    margin: 20px;
 }
+
+/* for tabs on cosmid page */
+.tabs {
+  position: relative; 
+  min-height: 1500px;
+  clear: both;
+ /* width: 100%;*/
+ 
+  margin: 25px 0;
+}
+.tab {
+  float: left;
+}
+
+.tab-panel {
+    overflow: hidden;
+    position: relative;
+    display: inline;
+}
+
+.tab label.tab  {
+  background: #eee; 
+  padding: 10px; 
+  border: 1px solid #ccc; 
+  margin-left: -1px; 
+  position: relative;
+  left: 1px; 
+}
+.tab [type=radio] {
+ display: none; 
+}
+.content {
+ /* position: absolute;
+  top: 28px;
+  left: 0;
+  right: 0;
+  bottom: 0; */
+ float: left;  /*SWITCH WITH 5 ABOVE for this and width*/
+  width: 100%; 
+  background: white;
+  padding: 20px;
+  border: 1px solid #ccc; 
+}
+[type=radio]:checked ~ label {
+  background: white;
+  border-bottom: 1px solid white;
+  z-index: 2;
+}
+[type=radio]:checked ~ label ~ .content {
+  z-index: 1;  */
+/* for tabs on cosmid page */

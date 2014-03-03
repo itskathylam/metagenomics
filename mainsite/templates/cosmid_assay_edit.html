@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <h2><img src="{{ STATIC_URL }}icons/edit64.png" alt="edit">Edit Cosmid Assay</h2>
     <form action="{% url 'cosmid-assay-list' %}{{ cosmid_assay.pk }}/" method="POST">
     {% csrf_token %}
         <table border = 1>    

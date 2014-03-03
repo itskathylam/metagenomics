@@ -1,10 +1,9 @@
 {% extends "base.html" %}
-
 {% block content %}
-
     {% if cosmid_list %}
-
-    <table border = 1>
+    <h2 class="list">Cosmids</h2>
+    <p>X number of results OR All records</p>
+        <table class="list">
             <tr>
                 <th>Cosmid Name</th>
                 <th>Researcher Name</th>
@@ -19,15 +18,14 @@
         {% for cosmid in cosmid_list %}
             <tr>
                 <td><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.cosmid_name }}</a></td>
-                <td>{{ cosmid.researcher.researcher_name }}</td>
-                <td>{{ cosmid.library.library_name }}</td>
-                <td>{{ cosmid.host.host_name }}</td>
-                <td>{{ cosmid.screen.screen_name }}</td>
-                <td>{{ cosmid.ec_collection }}</td>
-                <td>{{ cosmid.pool.id }}</td>
+                <td><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.researcher.researcher_name }}</a></td>
+                <td><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.library.library_name }}</a></td>
+                <td><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.host.host_name }}</a></td>
+                <td><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.screen.screen_name }}</a></td>
+                <td><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.ec_collection }}</a></td>
+                <td><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.pool.id }}</a></td>
                 {% for end_tag in cosmid.end_tag_set.all %}
-                        <td><textarea rows="5" cols="50" readonly=true>{{ end_tag.end_tag_sequence }}</textarea></td>
-                        
+                        <td><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}"><textarea rows="5" cols="40" readonly=true>{{ end_tag.end_tag_sequence }}</textarea></a></td>
                 {% endfor %}
             </tr>
         {% endfor %}

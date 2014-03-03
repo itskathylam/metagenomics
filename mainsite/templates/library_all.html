@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-        <a href="/export/library" >Download CSV File</a>
-    <table border = 1>
+    <h2 class="list">Libraries</h2>
+    <table class="list">
             <tr>
                 <th>Library Name</th>
                 <th>NCBI Biosample ID</th>
@@ -20,4 +20,11 @@
             </tr>
         {% endfor %}
     </table>
+{% endblock %}
+
+{% block second %}
+    <section id="second">
+        <h3>Quick Links</h3>
+        <a href="/export/library"><img class="download" src="{{ STATIC_URL }}icons/download.png" alt="download">CSV File</a>
+    </section>
 {% endblock %}

@@ -1,13 +1,18 @@
-{% extends "base.html" %}
+{% extends "detail.html" %}
+{% block record %}
+    <h2><img src="{{ STATIC_URL }}icons/detail64.png" alt="">Subclone Assay</h2>
+    <table>
+        <tr><th>Subclone</th><td>{{ subclone_assay.subclone }}</td></tr>
+        <tr><th>Substrate</th><td>{{ subclone_assay.substrate }}</td></tr>
+        <tr><th>Researcher</th><td>{{ subclone_assay.researcher }}</td></tr>
+        <tr><th>Km</th><td>{{ subclone_assay.subclone_km }}</td></tr>
+        <tr><th>Optimum Temperature</th><td>{{ subclone_assay.subclone_temp }}</td></tr>
+        <tr><th>pH</th><td>{{ subclone_assay.subclone_ph}}</td></tr>
+        <tr><th>Comments</th><td>{{ subclone_assay.subclone_comments }}</td></tr>
+    </table>
+{% endblock %}
 
-{% block content %}
-{{ subclone_assay.subclone }} <br>
-{{ subclone_assay.substrate }}<br>
-{{ subclone_assay.researcher }}<br>
-{{ subclone_assay.subclone_km }} <br>
-{{ subclone_assay.subclone_temp }}<br>
-{{ subclone_assay.subclone_ph}}<br>
-{{ subclone_assay.subclone_comments }}<br>
-
-<a href="/edit{% url 'subclone-assay-list' %}{{ subclone_assay.pk }}">Edit</a>
+{% block link %}
+    <a href="/edit{% url 'subclone-assay-list' %}{{ subclone_assay.pk }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit">Edit</a><br>
+    <a href="export/" ><img src="{{ STATIC_URL }}icons/download.png" alt="edit">CSV File</a><br>
 {% endblock %}

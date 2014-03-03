@@ -186,7 +186,7 @@ def SubcloneAssayResults(request):
     subclone_ph = request.GET.get('subclone_ph')
     subclone_comments = request.GET.get('subclone_comments')
     
-    values = { 'subclone' : subclone, 'host': host, 'researcher' : researcher, 'substrate': substrate, 'subclone_km': subclone_km, 'subclone_temp': subclone_temp, 'subclone_ph': subclone_ph, 'subclone_comments': subclone_comments}
+    values = { 'subclone' : subclone, 'host': host, 'researcher' : researcher, 'substrate': substrate, 'subclone_km': subclone_km, 'subclone_temp': subclone_temp, 'subclone_ph': subclone_ph, 'subclone_comments__icontains': subclone_comments}
     args = {}
     for k, v in values.items():
         if v:
@@ -204,7 +204,7 @@ def CosmidAssayResults(request):
     cosmid_ph = request.GET.get('cosmid_ph')
     cosmid_comments = request.GET.get('cosmid_comments')
     
-    values = {'cosmid': cosmid, 'host': host, 'researcher' : researcher, 'substrate': substrate, 'cosmid_km': cosmid_km, 'cosmid_temp': cosmid_temp, 'cosmid_ph': cosmid_ph, 'cosmid_comments': cosmid_comments}
+    values = {'cosmid': cosmid, 'host': host, 'researcher' : researcher, 'substrate': substrate, 'cosmid_km': cosmid_km, 'cosmid_temp': cosmid_temp, 'cosmid_ph': cosmid_ph, 'cosmid_comments__icontains': cosmid_comments}
     args = {}
     for k, v in values.items():
         if v:
