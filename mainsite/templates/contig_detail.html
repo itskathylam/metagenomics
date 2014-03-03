@@ -1,31 +1,52 @@
-{% extends "base.html" %}
+{% extends "detail.html" %}
 
-{% block content %}
-<h3>Contig {{ name }}</h3>
-Pool: {{ pool }} <br>
-Accession: {{ accession }}<br>
-Associated Cosmids:
-<ul>
-{% for c in cosmids %}
-    <li><a href="{% url 'cosmid-end-tag-list' %}{{ c.cosmid_name }}">{{ c.cosmid_name }}</a></li>
-{% endfor %}
-</ul>
-<label>Sequence:<br>
-<textarea readonly rows="20" cols="70" onclick="this.focus();this.select()">{{ sequence }}</textarea></label><br>
-<img src="{{ STATIC_URL }}data1.png"><br>
-{% for orf in orfresults %}
-    ORF Accession: {{ orf.orf_accession }}<br>
-    Start: {{ orf.start }}<br>
-    Stop: {{ orf.stop }}<br>
-    {% for s in orfseq %}
-        {% if s.id = orf.orf_id %}
-            ID: <a href="{% url 'orf-list' %}{{ s.id }}">{{s.id }}</a><br>
-            Annotation: {{ s.annotation }}<br>
-            <label>Sequence: <br>
-            <textarea rows="4" cols"10" readonly=true>{{ s.orf_sequence }}</textarea></label><br><br>
-        {% endif %}
+{% block record %}
+    <h3>Contig {{ name }}</h3>
+    Pool: {{ pool }} <br>
+    Accession: {{ accession }}<br>
+    Associated Cosmids:
+    <ul>
+    {% for c in cosmids %}
+        <li><a href="{% url 'cosmid-end-tag-list' %}{{ c.cosmid_name }}">{{ c.cosmid_name }}</a></li>
     {% endfor %}
-{% endfor %}
+    </ul>
+    <label>Sequence:<br>
+    <textarea readonly rows="20" cols="70" onclick="this.focus();this.select()">{{ sequence }}</textarea></label><br>
+{% endblock %}
 
-<a href="">Edit</a>
+{% block orfimg %}
+    <div style=width:100%;overflow:auto;border-style:solid;border-width:thin;>
+    <img src="{{ STATIC_URL }}scaffold177_1-F1.png" alt="ORF's for Contig"><br>
+    </div>
+    <p>Open reading frames in {{ name }}</p>
+    <table>
+        <tr>
+        <th>Accession</th>
+        <th>Start</th>
+        <th>Stop</th>
+        <th>ID</th>
+        <th>Annotation</th>
+        <th>Sequence</th>
+        </tr>
+    {% for orf in orfresults %}
+        <tr>
+            <td>{{ orf.orf_accession }}</td>
+            <td>{{ orf.start }}</td>
+            <td>{{ orf.stop }}</td>
+        {% for s in orfseq %}
+            {% if s.id = orf.orf_id %}
+                <td><a href="{% url 'orf-list' %}{{ s.id }}">{{s.id }}</a></td>
+                <td>{{ s.annotation }}</td>
+                <td>
+                    <textarea rows="4" cols"10" readonly=true>{{ s.orf_sequence }}</textarea>
+                </td>   
+            {% endif %}
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}
+
+{% block link %}
+<a href="/edit{% url 'contig-list' %}{{ key }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit contig">Edit {{ name }}</a>
 {% endblock %}

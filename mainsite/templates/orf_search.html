@@ -1,10 +1,22 @@
-{% extends "base.html" %}
+{% extends "search.html" %}
 
-{% block content %}
-    <form action="{% url 'orf-results' %}" method="get">
-        {{ form }}
-        <input type="submit" value="Search">
-    </form>
-    <a href="{% url 'orf-list' %}">View All</a>
+{% block urlform %}
+    {% url 'orf-results' %}
+{% endblock %}
+
+{% block title %}
+    <img src="{{ STATIC_URL }}icons/search64.png"><h2 class="search">Search ORFs</h2>
+{% endblock %}
     
+    <img src="{{ STATIC_URL }}icons/search64.png"><h2 class="search">
+{% block methodform %}
+    get
+{% endblock %}
+
+{% block form %}
+    {{ form }}
+{% endblock %}
+
+{% block link %}
+<a href="{% url 'orf-list' %}"><img class="viewall" src="{{ STATIC_URL }}icons/allblack.png" alt="all">View All</a><br>
 {% endblock %}

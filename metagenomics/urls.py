@@ -21,6 +21,9 @@ urlpatterns = patterns('',
     url(r'^tools/contig', ContigTool, name='contig'),
     url(r'^tools/pooling', Pooling, name='pool'),
     
+    url(r'^blast/search', BlastSearch, name='blast'),
+    url(r'^blast/results', BlastResults, name='blast-results'),
+    
     #Detail views
     url(r'^cosmid/(?P<cosmid_name>[\w-]+)/$', CosmidDetail, name='cosmid-detail'),
     url(r'^assay/subclone/(?P<pk>\d+)/$', SubcloneAssayDetailView.as_view(), name='sublcone-assay-detail'),
@@ -35,6 +38,10 @@ urlpatterns = patterns('',
     url(r'^edit/assay/cosmid/(?P<pk>\d+)$', CosmidAssayEditView.as_view(), name='cosmid-assay-edit'),
     url(r'^edit/assay/subclone/(?P<pk>\d+)$', SubcloneAssayEditView.as_view(), name='subclone-assay-edit'),
     url(r'^edit/orf/(?P<pk>\d+)$', ORFEditView.as_view(), name='orf-edit'),
+    url(r'^edit/contig/(?P<pk>\d+)$', ContigEditView.as_view(), name='contig-edit'),
+    
+    #Delete views (DeleteViews)
+    url(r'^delete/contig-orf/(?P<pk>\d+)$', ContigORFDeleteView.as_view(), name='contig-orf-delete'),
     
     #Search views
     url(r'^search/cosmid/$', CosmidSearchView, name='cosmid-search'),

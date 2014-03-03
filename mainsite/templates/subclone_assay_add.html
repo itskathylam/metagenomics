@@ -1,10 +1,20 @@
-{% extends "base.html" %}
+{% extends "add.html" %}
 
-{% block content %}
-    <form action="{% url "subclone-assay-add" %}" method="POST">{% csrf_token %}
-        <table border = 1>    
-            {{form}}
-        </table>
-        <input type="submit">
-    </form>
+{% block pagetitle%}
+    Add Subclone Assay
+{% endblock %}
+
+{% block title %}
+    <img src="{{ STATIC_URL }}icons/add64.png"><h2 class="add">Add Subclone Assay</h2>
+{% endblock %}
+
+{% block urlform %}
+    {% url "subclone-assay-add" %}
+{% endblock %}
+
+{% block form %}
+    {{form}}
+{% endblock %}
+
+{% block link %}
 {% endblock %}

@@ -1,0 +1,20 @@
+{% extends "search.html" %}
+
+{% block pagetitle%}
+    BLAST
+{% endblock %}
+    
+{% block title %}
+    <h2>BLAST</h2>
+{% endblock %}
+
+{% block urlform %}
+    {% url 'blast-results' %}
+{% endblock %}
+    
+{% block methodform %}post{% endblock %}
+
+{% block form %}
+    {% csrf_token %}
+    {{ blastform }}
+{% endblock %}

@@ -1,14 +1,27 @@
-{% extends "base.html" %}
+{% extends "add.html" %}
 
-{% block content %}
-     {% for key,value in form_errors.items %}
+{% block pagetitle%}
+    Add ORF
+{% endblock %}
+
+{% block title %}
+    <img src="{{ STATIC_URL }}icons/add64.png"><h2 class="add">Add Open Reading Frame</h2>
+{% endblock %}
+
+{% block urlform %}
+    {% url "orf-contig-add" %}
+{% endblock %}
+
+{% block form %}
+    {{contig_orf_form}}
+    {{orf_form}}
+{% endblock %}
+
+{% block errors %}
+    {% for key,value in form_errors.items %}
         {{ value }}
     {% endfor %}
-    <form action="{% url "orf-contig-add" %}" method="POST">{% csrf_token %}
-        <table border = 1>    
-            {{contig_orf_form}}
-            {{orf_form}}
-        </table>
-        <input type="submit">
-    </form>
+{% endblock %}
+
+{% block link %}
 {% endblock %}

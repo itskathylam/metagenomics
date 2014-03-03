@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="{% url 'contig-list' %}{{ contig.pk }}/" method="POST">
+    {% csrf_token %}
+        <table border = 1>
+            <tr><td> Contig Name </td><td>{{contig.contig_name}}</td></tr>
+            <tr><td> Pool ID </td><td>{{contig.pool_id}}</td></tr>
+            <tr><td> Contig Sequence </td><td><textarea rows="5" cols="100" readonly=true>{{ contig.contig_sequence }}</textarea></td></tr>
+            {{form}}
+        </table>
+        <input type="submit">
+    </form>
+{% endblock %}

@@ -22,7 +22,7 @@
 {% endfor %}
 {% for list in contigs %}
     <h3>Contig: <a href="/contig/{{ list.contig_name }}">{{ list.contig_name }}</a></h3><br>
-    Pool: {{ list.pool }}<br>
+    Pool: {{ list.pool }}<br>   
     Accession: {{ list.contig_accession }}<br>
     <label>Sequence: <br>
     <textarea rows="15" cols="70" readonly=true>{{ list.contig_sequence }}</textarea></label><br><br>
@@ -35,7 +35,8 @@
             Stop: {{ orf.stop }}<br>
             {% for s in seq %}
                 {% if s.id = orf.orf_id %}
-                    ORF Annotation: {{ s.annotation }}<br>
+                    ID: <a href="{% url 'orf-list' %}{{ s.id }}">{{ s.id }}</a><br>
+                    Annotation: {{ s.annotation }}<br>
                     <label>Sequence: <br>
                     <textarea rows="4" cols"10" readonly=true>{{ s.orf_sequence }}</textarea></label><br><br>
                 {% endif %}

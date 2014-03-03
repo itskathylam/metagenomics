@@ -15,9 +15,9 @@
             
             <nav>
             <ul>
-                <li><a href="/">Home</a></li>
+                <li><a href="/">Home<img src="{{ STATIC_URL }}icons/home.png"alt="home"></a></li>
                 {% if perms.mainsite.can_add_cosmid %}
-                <li><a href="/add/">Add</a>
+                <li><a href="">Add<img src="{{ STATIC_URL }}icons/add.png"alt="add"></a>
                     <ul>
                         <li><a href="{% url 'cosmid-end-tag-add' %}">Cosmid</a></li>
                         <li><a href="{% url 'subclone-add' %}">Subclone</a></li>
@@ -28,17 +28,17 @@
                     </ul>
                 </li>
                 {% endif %}
-                <li><a href="/search">Search</a>
+                <li><a href="/search">Search<img src="{{ STATIC_URL }}icons/search.png"alt="search"></a>
                     <ul>
                         <li><a href="{% url 'cosmid-search' %}">Cosmid</a></li>
                         <li><a href="{% url 'subclone-search' %}">Subclone</a></li>
                         <li><a href="{% url 'cosmid-assay-search' %}">Cosmid Assay</a></li>
                         <li><a href="{% url 'subclone-assay-search' %}">Subclone Assay</a></li>
                         <li><a href="{% url 'orf-search' %}">ORF</a></li>
-                        <li><a href="">Sequence (Local BLAST)</a></li>
+                        <li><a href="{% url 'blast' %}">Sequence (Local BLAST)</a></li>
                     </ul>
                 </li>
-                <li><a href="/viewall/">View All</a>
+                <li><a href="/viewall">View All<img src="{{ STATIC_URL }}icons/all.png"alt="all"></a>
                     <ul>
                         <li><a href="{% url 'cosmid-end-tag-list' %}">Cosmids</a></li>
                         <li><a href="{% url 'subclone-list' %}">Subclones</a></li>
@@ -60,13 +60,13 @@
                         </li>
                     </ul>
                 </li>
-                <li><a href="/tools">Tools</a>
+                <li><a href="/tools">Tools<img src="{{ STATIC_URL }}icons/tools.png"alt="tools"></a>
                     <ul>
                         <li><a href="/tools/contig">Contig Retrieval Tool</a></li>                  
                         <li><a href="/tools/pooling">Pooling Tool</a></li>           
                     </ul>
                 </li>
-                <li><a href="">Help</a>
+                <li><a href="">Help<img src="{{ STATIC_URL }}icons/help.png"alt="help"></a>
                     <ul>
                         <li><a href="/help/faq">FAQ</a></li>                  
                         <li><a href="/help/userdoc">User Documentation</a></li>           
@@ -76,10 +76,16 @@
             </nav>            
         </header>
         
-        <div id="main">
+        <section id="main">
             {% block content %}{% endblock %}
-        </div>
+        </section>
         
+        {% block second %}
+        {% endblock %}
+        
+        {% block third %}
+        {% endblock %}
+ 
         <footer id="footer">
             <p><a href="/about">About</a> <a href="/admin">Administration</a>
             </p>
