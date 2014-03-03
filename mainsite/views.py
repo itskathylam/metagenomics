@@ -14,8 +14,6 @@ from mainsite.forms import *
 from Bio import SeqIO
 import StringIO
 import pdb
-#pdb.set_trace()
-
 
 
 #Main, About etc
@@ -49,27 +47,31 @@ def ContigTool(request):
 def Contig_tool_test(request):
     pool_id = 1
     contigs = Contig.objects.filter(pool = pool_id).values_list('contig_name', 'contig_sequence')
-    #forward_tags =
-    #reverse_tags =
-    cosmids = Cosmid.objects.filter(pool = pool_id).values('cosmid_name')
-    p_id = End_Tag.objects.values(cosmid = cosmids.id, 'primer')
+    cosmids = Cosmid.objects.filter(pool = pool_id).values_list('id', 'cosmid_name')
+    seqs = End_Tag.objects.select_related('cosmids').values_list('id', 'primer', 'end_tag_sequence')
+    p_name = Primer.objects.select_related('primer').values_list('id','primer_name')
 
-    return HttpResponse(write_fasta(cosmids), write_csv(cosmids))
+    return HttpResponse(write_fasta(contigs), write_csv(cosmids, p_name, seqs))
 
     import subprocess
     return HttpResponse(subprocess.call(['perl','./endtag.pl', 'csv_test.csv', 'fasta_test.fa']))
     
-def write_csv(query):
-    import re
+def write_csv(cosmids, p_name, seqs):
     with open('./csv_test.csv', 'w') as f:
         csv = File(f)
-        query = re.findall('\'(.+?)\'', str(query))
-        it = iter(query)
-        for entry in it:
-            csv.write(entry)
-            csv.write(',')
-            csv.write(next(it))
-            csv.write(',\r\n')
+        seqs = list(seqs)
+        cos = dict(cosmids)
+        p_name = dict(p_name)
+        for x, y, z in seqs:
+            for c_id, csmd in cos.iteritems():
+                for p_id, prmr in p_name.iteritems():
+                    if y == c_id and x == p_id:
+                        csv.write(csmd)
+                        csv.write(',')
+                        csv.write(prmr)
+                        csv.write(',')
+                        csv.write(z)
+                        csv.write('\r\n')
         csv.closed
         f.closed
 
@@ -78,19 +80,15 @@ def write_fasta(contigs):
     import re
     with open('./fasta_test.fa', 'w') as f:
         fasta = File(f)
-        contigs = re.findall('\'(.+?)\'', str(contigs))
-        it = iter(contigs)
-        for contig in it:
+        contigs = re.findall('.*?\'(.+?)\'.*?\'(.+?)\'', str(contigs))
+        for contig, seq in contigs:
             fasta.write('>')
             fasta.write(contig)
             fasta.write('\r\n')
-            fasta.write(next(it))
+            fasta.write(seq)
             fasta.write('\r\n')
         fasta.closed
         f.closed
- 
-#pdb.set_trace()
-
 
 def Pooling(request):
     return (render(request, 'pooling.html'))
