@@ -62,19 +62,17 @@ def BlastSearch(request):
     return render_to_response('blast_search.html', {'blastform': blastform}, context_instance=RequestContext(request))
 
 def BlastResults(request):
-    #get all names and sequences in the database  
-    names = Contig.objects.all().values('contig_name')
-    sequences = Contig.objects.all().values('contig_sequence')
     
-    #create seqrecord object for each name-seq pair and write to file
+    #get all contig objects in the database, create seqrecord for each object, and write to file
     outfh = open("blast_contigdb.fa", "w")
-    for i in range(0, len(names)):
-        seqrecord = SeqRecord(Seq(sequences[i]['contig_sequence'], generic_dna), id=names[i]['contig_name'])
+    contigs = Contig.objects.all().values('contig_name', 'contig_sequence')
+    for contig in contigs:
+        seqrecord = SeqRecord(Seq(contig['contig_sequence'], generic_dna), id=contig['contig_name'])
         SeqIO.write(seqrecord, outfh, "fasta")
     outfh.close()
     
     #makeblastdb to create BLAST database of files from fastafile
-    system("/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin/makeblastdb -in blast_contigdb.fa -out contigdb -dbtype nucl")
+    system("makeblastdb -in blast_contigdb.fa -out contigdb -dbtype nucl")
     
     #get query sequence type of blast and parameters, and write to file
     seq = request.POST.get('sequence')
@@ -86,8 +84,6 @@ def BlastResults(request):
     #run blast command with query, parameters, and created database
     #blast options? => blastn, megablast, dcmega...?
     cmd = NcbiblastnCommandline(query="blast_query.fa", db="contigdb", evalue=1, outfmt=5, out="test.xml")
-    #have to set path vars for blastn, to be able to use this; bash command on next line
-    #export PATH=$PATH:/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin
     system(str(cmd))
     
     #have to know when its done to be able to continue?
