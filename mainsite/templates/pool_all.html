@@ -8,6 +8,7 @@
                 <th>Service Provider</th>
                 <th>NCBI SRA Accession</th>
                 <th>Maximum Number Clones</th>
+                <th>Pool Comments</th>
             </tr>
         {% for pooled_sequencing in pooled_sequencing_list %}
             <tr>
@@ -15,6 +16,7 @@
                 <td>{{ pooled_sequencing.service_provider }}</td>
                 <td>{{ pooled_sequencing.ncbi_sra_accession }}</td>
                 <td>{{ pooled_sequencing.max_number}}</td>
+                <td>{{ pooled_sequencing.pool_comments}}</td>
             </tr>
         {% endfor %}
     </table>

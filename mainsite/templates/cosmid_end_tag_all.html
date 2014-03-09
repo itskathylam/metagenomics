@@ -12,8 +12,10 @@
                 <th>Screen Name</th>
                 <th>E. coli Stock Location</th>
                 <th>Sequencing Pool ID (optional)</th>
+                <th>Cosmid Comments (optional)</th>
                 <th>End Tag 1 (optional)</th>
                 <th>End Tag 2 (optional)</th>
+                
             </tr>
         {% for cosmid in cosmid_list %}
             <tr>
@@ -24,12 +26,15 @@
                 <td><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.screen.screen_name }}</a></td>
                 <td><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.ec_collection }}</a></td>
                 <td><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.pool.id }}</a></td>
+                <td><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.cosmid_comments }}</a></td>
                 
                 {% for end_tag in cosmid.end_tag_set.all %}
                         <td>
                         <a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}"><textarea rows="5" cols="40" readonly=true>{{ end_tag.end_tag_sequence }}</textarea></a>
                         </td>
                 {% endfor %}
+                
+                
                 
             </tr>
         {% endfor %}

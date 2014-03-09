@@ -11,6 +11,7 @@
 <p>Original Media: {{ media }}</p>
 <p>Pool: {{ pool }}</p>
 <p>Lab Book Reference: {{ lab_book }}</p>
+<p>Cosmid Comments: {{ cosmid_comments }}</p>
 {% for endtag in endtags %}
     {% for p in primers %}
         {% if endtag.primer_id = p.id %}

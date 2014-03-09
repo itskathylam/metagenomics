@@ -14,7 +14,7 @@
             <tr>
                 <td>{{ library.library_name }}</td>
                 <td>{{ library.biosample }}</td>
-                <td>{{ library.vector.vector_name }}</td>
+                <td><a href="{% url 'vector-list' %}{{library.vector.id}}">{{ library.vector.vector_name }}</a></td>
                 <td>{{ library.number_clones }}</td>
                 <td>{{ library.insert_size }}</td>
             </tr>

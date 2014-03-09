@@ -1,0 +1,11 @@
+{% extends "detail.html" %}
+{% block record %}
+    <h2><img src="{{ STATIC_URL }}icons/detail64.png" alt="detail">Vector</h2>
+    <table>
+        <tr><th>ID</th><td>{{ vector.id }}</td></tr>
+        <tr><th>Vector Name</th><td>{{ vector.vector_name }}</td></tr>
+        <tr><th>Vector Type</th><td>{{ vector.vector_type }}</td></tr>
+        <tr><th>Vector Accession</th><td><a href="http://www.ncbi.nlm.nih.gov/nuccore/{{vector.vector_accession}}" target="_blank">{{ vector.vector_accession }}</a></td></tr>
+        <tr><th>Description</th><td>{{ vector.description }}</td></tr>
+    </table>
+{% endblock %}

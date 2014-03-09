@@ -56,6 +56,7 @@ class Pooled_Sequencing(models.Model):
     service_provider = models.CharField(max_length=200)
     ncbi_sra_accession = models.CharField(max_length=100, blank=True, null=True)
     max_number = models.PositiveIntegerField()
+    pool_comments = models.TextField(blank=True, null=True)
 
     def __unicode__(self):
         return self.pk
@@ -73,6 +74,7 @@ class Cosmid(models.Model):
     original_media = models.CharField(max_length=200, blank=True, null=True)
     pool = models.ForeignKey(Pooled_Sequencing, blank=True, null=True)
     lab_book_ref = models.CharField(max_length=100, blank=True, null=True)
+    cosmid_comments = models.TextField(blank=True, null=True)
     
     def __unicode__(self):
         return self.cosmid_name
@@ -147,6 +149,10 @@ class Subclone(models.Model):
     vector = models.ForeignKey(Vector)
     researcher = models.ForeignKey(Researcher)
     ec_collection = models.CharField(max_length=50)
+    primer1_name = models.CharField(max_length=50, blank=True, null=True)
+    primer1_seq = models.CharField(max_length=200, blank=True, null=True)
+    primer2_name = models.CharField(max_length=50, blank=True, null=True)
+    primer2_seq = models.CharField(max_length=200, blank=True, null=True)
     
     def __unicode__(self):
         return self.subclone_name

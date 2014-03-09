@@ -227,6 +227,7 @@ def CosmidDetail(request, cosmid_name):
     original_media = cosmid.original_media
     pool = cosmid.pool
     lab_book = cosmid.lab_book_ref
+    cosmid_comments = cosmid.cosmid_comments
     
     etresult = End_Tag.objects.filter(cosmid=c_id)
     pids = []
@@ -245,7 +246,7 @@ def CosmidDetail(request, cosmid_name):
         orfids.append(o.orf_id)
     seq = ORF.objects.filter(id__in=orfids)
     
-    return render_to_response('cosmid_detail.html', {'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book}, context_instance=RequestContext(request))
+    return render_to_response('cosmid_detail.html', {'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book, 'cosmid_comments': cosmid_comments}, context_instance=RequestContext(request))
 
 def ContigDetail(request, contig_name):
     contig = Contig.objects.get(contig_name=contig_name)
@@ -280,6 +281,10 @@ class SubcloneDetailView(DetailView):
     model = Subclone
     template_name = 'subclone_detail.html'
   
+class VectorDetailView(DetailView) :
+    model = Vector
+    template_name = 'vector_detail.html'
+    
 #edit views (updateview class)
 class CosmidEditView(UpdateView):
     model = Cosmid
