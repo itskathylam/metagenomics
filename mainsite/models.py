@@ -112,6 +112,8 @@ class Contig(models.Model):
     contig_sequence = models.TextField()
     cosmid = models.ManyToManyField(Cosmid)
     contig_accession = models.CharField(max_length=50, blank=True, null=True)
+    blast_hit_accession = models.CharField(max_length=50, blank=True, null=True)
+    image = models.BinaryField(blank=True, null=True)
     
     def __unicode__(self):
         return self.contig_name
@@ -136,7 +138,8 @@ class Contig_ORF_Join(models.Model):
     start = models.PositiveIntegerField()
     stop = models.PositiveIntegerField()
     orf_accession = models.CharField(max_length=50, blank=True, null=True)
-    db_generated = models.BooleanField()
+    predicted = models.BooleanField()
+    prediction_score = models.FloatField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'Contig & ORF Relationships'
