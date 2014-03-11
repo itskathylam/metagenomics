@@ -65,6 +65,7 @@ urlpatterns = patterns('',
     url(r'^vector/$', VectorListView.as_view(), name='vector-list'),
     url(r'^pool/$', PoolListView.as_view(), name='pool-list'),
     url(r'^substrate/$', SubstrateListView.as_view(), name='substrate-list'),
+    url(r'^antibiotic/$', AntibioticListView.as_view(), name='antibiotic-list'),
     
     #listviews for nonlookup tables
     url(r'^subclone/$', SubcloneListView.as_view(), name='subclone-list'),

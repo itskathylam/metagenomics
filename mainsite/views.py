@@ -510,6 +510,10 @@ def queryset_export_csv(qs):
 class PrimerListView(ListView):
     model = Primer
     template_name = 'primer_all.html'
+    
+class AntibioticListView(ListView):
+    model = Antibiotic
+    template_name = 'antibiotic_all.html'
 
 #retrieve PrimerListView queryset to export as csv
 def primer_queryset(response):

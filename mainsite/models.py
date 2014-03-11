@@ -171,11 +171,21 @@ class Substrate(models.Model):
     
     class Meta:
         ordering = ['substrate_name']
+
+class Antibiotic(models.Model):
+    antibiotic_name = models.CharField(max_length=100, unique=True)
     
+    def __unicode__(self):
+        return self.antibiotic_name
+    
+    class Meta:
+        ordering = ['antibiotic_name']
+
 class Cosmid_Assay(models.Model):
     cosmid = models.ForeignKey(Cosmid)
     host = models.ForeignKey(Host)
     substrate = models.ForeignKey(Substrate)
+    antibiotic = models.ForeignKey(Antibiotic, blank=True, null=True)
     researcher = models.ForeignKey(Researcher)
     cosmid_km = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     cosmid_temp = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
@@ -183,13 +193,14 @@ class Cosmid_Assay(models.Model):
     cosmid_comments = models.TextField(blank=True, null=True)
     
     class Meta:
-        unique_together = ("cosmid", "host", "substrate")
+        unique_together = ("cosmid", "host", "substrate", "antibiotic")
         verbose_name_plural = 'Cosmid Assays'
     
 class Subclone_Assay(models.Model):
     subclone = models.ForeignKey(Subclone)
     host = models.ForeignKey(Host)
     substrate = models.ForeignKey(Substrate)
+    antibiotic = models.ForeignKey(Antibiotic, blank=True, null=True)
     researcher = models.ForeignKey(Researcher)
     subclone_km = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     subclone_temp = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
@@ -197,5 +208,5 @@ class Subclone_Assay(models.Model):
     subclone_comments = models.TextField(blank=True, null=True)
     
     class Meta:
-        unique_together = ("subclone", "host", "substrate")
+        unique_together = ("subclone", "host", "substrate", "antibiotic")
         verbose_name_plural = 'Subclone Assays'
