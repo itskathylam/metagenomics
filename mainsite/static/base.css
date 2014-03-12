@@ -291,6 +291,7 @@ table.list td {
 }
 
 table.list td a {
+    vertical-align: center /* to center links in table cell --Kathy*/
     display: inline-block;
     width:100%;
     height:100%;

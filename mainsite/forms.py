@@ -15,10 +15,6 @@ EndTagFormSet = inlineformset_factory(Cosmid,
     can_delete=False,
     extra=2,
     form=CosmidForm)
-
-    #I dont know where these came from or where the are supposed to go. Sorry, I messed up the merge. -Phil
-    #model = End_Tag
-    #exclude = ('cosmid',)
     
 # For ORF-Contig add
 
@@ -31,7 +27,7 @@ class ORFForm(ModelForm):
 class ContigORFJoinForm(ModelForm):
     class Meta:
         model = Contig_ORF_Join
-        exclude = ('db_generated', 'orf', 'start', 'stop')
+        exclude = ('orf', 'start', 'stop', 'predicted', 'prediction_score')
 
 
 class SubcloneForm(ModelForm):
