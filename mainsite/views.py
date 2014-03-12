@@ -141,6 +141,10 @@ def OrfSearchView(request):
     form = OrfSearchForm
     return render_to_response('orf_search.html', {'form': form}, context_instance=RequestContext(request))
 
+def SearchAll(request):
+    form = AllSearchForm
+    return render_to_response('all_search.html', {'form': form}, context_instance=RequestContext(request))
+
 #search result views
 def CosmidResults(request):
     cosmid_name = request.GET.get('cosmid_name')
@@ -217,6 +221,10 @@ def OrfResults(request):
     results = ORF.objects.filter(annotation__icontains=annotation)
     return render_to_response('orf_all.html', {'orf_list': results}, context_instance=RequestContext(request))
 
+def AllResults(request):
+    results = watson.search(request.GET.get('query'))
+    return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': results}, context_instance=RequestContext(request))
+    
 #detail views
 def CosmidDetail(request, cosmid_name):
     cosmid = Cosmid.objects.get(cosmid_name=cosmid_name)
