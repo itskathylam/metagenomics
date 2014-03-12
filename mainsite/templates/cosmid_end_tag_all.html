@@ -12,30 +12,38 @@
                 <th>Screen Name</th>
                 <th>E. coli Stock Location</th>
                 <th>Sequencing Pool</th>
-                <th>Cosmid Comments</th>
                 <th>End Tag 1</th>
                 <th>End Tag 2</th>
-                
+                <th>Cosmid Comments</th>
             </tr>
         {% for cosmid in cosmid_list %}
             <tr>
-                <td><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.cosmid_name }}</a></td>
+                <td style="height:60px;"><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.cosmid_name }}</a></td>
                 <td>{{ cosmid.researcher.researcher_name }}</td>
                 <td>{{ cosmid.library.library_name }}</td>
                 <td>{{ cosmid.host.host_name }}</td>
                 <td>{{ cosmid.screen.screen_name }}</td>
                 <td>{{ cosmid.ec_collection }}</td>
                 <td>{{ cosmid.pool.id }}</td>
-                <td>{{ cosmid.cosmid_comments }}</td>
                 
-                {% for end_tag in cosmid.end_tag_set.all %}
+                {% if cosmid.end_tag_set.all|length == 2 %}
+                        {% for end_tag in cosmid.end_tag_set.all %}
                         <td>
-                        <a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}"><textarea rows="5" cols="40" readonly=true>{{ end_tag.end_tag_sequence }}</textarea></a>
+                        <a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}"><textarea rows="3" cols="20" readonly=true>{{ end_tag.end_tag_sequence }}</textarea></a>
                         </td>
-                {% endfor %}
-                
-                
-                
+                        {% endfor %}
+                {% elif cosmid.end_tag_set.all|length == 1 %}
+                        {% for end_tag in cosmid.end_tag_set.all %}
+                        <td>
+                        <a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}"><textarea rows="3" cols="20" readonly=true>{{ end_tag.end_tag_sequence }}</textarea></a>
+                        </td>
+                        {% endfor %}
+                        <td>&nbsp;</td>
+                {% else %}
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                {% endif %}
+                <td>{{ cosmid.cosmid_comments }}</td>
             </tr>
         {% endfor %}
     </table>
