@@ -8,6 +8,7 @@
                 <th>Cosmid Name</th>
                 <th>Expression Host</th>
                 <th>Substrate</th>
+                <th>Antibiotic</th>
                 <th>Researcher Name</th>
                 <th>Km (mM)</th>
                 <th>Temp Optimum</th>
@@ -19,6 +20,7 @@
                 <td><a href="{% url 'cosmid-assay-list' %}{{ cosmid_assay.pk }}">{{ cosmid_assay.cosmid.cosmid_name }}</a></td>
                 <td>{{ cosmid_assay.host.host_name}}</td>
                 <td>{{ cosmid_assay.substrate.substrate_name }}</td>
+                <td>{{ cosmid_assay.antibiotic.antibiotic_name }}</td>
                 <td>{{ cosmid_assay.researcher.researcher_name }}</td>
                 <td>{{ cosmid_assay.cosmid_km}}</td>
                 <td>{{ cosmid_assay.cosmid_ph }}</td>

@@ -11,7 +11,7 @@
             </tr>
         {% for vector in vector_list %}
             <tr>
-                <td>{{ vector.vector_name }}</td>
+                <td><a href="{% url 'vector-list' %}{{vector.id}}">{{ vector.vector_name }}</a></td>
                 <td>{{ vector.vector_type }}</td>
                 <td>{{ vector.vector_accession }}</td>
                 <td>{{ vector.description }}</td>

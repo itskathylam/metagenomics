@@ -9,6 +9,7 @@
                         <th>Subclone Name</th>
                         <th>Expression Host</th>
                         <th>Substrate</th>
+                        <th>Antibiotic</th>
                         <th>Researcher Name</th>
                         <th>Km (mM)</th>
                         <th>pH Optimum</th>
@@ -20,6 +21,7 @@
                         <td><a href="{% url 'subclone-assay-list' %}{{ subclone_assay.pk }}">{{ subclone_assay.subclone.subclone_name }}</a></td>
                         <td>{{ subclone_assay.host.host_name}}</td>
                         <td>{{ subclone_assay.substrate.substrate_name }}</td>
+                        <td>{{ subclone_assay.antibiotic.antibiotic_name }}</td>
                         <td>{{ subclone_assay.researcher.researcher_name }}</td>
                         <td>{{ subclone_assay.subclone_km}}</td>
                         <td>{{ subclone_assay.subclone_ph }}</td>

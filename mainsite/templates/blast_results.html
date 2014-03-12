@@ -2,13 +2,13 @@
 {% block content %}
 
 <p><b>Query:</b></p>
-<p><font face="courier" size=3pt>{{ query }}</font></p>
+<p><font face="courier" size=2pt>{{ query }}</font></p>
 <p><b>Results:</b></p>
 <table> 
 {% for result in results_list %}
     <tr>
             <td>
-                <font face="courier" size=3pt>
+                <font face="courier" size=2pt>
                     Contig Description: {{ result.title }}<br>
                     Contig Length: {{ result.length }}<br>
                     e-value: {{ result.evalue }}<br><br>
