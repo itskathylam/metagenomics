@@ -95,7 +95,18 @@ urlpatterns = patterns('',
     url(r'^export/vector', vector_queryset),
     url(r'^export/pool', pool_queryset),
     url(r'^export/substrate', substrate_queryset),
+    
+    #exportviews for non-lookup tables
+    url(r'^export/subclone', subclone_queryset),
+    url(r'^export/cosmid_assay', cosmid_assay_queryset),
+    url(r'^export/subclone_assay', subclone_assay_queryset),
+    url(r'^export/orf', orf_queryset),
+    url(r'^export/contig', contig_queryset),
+    
+    #exportviews for multi-table views
+    url(r'^export/cosmid_end_tag', cos_end_tag_queryset),
+    url(r'^export/orf_contig', orf_contig_queryset),
 
-    url(r'^test', Contig_tool_test),
+    url(r'^test', orf_data),
 
 )
