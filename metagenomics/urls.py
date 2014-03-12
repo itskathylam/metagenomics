@@ -31,6 +31,7 @@ urlpatterns = patterns('',
     url(r'^subclone/(?P<pk>\d+)/$', SubcloneDetailView.as_view(), name='subclone-detail'),
     url(r'^contig/(?P<contig_name>[\w-]+)/$', ContigDetail, name='contig-detail'),
     url(r'^orf/(?P<pk>\d+)/$', OrfDetailView.as_view(), name='orf-detail'),
+    url(r'^vector/(?P<pk>\d+)/$', VectorDetailView.as_view(), name='vector-detail'),
     
     #Edit views (Updateviews)
     url(r'^edit/cosmid/(?P<pk>\d+)$', CosmidEditView.as_view(), name='cosmid-edit'),
@@ -64,6 +65,7 @@ urlpatterns = patterns('',
     url(r'^vector/$', VectorListView.as_view(), name='vector-list'),
     url(r'^pool/$', PoolListView.as_view(), name='pool-list'),
     url(r'^substrate/$', SubstrateListView.as_view(), name='substrate-list'),
+    url(r'^antibiotic/$', AntibioticListView.as_view(), name='antibiotic-list'),
     
     #listviews for nonlookup tables
     url(r'^subclone/$', SubcloneListView.as_view(), name='subclone-list'),

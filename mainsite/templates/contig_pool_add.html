@@ -4,9 +4,8 @@
     Add Contigs
 {% endblock %}
 
-{% block title %}
-    <img src="{{ STATIC_URL }}icons/add64.png"><h2 class="add">Add Contigs</h2>
-    <p>Select a FASTA file of contigs to associate with a sequencing pool.</p>
+{% block titletext %}
+    Add Contigs
 {% endblock %}
 
 {% block urlform %}
@@ -18,6 +17,7 @@
 {% endblock %}
 
 {% block form %}
+        <p>Select a FASTA file of contigs to associate with a sequencing pool.</p>
     {{ contig_form }}
     {{ contig_upload_form }}
 {% endblock %}

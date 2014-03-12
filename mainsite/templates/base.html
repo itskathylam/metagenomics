@@ -76,6 +76,10 @@
             </nav>            
         </header>
         
+        <section id="title">
+          {% block subtitle %}
+          {% endblock %}
+        </section>
         <section id="main">
             {% block content %}{% endblock %}
         </section>
@@ -87,7 +91,10 @@
         {% endblock %}
  
         <footer id="footer">
-            <p><a href="/about">About</a> <a href="/admin">Administration</a>
+            <p><a href="/about">About</a>
+             {% if user.is_staff %}
+              <a href="/admin">Administration</a>
+             {% endif %}
             </p>
         </footer>  
   </body>

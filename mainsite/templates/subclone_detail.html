@@ -1,13 +1,21 @@
-{% extends "base.html" %}
+{% extends "detail.html" %}
+{% block record %}
+    <h2><img src="{{ STATIC_URL }}icons/detail64.png" alt="edit">Subclone {{ subclone.subclone_name }}</h2>
+    <table>
+        <tr><th>Subclone</th><td>{{ subclone.subclone_name }}</td></tr>
+        <tr><th>Cosmid</th><td>{{ subclone.cosmid }}</td></tr>
+        <tr><th>ORF</th><td>{{ subclone.orf }}</td></tr>
+        <tr><th>Vector</th><td>{{ subclone.vector }}</td></tr>
+        <tr><th>Researcher</th><td>{{ subclone.researcher }}</td></tr>
+        <tr><th>E. coli Collection</th><td>{{ subclone.ec_collection }}</td></tr>
+        <tr><th>Primer 1 Name</th><td>{{ subclone.primer1_name }}</td></tr>
+        <tr><th>Primer 1 Sequence</th><td>{{ subclone.primer1_seq }}</td></tr>
+        <tr><th>Primer 2 Name</th><td>{{ subclone.primer2_name }}</td></tr>
+        <tr><th>Primer 2 Sequence</th><td>{{ subclone.primer2_seq }}</td></tr>
+    </table>
+{% endblock %}
 
-{% block content %}
-
-{{ subclone.subclone_name }} <br>
-{{ subclone.cosmid }}<br>
-{{ subclone.orf }}<br>
-{{ subclone.vector }} <br>
-{{ subclone.researcher }}<br>
-{{ subclone.ec_collection }}<br>
-
-<a href="/edit{% url 'subclone-list' %}{{ subclone.pk }}">Edit</a>
+{% block link %}
+    <a href="/edit{% url 'subclone-list' %}{{ subclone.pk }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit">Edit</a><br>
+    <a href="export/" ><img src="{{ STATIC_URL }}icons/download.png" alt="edit">CSV File</a><br>
 {% endblock %}

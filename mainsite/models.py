@@ -56,6 +56,7 @@ class Pooled_Sequencing(models.Model):
     service_provider = models.CharField(max_length=200)
     ncbi_sra_accession = models.CharField(max_length=100, blank=True, null=True)
     max_number = models.PositiveIntegerField()
+    pool_comments = models.TextField(blank=True, null=True)
 
     def __unicode__(self):
         return self.pk
@@ -73,6 +74,7 @@ class Cosmid(models.Model):
     original_media = models.CharField(max_length=200, blank=True, null=True)
     pool = models.ForeignKey(Pooled_Sequencing, blank=True, null=True)
     lab_book_ref = models.CharField(max_length=100, blank=True, null=True)
+    cosmid_comments = models.TextField(blank=True, null=True)
     
     def __unicode__(self):
         return self.cosmid_name
@@ -110,6 +112,8 @@ class Contig(models.Model):
     contig_sequence = models.TextField()
     cosmid = models.ManyToManyField(Cosmid)
     contig_accession = models.CharField(max_length=50, blank=True, null=True)
+    blast_hit_accession = models.CharField(max_length=50, blank=True, null=True)
+    image = models.BinaryField(blank=True, null=True)
     
     def __unicode__(self):
         return self.contig_name
@@ -134,7 +138,8 @@ class Contig_ORF_Join(models.Model):
     start = models.PositiveIntegerField()
     stop = models.PositiveIntegerField()
     orf_accession = models.CharField(max_length=50, blank=True, null=True)
-    db_generated = models.BooleanField()
+    predicted = models.BooleanField()
+    prediction_score = models.FloatField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'Contig & ORF Relationships'
@@ -147,6 +152,10 @@ class Subclone(models.Model):
     vector = models.ForeignKey(Vector)
     researcher = models.ForeignKey(Researcher)
     ec_collection = models.CharField(max_length=50)
+    primer1_name = models.CharField(max_length=50, blank=True, null=True)
+    primer1_seq = models.CharField(max_length=200, blank=True, null=True)
+    primer2_name = models.CharField(max_length=50, blank=True, null=True)
+    primer2_seq = models.CharField(max_length=200, blank=True, null=True)
     
     def __unicode__(self):
         return self.subclone_name
@@ -162,11 +171,21 @@ class Substrate(models.Model):
     
     class Meta:
         ordering = ['substrate_name']
+
+class Antibiotic(models.Model):
+    antibiotic_name = models.CharField(max_length=100, unique=True)
     
+    def __unicode__(self):
+        return self.antibiotic_name
+    
+    class Meta:
+        ordering = ['antibiotic_name']
+
 class Cosmid_Assay(models.Model):
     cosmid = models.ForeignKey(Cosmid)
     host = models.ForeignKey(Host)
     substrate = models.ForeignKey(Substrate)
+    antibiotic = models.ForeignKey(Antibiotic, blank=True, null=True)
     researcher = models.ForeignKey(Researcher)
     cosmid_km = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     cosmid_temp = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
@@ -174,13 +193,14 @@ class Cosmid_Assay(models.Model):
     cosmid_comments = models.TextField(blank=True, null=True)
     
     class Meta:
-        unique_together = ("cosmid", "host", "substrate")
+        unique_together = ("cosmid", "host", "substrate", "antibiotic")
         verbose_name_plural = 'Cosmid Assays'
     
 class Subclone_Assay(models.Model):
     subclone = models.ForeignKey(Subclone)
     host = models.ForeignKey(Host)
     substrate = models.ForeignKey(Substrate)
+    antibiotic = models.ForeignKey(Antibiotic, blank=True, null=True)
     researcher = models.ForeignKey(Researcher)
     subclone_km = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     subclone_temp = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
@@ -188,5 +208,5 @@ class Subclone_Assay(models.Model):
     subclone_comments = models.TextField(blank=True, null=True)
     
     class Meta:
-        unique_together = ("subclone", "host", "substrate")
+        unique_together = ("subclone", "host", "substrate", "antibiotic")
         verbose_name_plural = 'Subclone Assays'

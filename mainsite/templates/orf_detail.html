@@ -1,9 +1,14 @@
-{% extends "base.html" %}
+{% extends "detail.html" %}
+{% block record %}
+    <h2><img src="{{ STATIC_URL }}icons/detail64.png" alt="detail">ORF</h2>
+    <table>
+        <tr><th>ID</th><td>{{ orf.id }}</td></tr>
+        <tr><th>Annotation</th><td>{{ orf.annotation }}</td></tr>
+        <tr><th>Sequence</th><td><textarea rows="10" cols="50" readonly=true>{{ orf.orf_sequence }}</textarea></td></tr>
+    </table>
+{% endblock %}
 
-{% block content %}
-ID: {{ orf.id }} <br>
-<label>Sequence<textarea rows="10" cols="50" readonly=true>{{ orf.orf_sequence }}</textarea></label><br>
-Annotation: {{ orf.annotation }}<br>
-
-<a href="/edit{% url 'orf-list' %}{{ orf.id }}">Edit</a>
+{% block link %}
+    <a href="/edit{% url 'orf-list' %}{{ orf.id }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit">Edit</a><br>
+    <a href="export/" ><img src="{{ STATIC_URL }}icons/download.png" alt="edit">CSV File</a><br>
 {% endblock %}

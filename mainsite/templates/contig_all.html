@@ -1,13 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
+        
         <a href="/export/contig" >Download CSV File</a>
     <table border = 1>
+    <h2 class="list">Contigs</h2>
+    <p>X number of results OR All records</p>
+    <table class="list">
             <tr>
                 <th>Contig Name</th>
                 <th>Pool ID</th>
                 <th>Contig Sequence</th>
                 <th>Contig NCBI Accession</th>
+                <th>BLAST Hit NCBI Accession</th>
+                <th>Image</th>
+                
             </tr>
         {% for contig in contig_list %}
             <tr>
@@ -15,6 +22,8 @@
                 <td>{{ contig.pool_id}}</td>
                 <td><textarea rows="5" cols="100" readonly=true>{{ contig.contig_sequence }}</textarea></td>
                 <td>{{ contig.contig_accession }}</td>
+                <td>{{ contig.blast_hit_accession }}</td>
+                <td>{{ contig.image }}</td>
             </tr>
         {% endfor %}
     </table>

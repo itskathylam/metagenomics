@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-        <a href="/export/primer" ><img class="download" src="{{ STATIC_URL }}icons/download.png" alt="download">CSV File</a><br><br>
-    <table border = 1>
+    <h2 class="list">Primers</h2>
+    <table class="list">
             <tr>
                 <th>Primer Name</th>
                 <th>Primer Pair</th>
@@ -16,4 +16,11 @@
             </tr>
         {% endfor %}
     </table>
+{% endblock %}
+
+{% block second %}
+    <section id="second">
+        <h3>Quick Links</h3>
+        <a href="/export/primer"><img class="download" src="{{ STATIC_URL }}icons/download.png" alt="download">CSV File</a>
+    </section>
 {% endblock %}

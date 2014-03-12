@@ -137,6 +137,7 @@ def orf_data(request):
     contig = Contig.objects.filter(cosmid = cos_id).values_list('contig_name', 'contig_sequence')
     orfs = Contig_ORF_Join.objects.select_related('contigs').filter(predicted = '1').values_list('id', 'start', 'stop', 'orf_accession', 'prediction_score')
     anno = ORF.objects.select_related('contigs').values_list('orf_sequence', 'annotation')
+    pdb.set_trace()
 
 def Pooling(request):
     return (render(request, 'pooling.html'))
@@ -147,19 +148,17 @@ def BlastSearch(request):
     return render_to_response('blast_search.html', {'blastform': blastform}, context_instance=RequestContext(request))
 
 def BlastResults(request):
-    #get all names and sequences in the database  
-    names = Contig.objects.all().values('contig_name')
-    sequences = Contig.objects.all().values('contig_sequence')
     
-    #create seqrecord object for each name-seq pair and write to file
+    #get all contig objects in the database, create seqrecord for each object, and write to file
     outfh = open("blast_contigdb.fa", "w")
-    for i in range(0, len(names)):
-        seqrecord = SeqRecord(Seq(sequences[i]['contig_sequence'], generic_dna), id=names[i]['contig_name'])
+    contigs = Contig.objects.all().values('contig_name', 'contig_sequence')
+    for contig in contigs:
+        seqrecord = SeqRecord(Seq(contig['contig_sequence'], generic_dna), id=contig['contig_name'])
         SeqIO.write(seqrecord, outfh, "fasta")
     outfh.close()
     
     #makeblastdb to create BLAST database of files from fastafile
-    system("/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin/makeblastdb -in blast_contigdb.fa -out contigdb -dbtype nucl")
+    system("makeblastdb -in blast_contigdb.fa -out contigdb -dbtype nucl")
     
     #get query sequence type of blast and parameters, and write to file
     seq = request.POST.get('sequence')
@@ -171,8 +170,6 @@ def BlastResults(request):
     #run blast command with query, parameters, and created database
     #blast options? => blastn, megablast, dcmega...?
     cmd = NcbiblastnCommandline(query="blast_query.fa", db="contigdb", evalue=1, outfmt=5, out="test.xml")
-    #have to set path vars for blastn, to be able to use this; bash command on next line
-    #export PATH=$PATH:/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin
     system(str(cmd))
     
     #have to know when its done to be able to continue?
@@ -271,7 +268,7 @@ def SubcloneAssayResults(request):
     subclone_ph = request.GET.get('subclone_ph')
     subclone_comments = request.GET.get('subclone_comments')
     
-    values = { 'subclone' : subclone, 'host': host, 'researcher' : researcher, 'substrate': substrate, 'subclone_km': subclone_km, 'subclone_temp': subclone_temp, 'subclone_ph': subclone_ph, 'subclone_comments': subclone_comments}
+    values = { 'subclone' : subclone, 'host': host, 'researcher' : researcher, 'substrate': substrate, 'subclone_km': subclone_km, 'subclone_temp': subclone_temp, 'subclone_ph': subclone_ph, 'subclone_comments__icontains': subclone_comments}
     args = {}
     for k, v in values.items():
         if v:
@@ -289,7 +286,7 @@ def CosmidAssayResults(request):
     cosmid_ph = request.GET.get('cosmid_ph')
     cosmid_comments = request.GET.get('cosmid_comments')
     
-    values = {'cosmid': cosmid, 'host': host, 'researcher' : researcher, 'substrate': substrate, 'cosmid_km': cosmid_km, 'cosmid_temp': cosmid_temp, 'cosmid_ph': cosmid_ph, 'cosmid_comments': cosmid_comments}
+    values = {'cosmid': cosmid, 'host': host, 'researcher' : researcher, 'substrate': substrate, 'cosmid_km': cosmid_km, 'cosmid_temp': cosmid_temp, 'cosmid_ph': cosmid_ph, 'cosmid_comments__icontains': cosmid_comments}
     args = {}
     for k, v in values.items():
         if v:
@@ -316,6 +313,7 @@ def CosmidDetail(request, cosmid_name):
     original_media = cosmid.original_media
     pool = cosmid.pool
     lab_book = cosmid.lab_book_ref
+    cosmid_comments = cosmid.cosmid_comments
     
     etresult = End_Tag.objects.filter(cosmid=c_id)
     pids = []
@@ -334,7 +332,7 @@ def CosmidDetail(request, cosmid_name):
         orfids.append(o.orf_id)
     seq = ORF.objects.filter(id__in=orfids)
     
-    return render_to_response('cosmid_detail.html', {'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book}, context_instance=RequestContext(request))
+    return render_to_response('cosmid_detail.html', {'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book, 'cosmid_comments': cosmid_comments}, context_instance=RequestContext(request))
 
 def ContigDetail(request, contig_name):
     contig = Contig.objects.get(contig_name=contig_name)
@@ -369,6 +367,10 @@ class SubcloneDetailView(DetailView):
     model = Subclone
     template_name = 'subclone_detail.html'
   
+class VectorDetailView(DetailView) :
+    model = Vector
+    template_name = 'vector_detail.html'
+    
 #edit views (updateview class)
 class CosmidEditView(UpdateView):
     model = Cosmid
@@ -611,8 +613,7 @@ def queryset_export_csv(qs):
     
     headers = []
     for field in qs_model._meta.fields:
-        if not field.name == 'id':
-            headers.append(field.name)
+        headers.append(field.name)
     writer.writerow(headers)
 
     for obj in qs:
@@ -631,6 +632,10 @@ def queryset_export_csv(qs):
 class PrimerListView(ListView):
     model = Primer
     template_name = 'primer_all.html'
+    
+class AntibioticListView(ListView):
+    model = Antibiotic
+    template_name = 'antibiotic_all.html'
 
 #retrieve PrimerListView queryset to export as csv
 def primer_queryset(response):

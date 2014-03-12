@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2 class="list">Antibiotics</h2>    
+    <table class="list">
+            <tr>
+                <th>Antibiotic Name</th>
+            </tr>
+        {% for antibiotic in antibiotic_list %}
+            <tr>
+                <td>{{ antibiotic.antibiotic_name }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+
+{% block second %}
+    <section id="second">
+        <h3>Quick Links</h3>
+        <a href="/export/antibiotic"><img class="download" src="{{ STATIC_URL }}icons/download.png" alt="download">CSV File</a>
+    </section>
+{% endblock %}

@@ -25,3 +25,40 @@
         {% endfor %}
     </table>
 {% endblock %}
+    {% if subclone_list %}
+        <h2 class="list">Subclones</h2>
+        <p>X number of results OR All records</p>
+        <table class="list">
+                <tr>
+                    <th>Subclone Name</th>
+                    <th>Researcher Name</th>
+                    <th>Parent Cosmid Name</th>
+                    <th>ORF ID</th>
+                    <th>Vector</th>
+                    <th>E. coli Stock Location</th>
+                    <th>Primer 1 Name</th>
+                    <th>Primer 1 Sequence</th>
+                    <th>Primer 2 Name</th>
+                    <th>Primer 2 Sequence</th>
+                </tr>
+            {% for subclone in subclone_list %}
+                <tr>
+                    <td><a href="{% url 'subclone-list' %}{{ subclone.pk }}">{{ subclone.subclone_name }}</a></td>
+                    <td>{{ subclone.researcher.researcher_name }}</td>
+                    <td>{{ subclone.cosmid.cosmid_name }}</td>
+                    <td>{{ subclone.orf.id }}</td>
+                    <td>{{ subclone.vector.vector_name }}</td>
+                    <td>{{ subclone.ec_collection }}</td>
+                    <td>{{ subclone.primer1_name }}</td>
+                    <td>{{ subclone.primer1_seq }}</td>
+                    <td>{{ subclone.primer2_name }}</td>
+                    <td>{{ subclone.primer2_seq }}</td>
+    
+                    
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>0 Subclones found. <a href="{% url 'subclone-search' %}">Try another search</a>.</p>
+    {% endif %}
+{% endblock %}

@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-        <a href="/export/library" >Download CSV File</a>
-    <table border = 1>
+    <h2 class="list">Libraries</h2>
+    <table class="list">
             <tr>
                 <th>Library Name</th>
                 <th>NCBI Biosample ID</th>
@@ -14,10 +14,17 @@
             <tr>
                 <td>{{ library.library_name }}</td>
                 <td>{{ library.biosample }}</td>
-                <td>{{ library.vector.vector_name }}</td>
+                <td><a href="{% url 'vector-list' %}{{library.vector.id}}">{{ library.vector.vector_name }}</a></td>
                 <td>{{ library.number_clones }}</td>
                 <td>{{ library.insert_size }}</td>
             </tr>
         {% endfor %}
     </table>
+{% endblock %}
+
+{% block second %}
+    <section id="second">
+        <h3>Quick Links</h3>
+        <a href="/export/library"><img class="download" src="{{ STATIC_URL }}icons/download.png" alt="download">CSV File</a>
+    </section>
 {% endblock %}

@@ -11,6 +11,7 @@
 <p>Original Media: {{ media }}</p>
 <p>Pool: {{ pool }}</p>
 <p>Lab Book Reference: {{ lab_book }}</p>
+<p>Cosmid Comments: {{ cosmid_comments }}</p>
 {% for endtag in endtags %}
     {% for p in primers %}
         {% if endtag.primer_id = p.id %}
@@ -20,29 +21,60 @@
     <label>End Tag:<br>
     <textarea rows="10" cols="80" readonly>{{ endtag.end_tag_sequence }}</textarea></label><br>
 {% endfor %}
+{% endblock %}
+
+{% block third %}
+<div class="tabs">
 {% for list in contigs %}
-    <h3>Contig: <a href="/contig/{{ list.contig_name }}">{{ list.contig_name }}</a></h3><br>
-    Pool: {{ list.pool }}<br>   
-    Accession: {{ list.contig_accession }}<br>
-    <label>Sequence: <br>
-    <textarea rows="15" cols="70" readonly=true>{{ list.contig_sequence }}</textarea></label><br><br>
-    <img src="{{ STATIC_URL }}data1.png"><br>
-    {% for orf in orfs %}
-        {% if orf.contig_id = list.id %}
-            
-            ORF Accession: {{ orf.orf_accession }}<br>
-            Start: {{ orf.start }}<br>
-            Stop: {{ orf.stop }}<br>
-            {% for s in seq %}
-                {% if s.id = orf.orf_id %}
-                    ID: <a href="{% url 'orf-list' %}{{ s.id }}">{{ s.id }}</a><br>
-                    Annotation: {{ s.annotation }}<br>
-                    <label>Sequence: <br>
-                    <textarea rows="4" cols"10" readonly=true>{{ s.orf_sequence }}</textarea></label><br><br>
-                {% endif %}
-            {% endfor %}
-        {% endif %}
-    {% endfor %}
+    <div class="tab">
+        <input type="radio" id="{% cycle 'tab1' 'tab2' %}" name="contigtabs" checked>
+        <label for="{% cycle 'tab1' 'tab2' %}" class ="tab">{{ list.contig_name }}</label>
+        <div class="tab-panel"> 
+            <div class="content">
+                <h3>Contig: <a href="/contig/{{ list.contig_name }}">{{ list.contig_name }}</a></h3><br>
+                Pool: {{ list.pool }}<br>   
+                Accession: {{ list.contig_accession }}<br>
+                <label>Sequence: <br>
+                <textarea rows="15" cols="70" readonly=true>{{ list.contig_sequence }}</textarea></label><br><br>
+                    <div style=width:100%;overflow:scroll;border-style:solid;border-width:thin;>
+                        <img src="{{ STATIC_URL }}scaffold177_1-F1.png" alt="ORF's for Contig"><br>
+                    </div>
+                <p>Open reading frames in {{ list.contig_name }}</p>
+                <table>
+                    <tr>
+                        <th>Accession</th>
+                        <th>Start</th>
+                        <th>Stop</th>
+                        <th>ID</th>
+                        <th>Annotation</th>
+                        <th>Sequence</th>
+                    </tr>
+                {% for orf in orfs %}
+                    {% if orf.contig_id = list.id %}
+                        <tr><td>{{ orf.orf_accession }}</td>
+                        <td>{{ orf.start }}</td>
+                        <td>{{ orf.stop }}</td>
+                        {% for s in seq %}
+                            {% if s.id = orf.orf_id %}
+                                 <td><a href="{% url 'orf-list' %}{{ s.id }}">{{ s.id }}</a></td>
+                                 <td>{{ s.annotation }}</td>
+                                <td><textarea rows="4" cols"10" readonly=true>{{ s.orf_sequence }}</textarea></td></tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
 {% endfor %}
-<a href="/edit{% url 'cosmid-end-tag-list' %}{{ cosmidpk }}">Edit</a>
+</div>
+{% endblock %}
+
+{% block second %}
+    <section id="second">
+        <h3>Links</h3>
+        <a href="/edit{% url 'cosmid-end-tag-list' %}{{ cosmidpk }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit"> Edit {{ name }}</a><br>
+        <a href="/export"><img src="{{ STATIC_URL }}icons/download.png" alt="download"> CSV File</a>
+    </section>
 {% endblock %}

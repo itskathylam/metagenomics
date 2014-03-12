@@ -1,8 +1,7 @@
 {% extends "base.html" %}
-
 {% block content %}
-        <a href="/export/substrate" >Download CSV File</a>
-    <table border = 1>
+    <h2 class="list">Substrates</h2>    
+    <table class="list">
             <tr>
                 <th>Substrate Name</th>
             </tr>
@@ -12,4 +11,11 @@
             </tr>
         {% endfor %}
     </table>
+{% endblock %}
+
+{% block second %}
+    <section id="second">
+        <h3>Quick Links</h3>
+        <a href="/export/substrate"><img class="download" src="{{ STATIC_URL }}icons/download.png" alt="download">CSV File</a>
+    </section>
 {% endblock %}
