@@ -45,10 +45,10 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles', #redudant? this line can be deleted.
     'mainsite',
     'django.contrib.staticfiles', # added by Kathy for css
-    'reversion'  #app that allows tracking of database changes
+    'reversion',  #app that allows tracking of database changes
+    'watson',
 )
 
 MIDDLEWARE_CLASSES = (

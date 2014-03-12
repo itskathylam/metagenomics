@@ -1,4 +1,5 @@
 from django.db import models
+import watson
 
 class Host(models.Model):
     host_name = models.CharField(max_length=150, unique=True)
@@ -210,3 +211,20 @@ class Subclone_Assay(models.Model):
     class Meta:
         unique_together = ("subclone", "host", "substrate", "antibiotic")
         verbose_name_plural = 'Subclone Assays'
+
+
+watson.register(Host)
+watson.register(Vector)
+watson.register(Library)
+watson.register(Researcher)
+watson.register(Pooled_Sequencing)
+watson.register(Cosmid)
+watson.register(Primer, exclude=("primer_sequence"))
+#watson.register(End_Tag, exclude=("end_tag_sequence"))
+watson.register(Contig, exclude=("contig_sequence"))
+watson.register(ORF, exclude=("orf_sequence"))
+watson.register(Contig_ORF_Join)
+watson.register(Subclone)
+watson.register(Substrate)
+watson.register(Cosmid_Assay)
+watson.register(Subclone_Assay)

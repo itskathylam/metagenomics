@@ -84,3 +84,6 @@ class BlastForm(forms.Form):
     mmscore = forms.Select()
     gapc = forms.Select()
 
+#All Search form
+class AllSearchForm(forms.Form):
+    query = forms.CharField(label='query', required=True)

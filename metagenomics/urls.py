@@ -56,6 +56,9 @@ urlpatterns = patterns('',
     url(r'^search/orf/$', OrfSearchView, name='orf-search'),
     url(r'^results/orf/$', OrfResults, name = 'orf-results'),
     
+    url(r'^search/$', SearchAll, name = 'all-search'),
+    url(r'^results/$', AllResults, name = 'all-results'),
+    
     #listviews for lookup tables 
     url(r'^primer/$', PrimerListView.as_view(), name='primer-list'),
     url(r'^host/$', HostListView.as_view(), name='host-list'),

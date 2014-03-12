@@ -1,0 +1,22 @@
+{% extends "search.html" %}
+
+{% block urlform %}
+    {% url 'all-results' %}
+{% endblock %}
+
+{% block title %}
+    <img src="{{ STATIC_URL }}icons/search64.png"><h2 class="search">Search Cosmids - ALL</h2>
+{% endblock %}
+    
+    <img src="{{ STATIC_URL }}icons/search64.png"><h2 class="search">
+{% block methodform %}
+get
+{% endblock %}
+
+{% block form %}
+    {{ form }}
+{% endblock %}
+
+{% block link %}
+<a href="{% url 'cosmid-end-tag-list' %}"><img class="viewall" src="{{ STATIC_URL }}icons/allblack.png" alt="all">View All</a><br>
+{% endblock %}
