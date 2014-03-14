@@ -99,6 +99,7 @@ class End_Tag(models.Model):
     cosmid = models.ForeignKey(Cosmid, verbose_name="Cosmid Name")
     primer = models.ForeignKey(Primer, verbose_name="Primer Name")
     end_tag_sequence = models.TextField("End Tag Sequence")
+    vector_trimmed = models.BooleanField()
     
     def __unicode__(self):
         return self.end_tag_sequence
@@ -138,6 +139,7 @@ class Contig_ORF_Join(models.Model):
     orf = models.ForeignKey(ORF)
     start = models.PositiveIntegerField()
     stop = models.PositiveIntegerField()
+    complement = models.BooleanField()
     orf_accession = models.CharField("ORF Accession", max_length=50, blank=True, null=True)
     predicted = models.BooleanField()
     prediction_score = models.FloatField(blank=True, null=True)
