@@ -23,7 +23,8 @@ from os import system
 import pdb
 #pdb.set_trace()
 
-
+from django.db.models import Q
+import operator
 
 #Main, About etc
 
@@ -119,7 +120,8 @@ def BlastResults(request):
 #search forms
 def CosmidSearchView(request):
     form = CosmidForm
-    return render_to_response('cosmid_search.html', {'form': form}, context_instance=RequestContext(request))
+    basicform = AllSearchForm
+    return render_to_response('cosmid_search.html', {'advancedform': form, 'basicform': basicform}, context_instance=RequestContext(request))
 
 def SubcloneSearchView(request):
     form = SubcloneForm
@@ -218,8 +220,26 @@ def OrfResults(request):
     return render_to_response('orf_all.html', {'orf_list': results}, context_instance=RequestContext(request))
 
 def AllResults(request):
-    results = watson.search(request.GET.get('query'))
-    return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': results}, context_instance=RequestContext(request))
+    query = request.GET.get('query')
+    keywords = query.split()
+    
+    if keywords == None:
+        results = None
+    else:
+        list_name_qs = [Q(cosmid_name__icontains=word) for word in keywords]
+        list_host_qs = [Q(host__host_name__icontains=word) for word in keywords]
+        list_researcher_qs = [Q(researcher__researcher_name__icontains=word) for word in keywords]
+        list_library_qs = [Q(library__library_name__icontains=word) for word in keywords]
+        list_screen_qs = [Q(screen__screen_name__icontains=word) for word in keywords]
+        list_ec_collection_qs = [Q(ec_collection__icontains=word) for word in keywords]
+        list_original_media_qs = [Q(original_media__icontains=word) for word in keywords]
+        list_pool_qs = [Q(pool__service_provider__icontains=word) for word in keywords]
+        list_labbook_qs = [Q(lab_book_ref__icontains=word) for word in keywords]
+        list_comments_qs = [Q(cosmid_comments__icontains=word) for word in keywords]
+        
+        final_q = reduce(operator.or_, list_name_qs + list_host_qs + list_researcher_qs + list_library_qs + list_screen_qs + list_ec_collection_qs + list_original_media_qs + list_pool_qs + list_labbook_qs + list_comments_qs)
+        results = Cosmid.objects.filter(final_q)
+    return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': results, 'query': query}, context_instance=RequestContext(request))
     
 #detail views
 def CosmidDetail(request, cosmid_name):

@@ -2,7 +2,7 @@
 {% block content %}
     {% if cosmid_list %}
     <h2 class="list">Cosmids</h2>
-    <p>X number of results OR All records</p>
+    <p>Search for: '{{ query }}' returned {{ cosmid_list.count }} results</p>    
         <table class="list">
             <tr>
                 <th>Cosmid Name</th>
@@ -40,6 +40,6 @@
         {% endfor %}
     </table>
     {% else %}
-        <p>0 Cosmids found. <a href="{% url 'cosmid-search' %}">Try another search</a>.</p>
+        <p>0 Cosmids found for search '{{ query }}' <a href="{% url 'cosmid-search' %}">Try another search</a>.</p>
     {% endif%}
 {% endblock %}
