@@ -48,5 +48,7 @@
 {% endblock %}
 
 {% block link %}
-<a href="/edit{% url 'contig-list' %}{{ key }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit contig">Edit {{ name }}</a>
+    {% if perms.mainsite.change_contig %}
+        <a href="/edit{% url 'contig-list' %}{{ key }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit contig">Edit {{ name }}</a>
+    {% endif %}
 {% endblock %}

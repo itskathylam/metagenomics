@@ -13,6 +13,8 @@
 {% endblock %}
 
 {% block link %}
-    <a href="/edit{% url 'subclone-assay-list' %}{{ subclone_assay.pk }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit">Edit</a><br>
+    {% if perms.mainsite.change_subclone_assay %}
+        <a href="/edit{% url 'subclone-assay-list' %}{{ subclone_assay.pk }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit">Edit</a><br>
+    {% endif %}
     <a href="export/" ><img src="{{ STATIC_URL }}icons/download.png" alt="edit">CSV File</a><br>
 {% endblock %}

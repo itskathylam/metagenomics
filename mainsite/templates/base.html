@@ -16,15 +16,27 @@
             <nav>
             <ul>
                 <li><a href="/">Home<img src="{{ STATIC_URL }}icons/home.png"alt="home"></a></li>
-                {% if perms.mainsite.can_add_cosmid %}
+                {% if perms.mainsite.add_cosmid or perms.mainsite.add_subclone or perms.mainsite.add_subclone_assay or perms.mainsite.add_cosmid_assay or perms.mainsite.add_orf or perms.mainsite.add_contig %}
                 <li><a href="">Add<img src="{{ STATIC_URL }}icons/add.png"alt="add"></a>
                     <ul>
-                        <li><a href="{% url 'cosmid-end-tag-add' %}">Cosmid</a></li>
-                        <li><a href="{% url 'subclone-add' %}">Subclone</a></li>
-                        <li><a href="{% url 'subclone-assay-add' %}">Subclone Assay</a></li>
-                        <li><a href="{% url 'cosmid-assay-add' %}">Cosmid Assay</a></li>
-                        <li><a href="{% url 'orf-contig-add' %}">ORF</a></li>
-                        <li><a href="{% url 'contig-pool-add' %}">Contigs</a></li>
+                        {% if perms.mainsite.add_cosmid %}
+                                <li><a href="{% url 'cosmid-end-tag-add' %}">Cosmid</a></li>
+                        {% endif %}
+                        {% if perms.mainsite.add_subclone %}
+                                <li><a href="{% url 'subclone-add' %}">Subclone</a></li>
+                        {% endif%}
+                        {% if perms.mainsite.add_subclone_assay %}
+                                <li><a href="{% url 'subclone-assay-add' %}">Subclone Assay</a></li>
+                        {% endif %}
+                        {% if perms.mainsite.add_cosmid_assay %}
+                                <li><a href="{% url 'cosmid-assay-add' %}">Cosmid Assay</a></li>
+                        {% endif %}
+                        {% if perms.mainsite.add_orf %}
+                                <li><a href="{% url 'orf-contig-add' %}">ORF</a></li>
+                        {% endif %}
+                        {% if perms.mainsite.add_contig %}
+                                <li><a href="{% url 'contig-pool-add' %}">Contigs</a></li>
+                        {% endif %}
                     </ul>
                 </li>
                 {% endif %}
@@ -89,7 +101,7 @@
         
         {% block third %}
         {% endblock %}
- 
+
         <footer id="footer">
             <p><a href="/about">About</a>
              {% if user.is_staff %}

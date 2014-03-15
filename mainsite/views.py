@@ -28,7 +28,7 @@ import operator
 
 #Main, About etc
 
-#login_required
+#@login_required
 def MainPage(request):
     template_name = 'index.html'
     return (render(request, 'index.html'))
@@ -45,6 +45,7 @@ def Logout(request):
 def UserSettings(request):
     form = UserForm
     return render_to_response('usersettings.html', {'form': form}, context_instance=RequestContext(request))
+
 def Faq(request):
     return (render(request, 'faq.html'))
 
@@ -197,6 +198,7 @@ def SubcloneAssayResults(request):
     return render_to_response('subclone_assay_all.html', {'subclone_assay_list': results}, context_instance=RequestContext(request))
 
 def CosmidAssayResults(request):
+    #gets all of the user inputted information from the form
     cosmid = request.GET.get('cosmid')
     host = request.GET.get('host')
     substrate = request.GET.get('substrate')
@@ -206,11 +208,14 @@ def CosmidAssayResults(request):
     cosmid_ph = request.GET.get('cosmid_ph')
     cosmid_comments = request.GET.get('cosmid_comments')
     
+    #converts it to dictionary
     values = {'cosmid': cosmid, 'host': host, 'researcher' : researcher, 'substrate': substrate, 'cosmid_km': cosmid_km, 'cosmid_temp': cosmid_temp, 'cosmid_ph': cosmid_ph, 'cosmid_comments__icontains': cosmid_comments}
     args = {}
+    #iterates through dictionary and assigns an arg value if it was entered
     for k, v in values.items():
         if v:
             args[k] = v
+    #returns queryset of results based on args
     results = Cosmid_Assay.objects.filter(**args)
     return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': results}, context_instance=RequestContext(request))
 
@@ -220,12 +225,16 @@ def OrfResults(request):
     return render_to_response('orf_all.html', {'orf_list': results}, context_instance=RequestContext(request))
 
 def AllResults(request):
+   #gets the list of words they entered
     query = request.GET.get('query')
+    #splits string into a list
     keywords = query.split()
     
+    #if no words entered, returns no results
     if keywords == None:
         results = None
     else:
+        #builds a Q object for each word in the list
         list_name_qs = [Q(cosmid_name__icontains=word) for word in keywords]
         list_host_qs = [Q(host__host_name__icontains=word) for word in keywords]
         list_researcher_qs = [Q(researcher__researcher_name__icontains=word) for word in keywords]
@@ -237,14 +246,17 @@ def AllResults(request):
         list_labbook_qs = [Q(lab_book_ref__icontains=word) for word in keywords]
         list_comments_qs = [Q(cosmid_comments__icontains=word) for word in keywords]
         
+        #combines all the Q objects with the OR operator
         final_q = reduce(operator.or_, list_name_qs + list_host_qs + list_researcher_qs + list_library_qs + list_screen_qs + list_ec_collection_qs + list_original_media_qs + list_pool_qs + list_labbook_qs + list_comments_qs)
         results = Cosmid.objects.filter(final_q)
     return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': results, 'query': query}, context_instance=RequestContext(request))
     
 #detail views
 def CosmidDetail(request, cosmid_name):
+    #returns the Cosmid object requested
     cosmid = Cosmid.objects.get(cosmid_name=cosmid_name)
     
+    #gets all associated values with the requested cosmid object
     c_id = cosmid.pk
     name = cosmid.cosmid_name
     host = cosmid.host
@@ -257,21 +269,27 @@ def CosmidDetail(request, cosmid_name):
     lab_book = cosmid.lab_book_ref
     cosmid_comments = cosmid.cosmid_comments
     
+    #returns all end tags that are associated with the cosmid
     etresult = End_Tag.objects.filter(cosmid=c_id)
     pids = []
+    #returns all the primers ids for the end tags
     for p in etresult:
-        pids.append(p.primer_id)  
+        pids.append(p.primer_id)
+    #returns a queryset of all primer objects used on all associated end tags
     primerresults = Primer.objects.filter(id__in= pids).values
     
+    #returns queryset of all contigs associated with the cosmid requested
     contigresults = Contig.objects.filter(cosmid=c_id)
     contigids = []
     for c in contigresults:
         contigids.append(c.id)
     
+    #returns all the orfs for the contigs that are associated with the cosmid
     orfresults = Contig_ORF_Join.objects.filter(contig_id__in=contigids)
     orfids = []
     for o in orfresults:
         orfids.append(o.orf_id)
+    #returns all the sequences for all the associated orfs
     seq = ORF.objects.filter(id__in=orfids)
     
     return render_to_response('cosmid_detail.html', {'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book, 'cosmid_comments': cosmid_comments}, context_instance=RequestContext(request))
@@ -293,6 +311,7 @@ def ContigDetail(request, contig_name):
     orfseq = ORF.objects.filter(id__in=orfids)
     return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
 
+#the 5 classes below all use the generic DetailView to generate a detailed listing of the requested object from the database
 class OrfDetailView(DetailView):
     model = ORF
     template_name = 'orf_detail.html'
@@ -383,12 +402,11 @@ class ORFContigListView(ListView):
     template_name = 'orf_contig_all.html'
     
 # Create views for adding data to one model (Kathy)
-
 class SubcloneCreateView(CreateView):
     model = Subclone
     template_name = 'subclone_add.html'
     success_url = reverse_lazy('subclone-list')
-    
+
 class CosmidAssayCreateView(CreateView):
     model = Cosmid_Assay
     template_name = 'cosmid_assay_add.html'
@@ -424,7 +442,7 @@ def CosmidEndTagCreate(request):
     return render_to_response('cosmid_end_tag_add.html', {'cosmid_form': cosmid_form, 'end_tag_formset': end_tag_formset}, context_instance=RequestContext(request))
     
 # Add to ORF and Contig-ORF-Join tables (Kathy)
-@permission_required('mainsite.cosmid.can_add_contig_orf_join')
+@permission_required('mainsite.cosmid.can_add_orf')
 def ORFContigCreate(request):
     
     #track errors with dict

@@ -34,12 +34,12 @@ urlpatterns = patterns('',
     url(r'^vector/(?P<pk>\d+)/$', VectorDetailView.as_view(), name='vector-detail'),
     
     #Edit views (Updateviews)
-    url(r'^edit/cosmid/(?P<pk>\d+)$', CosmidEditView.as_view(), name='cosmid-edit'),
-    url(r'^edit/subclone/(?P<pk>\d+)$', SubcloneEditView.as_view(), name='subclone-edit'),
-    url(r'^edit/assay/cosmid/(?P<pk>\d+)$', CosmidAssayEditView.as_view(), name='cosmid-assay-edit'),
-    url(r'^edit/assay/subclone/(?P<pk>\d+)$', SubcloneAssayEditView.as_view(), name='subclone-assay-edit'),
-    url(r'^edit/orf/(?P<pk>\d+)$', ORFEditView.as_view(), name='orf-edit'),
-    url(r'^edit/contig/(?P<pk>\d+)$', ContigEditView.as_view(), name='contig-edit'),
+    url(r'^edit/cosmid/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_cosmid')(CosmidEditView.as_view()), name='cosmid-edit'),
+    url(r'^edit/subclone/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_subclone')(SubcloneEditView.as_view()), name='subclone-edit'),
+    url(r'^edit/assay/cosmid/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_cosmid_assay')(CosmidAssayEditView.as_view()), name='cosmid-assay-edit'),
+    url(r'^edit/assay/subclone/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_subclone_assay')(SubcloneAssayEditView.as_view()), name='subclone-assay-edit'),
+    url(r'^edit/orf/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_orf')(ORFEditView.as_view()), name='orf-edit'),
+    url(r'^edit/contig/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_contig')(ContigEditView.as_view()), name='contig-edit'),
     
     #Delete views (DeleteViews)
     url(r'^delete/contig-orf/(?P<pk>\d+)$', ContigORFDeleteView.as_view(), name='contig-orf-delete'),
@@ -82,9 +82,9 @@ urlpatterns = patterns('',
     url(r'^orfcontig/$', ORFContigListView.as_view(), name='orf-contig-list'), # not a useful view; may remove (Kathy)
     
     #createviews - form to add data to database table  
-    url(r'^add/subclone/$', SubcloneCreateView.as_view(), name='subclone-add'),
-    url(r'^add/assay/cosmid/$', CosmidAssayCreateView.as_view(), name='cosmid-assay-add'),
-    url(r'^add/assay/subclone/$', SubcloneAssayCreateView.as_view(), name='subclone-assay-add'),
+    url(r'^add/subclone/$', permission_required('mainsite.cosmid.can_add_subclone')(SubcloneCreateView.as_view()), name='subclone-add'),
+    url(r'^add/assay/cosmid/$', permission_required('mainsite.cosmid.can_add_cosmid_assay')(CosmidAssayCreateView.as_view()), name='cosmid-assay-add'),
+    url(r'^add/assay/subclone/$', permission_required('mainsite.cosmid.can_add_subclone_assay')(SubcloneAssayCreateView.as_view()), name='subclone-assay-add'),
     
     #createviews for adding data to multiple tables at once
     url(r'^add/cosmid/$', CosmidEndTagCreate, name='cosmid-end-tag-add'),
@@ -92,6 +92,7 @@ urlpatterns = patterns('',
     url(r'^add/contigpool/$', ContigPoolCreate, name='contig-pool-add'),
     
     
+    #export URLS
     url(r'^export/primer', primer_queryset),
     url(r'^export/host', host_queryset),
     url(r'^export/screen', screen_queryset),

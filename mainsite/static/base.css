@@ -193,7 +193,7 @@ nav ul ul ul {
     top: 20px;
     padding: 0;
     margin-right: 5px;
-            margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 #second h3 {
     padding: 0;
@@ -217,13 +217,14 @@ nav ul ul ul {
 
 /*Footer at the bottom of every page*/ 
 #footer {
-    font-family: verdana, arial, sans-serif;
+    font-family: verdanaHB, arial, sans-serif;
    /* position: relative;
-    bottom: 0px;
-    left: 0px; */
+    bottom: -13px;
+    left: -8px;
+    width: 101%; */
     clear: both;
-    width: 100%;
-    margin-bottom: 10px;
+    margin: 0;
+    padding: 0;
     background-color: #000000;
     color: #fff;
     text-align: center;

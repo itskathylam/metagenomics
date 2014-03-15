@@ -82,4 +82,4 @@ class BlastForm(forms.Form):
 
 #All Search form
 class AllSearchForm(forms.Form):
-    query = forms.CharField(label='query', required=True)
+    query = forms.CharField(label='Keywords', required=True)

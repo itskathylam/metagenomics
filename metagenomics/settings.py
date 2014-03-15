@@ -48,7 +48,6 @@ INSTALLED_APPS = (
     'mainsite',
     'django.contrib.staticfiles', # added by Kathy for css
     'reversion',  #app that allows tracking of database changes
-    'watson',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -64,21 +63,19 @@ ROOT_URLCONF = 'metagenomics.urls'
 
 WSGI_APPLICATION = 'metagenomics.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'metagenomics',            # Or path to database file if using sqlite3.
-        'USER': 'root',            # Not used with sqlite3.
-        'PASSWORD': '123qwe',       # Not used with sqlite3.
-        'HOST': '',                 # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                 # Set to empty string for default. Not used with sqlite3.
+        'NAME': 'metagenomics',          
+        'USER': 'root',            
+        'PASSWORD': '123qwe',       # NEED TO SECURE THIS
+        'HOST': '',                 # Set to empty string for localhost.
+        'PORT': '',                 # Set to empty string for default.
     }
 }
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
@@ -96,7 +93,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
-
 STATIC_URL = '/static/'
 
 # For uploaded files

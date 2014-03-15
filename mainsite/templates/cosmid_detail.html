@@ -74,7 +74,9 @@
 {% block second %}
     <section id="second">
         <h3>Links</h3>
+        {% if perms.mainsite.change_cosmid %}
         <a href="/edit{% url 'cosmid-end-tag-list' %}{{ cosmidpk }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit"> Edit {{ name }}</a><br>
+        {% endif %}
         <a href="/export"><img src="{{ STATIC_URL }}icons/download.png" alt="download"> CSV File</a>
     </section>
 {% endblock %}
