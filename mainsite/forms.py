@@ -56,7 +56,7 @@ class SubcloneCosmidForm(ModelForm):
 class UserForm(ModelForm):
     class Meta:
         model = User
-        exclude = ('last_login', 'is_superuser', 'username', 'is_staff', 'is_active', 'date_joined', 'group', 'permission',)
+        exclude = ('last_login', 'is_superuser', 'username', 'is_staff', 'is_active', 'date_joined', 'groups', 'user_permissions',)
         
  
 # For Contig-Pool add

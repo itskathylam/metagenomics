@@ -4,12 +4,15 @@
 <title>Change User Settings</title>
 {% endblock %}
 {% block content %}
-    <h2>Change User Settings</h2>
-    {{ form }}
+    <h2><img src="{{ STATIC_URL }}/gear.png">Change User Settings</h2>
+    <table>
+    
+        {{ form }}
+    </table>
     <form action="" method="POST">
         {% csrf_token %}
         
-        <table border = 1>
+        <table>
            <tr>
                 <td><label for="first">First name</label></td>
                 <td><input type="text" id="first" name="first" value="{{ user.first_name }}"></td>
