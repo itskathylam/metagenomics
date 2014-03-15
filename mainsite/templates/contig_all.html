@@ -15,7 +15,7 @@
             </tr>
         {% for contig in contig_list %}
             <tr>
-                <td>{{ contig.contig_name}}</td>
+                <td><a href="{% url 'contig-list' %}{{contig.contig_name}}">{{ contig.contig_name}}</a></td>
                 <td>{{ contig.pool_id}}</td>
                 <td><textarea rows="5" cols="100" readonly=true>{{ contig.contig_sequence }}</textarea></td>
                 <td>{{ contig.contig_accession }}</td>

@@ -8,6 +8,7 @@
                 <th>ORF ID</th>
                 <th>ORF Annotation</th>
                 <th>Predicted by FGS</th>
+                <th>Prediction Score</th>
                 <th>ORF Start</th>
                 <th>ORF Stop</th>
                 <th>ORF Accession</th>
@@ -15,11 +16,12 @@
             </tr>
         {% for contig_orf_join in contig_orf_join_list %}
             <tr>
-                <td>{{ contig_orf_join.contig.contig_name }}</td>
+                <td><a href="{% url 'contig-list' %}{{ contig_orf_join.contig.contig_name }}">{{ contig_orf_join.contig.contig_name }}</a></td>
                 <td><textarea rows="5" cols="50" readonly=true>{{ contig_orf_join.contig.contig_sequence }}</textarea></td>
-                <td>{{ contig_orf_join.orf_id }}</td>
+                <td><a href="{%url 'orf-list' %}{{contig_orf_join.orf_id}}">{{ contig_orf_join.orf_id }}</a></td>
                 <td>{{ contig_orf_join.orf.annotation }}</td>
                 <td>{{ contig_orf_join.predicted }}</td>
+                <td>{{ contig_orf_join.prediction_score }}</td>
                 <td>{{ contig_orf_join.start }}</td>
                 <td>{{ contig_orf_join.stop }}</td>
                 <td>{{ contig_orf_join.orf_accession }}</td>

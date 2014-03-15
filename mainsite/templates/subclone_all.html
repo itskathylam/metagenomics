@@ -21,7 +21,7 @@
                 <tr>
                     <td><a href="{% url 'subclone-list' %}{{ subclone.pk }}">{{ subclone.subclone_name }}</a></td>
                     <td>{{ subclone.researcher.researcher_name }}</td>
-                    <td>{{ subclone.cosmid.cosmid_name }}</td>
+                    <td><a href="{% url 'cosmid-end-tag-list' %}{{ subclone.cosmid.cosmid_name }}">{{ subclone.cosmid.cosmid_name }}</a></td>
                     <td>{{ subclone.orf.id }}</td>
                     <td>{{ subclone.vector.vector_name }}</td>
                     <td>{{ subclone.ec_collection }}</td>
