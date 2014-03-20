@@ -65,42 +65,71 @@ def BlastSearch(request):
 
 def BlastResults(request):
     
-    #get all contig objects in the database, create seqrecord for each object, and write to file
-    outfh = open("blast_contigdb.fa", "w")
-    contigs = Contig.objects.all().values('contig_name', 'contig_sequence')
-    for contig in contigs:
-        seqrecord = SeqRecord(Seq(contig['contig_sequence'], generic_dna), id=contig['contig_name'])
-        SeqIO.write(seqrecord, outfh, "fasta")
-    outfh.close()
+    #prepare file to write sequences into - for making blast db
+    out = open("blast_db.fa", "w")
+    
+    #get the url from which redirect occurred; determines what sequences are written in the blast db fasta file
+    #possibilities: '/search/blast/', '/search/cosmid/', '/search/contig/', '/search/orf/', '/search/subclone/'
+    url = request.GET.get('from')
+    
+    #get contig sequences; use contig name as descriptor line for fasta file
+    if (url == '/search/blast/') or (url == '/search/cosmid/') or (url == '/search/contig/'):
+        contigs = Contig.objects.all()
+        for contig in contigs:
+            contig.contig_sequence = contig.contig_sequence.strip()
+            seqrecord = SeqRecord(Seq(contig.contig_sequence, generic_dna), id=contig.contig_name)
+            SeqIO.write(seqrecord, out, "fasta")
+    
+    #get orf sequences; use orf_id as descriptor line for fasta file 
+    if (url == '/search/blast/') or (url == '/search/cosmid/') or (url == '/search/orf/')or (url == '/search/subclone/'):        
+        orfs = ORF.objects.all()
+        for orf in orfs:
+            orf.orf_sequence = orf.orf_sequence.strip()
+            seqrecord = SeqRecord(Seq(orf.orf_sequence, generic_dna), id='ORF_' + str(orf.id))
+            SeqIO.write(seqrecord, out, "fasta")
+            
+    #get end-tag sequences; use (cosmid_name + primer_name) as descriptor line for fasta file
+    if (url == '/search/blast/') or (url == '/search/cosmid/'): 
+        end_tags = End_Tag.objects.all().select_related('cosmid__primer')
+        for end_tag in end_tags:
+            end_tag.end_tag_sequence = end_tag.end_tag_sequence.strip()
+            seqrecord = SeqRecord(Seq(end_tag.end_tag_sequence, generic_dna), id=end_tag.cosmid.cosmid_name + "_" + end_tag.primer.primer_name)
+            SeqIO.write(seqrecord, out, "fasta")
+            
+    out.close()
     
     #makeblastdb to create BLAST database of files from fastafile
-    system("makeblastdb -in blast_contigdb.fa -out contigdb -dbtype nucl")
+    system("makeblastdb -in blast_db.fa -out blast_db.db -dbtype nucl")
     
     #get query sequence type of blast and parameters, and write to file
     seq = request.POST.get('sequence')
-    queryseq = SeqRecord(Seq(seq, generic_dna), id="queryid", name="Query", description="testquery")
+    queryseq = SeqRecord(Seq(seq, generic_dna), id="query")
     queryfh = open("blast_query.fa", "w")
     SeqIO.write(queryseq, queryfh, "fasta") 
     queryfh.close()
     
+    #get parameters for BLAST
+    e = request.POST.get('expect_threshold')
+    w = request.POST.get('word_size')
+    ma = request.POST.get('match_score')
+    mi = request.POST.get('mismatch_score')
+    go = request.POST.get('gap_open_penalty')
+    ge = request.POST.get('gap_extension_penalty')
+
     #run blast command with query, parameters, and created database
-    #blast options? => blastn, megablast, dcmega...?
-    cmd = NcbiblastnCommandline(query="blast_query.fa", db="contigdb", evalue=1, outfmt=5, out="test.xml")
+    cmd = NcbiblastnCommandline(query="blast_query.fa", db="blast_db.db", evalue=float(e), word_size=int(w), reward=int(ma), penalty=int(mi), gapopen=int(go), gapextend=int(ge), outfmt=5, out="blast_results.xml")
     system(str(cmd))
     
-    #have to know when its done to be able to continue?
-    #show loading and then display to results??
-    
     #parse xml file
-    resultsfh = open("test.xml")     
+    resultsfh = open("blast_results.xml")     
     records = NCBIXML.parse(resultsfh)
     test = records.next()
     results_list = []
     for alignment in test.alignments:
         for hsp in alignment.hsps:
             result = {}
-            list_title = alignment.title.split('|')
-            title = list_title[2]
+            list_title = alignment.title.split(' ')
+            title = list_title[1]
             length = alignment.length
             evalue = hsp.expect
             hq = hsp.query
@@ -114,7 +143,6 @@ def BlastResults(request):
             result['hs'] = hs
             result['hsp'] = hsp
             results_list.append(result)
-            #pdb.set_trace()
             
     return render_to_response('blast_results.html', {'results_list': results_list, 'query': seq}, context_instance=RequestContext(request))
 
@@ -122,7 +150,8 @@ def BlastResults(request):
 def CosmidSearchView(request):
     form = CosmidForm
     basicform = AllSearchForm
-    return render_to_response('cosmid_search.html', {'advancedform': form, 'basicform': basicform}, context_instance=RequestContext(request))
+    blast_form = BlastForm
+    return render_to_response('cosmid_search.html', {'advancedform': form, 'basicform': basicform, 'blast_form':blast_form}, context_instance=RequestContext(request))
 
 def SubcloneSearchView(request):
     form = SubcloneForm
@@ -139,6 +168,10 @@ def CosmidAssaySearchView(request):
 def OrfSearchView(request):
     form = OrfSearchForm
     return render_to_response('orf_search.html', {'form': form}, context_instance=RequestContext(request))
+
+def ContigSearchView(request):
+    form = ContigSearchForm
+    return render_to_response('contig_search.html', {'form': form}, context_instance=RequestContext(request))
 
 def SearchAll(request):
     form = AllSearchForm
@@ -223,6 +256,18 @@ def OrfResults(request):
     annotation = request.GET.get('annotation')
     results = ORF.objects.filter(annotation__icontains=annotation)
     return render_to_response('orf_all.html', {'orf_list': results}, context_instance=RequestContext(request))
+
+def ContigResults(request):
+    pool = request.GET.get('pool')
+    contig_name = request.GET.get('contig_name')
+    contig_accession = request.GET.get('contig_accession')
+    values = {'pool' : pool, 'contig_name__icontains': contig_name, 'contig_accession' : contig_accession}
+    args = {}
+    for k, v in values.items():
+        if v:
+            args[k] = v
+    results = Contig.objects.filter(**args)
+    return render_to_response('contig_all.html', {'contig_list': results}, context_instance=RequestContext(request))
 
 def AllResults(request):
    #gets the list of words they entered

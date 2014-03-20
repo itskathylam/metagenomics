@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block urlform %}
-    {% url 'blast-results' %}
+    {% url 'blast-results' %}?from={{ request.path }}
 {% endblock %}
     
 {% block methodform %}post{% endblock %}

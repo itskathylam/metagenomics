@@ -20,9 +20,7 @@ urlpatterns = patterns('',
     #Tools Views
     url(r'^tools/contig', ContigTool, name='contig'),
     url(r'^tools/pooling', Pooling, name='pool'),
-    
-    url(r'^blast/search', BlastSearch, name='blast'),
-    url(r'^blast/results', BlastResults, name='blast-results'),
+
     
     #Detail views
     url(r'^cosmid/(?P<cosmid_name>[\w-]+)/$', CosmidDetail, name='cosmid-detail'),
@@ -54,10 +52,13 @@ urlpatterns = patterns('',
     url(r'^search/assay/cosmid$', CosmidAssaySearchView, name = 'cosmid-assay-search'),
     url(r'^results/assay/cosmid$', CosmidAssayResults, name='cosmid-assay-results'),
     url(r'^search/orf/$', OrfSearchView, name='orf-search'),
-    url(r'^results/orf/$', OrfResults, name = 'orf-results'),
-    
+    url(r'^results/orf/$', OrfResults, name='orf-results'),
+    url(r'^search/contig/$', ContigSearchView, name='contig-search'),
+    url(r'^results/contig/$', ContigResults, name='contig-results'),
     url(r'^search/$', SearchAll, name = 'all-search'),
     url(r'^results/$', AllResults, name = 'all-results'),
+    url(r'^search/blast/$', BlastSearch, name='blast-search'),
+    url(r'^results/blast/', BlastResults, name='blast-results'),
     
     #listviews for lookup tables 
     url(r'^primer/$', PrimerListView.as_view(), name='primer-list'),

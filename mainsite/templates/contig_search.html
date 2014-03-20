@@ -1,0 +1,22 @@
+{% extends "search.html" %}
+
+{% block urlform %}
+    {% url 'contig-results' %}
+{% endblock %}
+
+{% block title %}
+    <img src="{{ STATIC_URL }}icons/search64.png"><h2 class="search">Search Contigs</h2>
+{% endblock %}
+    
+    <img src="{{ STATIC_URL }}icons/search64.png"><h2 class="search">
+{% block methodform %}
+    get
+{% endblock %}
+
+{% block form %}
+    {{ form }}
+{% endblock %}
+
+{% block link %}
+<a href="{% url 'contig-list' %}"><img class="viewall" src="{{ STATIC_URL }}icons/allblack.png" alt="all">View All</a><br>
+{% endblock %}
