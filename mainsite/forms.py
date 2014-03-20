@@ -65,7 +65,7 @@ class UserForm(ModelForm):
 class ContigForm(ModelForm):
     class Meta:
         model = Contig
-        exclude = ('contig_name', 'contig_sequence', 'cosmid', 'contig_accession')
+        exclude = ('contig_name', 'contig_sequence', 'cosmid', 'contig_accession', 'blast_hit_accession')
 
 # For Contig-Pool add
 class UploadContigsForm(forms.Form):
