@@ -60,11 +60,38 @@ def Pooling(request):
 
 #sequence search
 def BlastSearch(request):
-    blastform = BlastForm
+    ##collect errors in a dictionary
+    #errors = {}
+    #
+    #if request.method == "POST":
+    #    blastform = BlastForm(request.POST)
+    #    seq = request.POST.get('sequence')
+    #    e = request.POST.get('expect_threshold')
+    #    if seq == "":
+    #        errors['sequence'] = "Error: sequence is required"
+    #    if e == "":
+    #        errors['evalue'] = "Error: E-value cut-off is required"
+    #        
+    #else:
+    blastform = BlastForm()
     return render_to_response('blast_search.html', {'blastform': blastform}, context_instance=RequestContext(request))
 
 def BlastResults(request):
-    
+
+    #get query sequence parameters, and write to file
+    seq = request.POST.get('sequence')
+    e = request.POST.get('expect_threshold')
+    w = request.POST.get('word_size')
+    ma = request.POST.get('match_score')
+    mi = request.POST.get('mismatch_score')
+    go = request.POST.get('gap_open_penalty')
+    ge = request.POST.get('gap_extension_penalty')
+   
+    queryseq = SeqRecord(Seq(seq, generic_dna), id="query")
+    queryfh = open("blast_query.fa", "w")
+    SeqIO.write(queryseq, queryfh, "fasta") 
+    queryfh.close()
+
     #prepare file to write sequences into - for making blast db
     out = open("blast_db.fa", "w")
     
@@ -100,57 +127,47 @@ def BlastResults(request):
     
     #makeblastdb to create BLAST database of files from fastafile
     system("makeblastdb -in blast_db.fa -out blast_db.db -dbtype nucl")
-    
-    #get query sequence type of blast and parameters, and write to file
-    seq = request.POST.get('sequence')
-    queryseq = SeqRecord(Seq(seq, generic_dna), id="query")
-    queryfh = open("blast_query.fa", "w")
-    SeqIO.write(queryseq, queryfh, "fasta") 
-    queryfh.close()
-    
-    #get parameters for BLAST
-    e = request.POST.get('expect_threshold')
-    w = request.POST.get('word_size')
-    ma = request.POST.get('match_score')
-    mi = request.POST.get('mismatch_score')
-    go = request.POST.get('gap_open_penalty')
-    ge = request.POST.get('gap_extension_penalty')
 
     #run blast command with query, parameters, and created database
     cmd = NcbiblastnCommandline(query="blast_query.fa", db="blast_db.db", evalue=float(e), word_size=int(w), reward=int(ma), penalty=int(mi), gapopen=int(go), gapextend=int(ge), outfmt=5, out="blast_results.xml")
     system(str(cmd))
     
     #parse xml file
-    resultsfh = open("blast_results.xml")     
-    records = NCBIXML.parse(resultsfh)
-    test = records.next()
-    results_list = []
-    for alignment in test.alignments:
-        list_title = alignment.title.split(' ')
-        title = list_title[1]
-        length = alignment.length
-        for hsp in alignment.hsps:
-            result = {}
-            align_length = hsp.align_length
-            evalue = hsp.expect
-            hsp_query = hsp.query
-            hsp_match = hsp.match
-            hsp_subject = hsp.sbjct
-            query_start = hsp.query_start
-            subject_start = hsp.sbjct_start
-            result['title'] = title
-            result['length'] = length
-            result['align_length'] = align_length
-            result['evalue'] = evalue
-            result['query_start'] = query_start
-            result['subject_start'] = subject_start
-            result['query_end'] = query_start + align_length
-            result['subject_end'] = subject_start + align_length
-            result['hsp_query'] = hsp_query
-            result['hsp_match'] = hsp_match
-            result['hsp_subject'] = hsp_subject
-            result['hsp'] = hsp
-            results_list.append(result)
+    try:
+        resultsfh = open("blast_results.xml")
+        records = NCBIXML.parse(resultsfh)
+        test = records.next()
+    except Exception:
+        results_list = 0
+        seq = "No sequence entered"
+    else:
+        results_list = []
+        for alignment in test.alignments:
+            list_title = alignment.title.split(' ')
+            title = list_title[1]
+            length = alignment.length
+            for hsp in alignment.hsps:
+                result = {}
+                align_length = hsp.align_length
+                evalue = hsp.expect
+                hsp_query = hsp.query
+                hsp_match = hsp.match
+                hsp_subject = hsp.sbjct
+                query_start = hsp.query_start
+                subject_start = hsp.sbjct_start
+                result['title'] = title
+                result['length'] = length
+                result['align_length'] = align_length
+                result['evalue'] = evalue
+                result['query_start'] = query_start
+                result['subject_start'] = subject_start
+                result['query_end'] = query_start + align_length
+                result['subject_end'] = subject_start + align_length
+                result['hsp_query'] = hsp_query
+                result['hsp_match'] = hsp_match
+                result['hsp_subject'] = hsp_subject
+                result['hsp'] = hsp
+                results_list.append(result)
             
     return render_to_response('blast_results.html', {'results_list': results_list, 'query': seq}, context_instance=RequestContext(request))
 

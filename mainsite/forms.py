@@ -73,14 +73,13 @@ class UploadContigsForm(forms.Form):
 
 #BLAST Form
 class BlastForm(forms.Form):
-    sequence = forms.CharField(label='Sequence', required=True, widget=forms.Textarea)
-    #max_returned = forms.CharField(label='Number of Returned Hits')
-    expect_threshold = forms.CharField(label='E-value Cut-Off', initial=0.01, required=True)
-    word_size = forms.ChoiceField(label='Word Size', required=True, choices=[(str(x), x) for x in range(7, 20)], initial=11)
-    match_score = forms.ChoiceField(label='Nucleotide Match Score', required=True, choices=[(str(x), x) for x in (1,2,4)], initial=2)
-    mismatch_score = forms.ChoiceField(label='Nucleotide Mismatch Score', required=True, choices=[(str(x), x) for x in (-1,-2,-3,-4,-5)], initial=-3)
-    gap_open_penalty = forms.ChoiceField(label='Gap Open Penalty', required=True, choices=[(str(x), x) for x in (0,2,3,4,5,6)], initial=5)
-    gap_extension_penalty = forms.ChoiceField(label='Gap Extension Penalty', required=True, choices=[(str(x), x) for x in (2,3,4)], initial=2)
+    sequence = forms.CharField(label='Sequence', widget=forms.Textarea)
+    expect_threshold = forms.ChoiceField(label='E-value Cut-Off', choices=[(str(x), x) for x in (10, 1, 0.1, 0.01, 0.001, 0.0001)], initial=0.01)
+    word_size = forms.ChoiceField(label='Word Size', choices=[(str(x), x) for x in range(7, 20)], initial=11)
+    match_score = forms.ChoiceField(label='Nucleotide Match Score', choices=[(str(x), x) for x in (1,2,4)], initial=2)
+    mismatch_score = forms.ChoiceField(label='Nucleotide Mismatch Score', choices=[(str(x), x) for x in (-1,-2,-3,-4,-5)], initial=-3)
+    gap_open_penalty = forms.ChoiceField(label='Gap Open Penalty', choices=[(str(x), x) for x in (0,2,3,4,5,6)], initial=5)
+    gap_extension_penalty = forms.ChoiceField(label='Gap Extension Penalty', choices=[(str(x), x) for x in (2,3,4)], initial=2)
 
 #All Search form
 class AllSearchForm(forms.Form):

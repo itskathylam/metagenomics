@@ -141,7 +141,13 @@ div.tabContent.hide {
     </div>
     
     <div class="tabContent" id="BLAST">
-        <p><table>{{ blast_form }}</table></p>
+        <form action="{% url 'blast-results' %}?from={{ request.path}}" method="post">
+            <table class="search">
+                {% csrf_token %}
+                {{ blast_form }}
+            </table>
+            <input type="submit" value="Search">
+        </form>
     </div>
 {% endblock %}
 
