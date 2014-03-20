@@ -126,21 +126,29 @@ def BlastResults(request):
     test = records.next()
     results_list = []
     for alignment in test.alignments:
+        list_title = alignment.title.split(' ')
+        title = list_title[1]
+        length = alignment.length
         for hsp in alignment.hsps:
             result = {}
-            list_title = alignment.title.split(' ')
-            title = list_title[1]
-            length = alignment.length
+            align_length = hsp.align_length
             evalue = hsp.expect
-            hq = hsp.query
-            hm = hsp.match
-            hs = hsp.sbjct
+            hsp_query = hsp.query
+            hsp_match = hsp.match
+            hsp_subject = hsp.sbjct
+            query_start = hsp.query_start
+            subject_start = hsp.sbjct_start
             result['title'] = title
             result['length'] = length
+            result['align_length'] = align_length
             result['evalue'] = evalue
-            result['hq'] = hq
-            result['hm'] = hm
-            result['hs'] = hs
+            result['query_start'] = query_start
+            result['subject_start'] = subject_start
+            result['query_end'] = query_start + align_length
+            result['subject_end'] = subject_start + align_length
+            result['hsp_query'] = hsp_query
+            result['hsp_match'] = hsp_match
+            result['hsp_subject'] = hsp_subject
             result['hsp'] = hsp
             results_list.append(result)
             
