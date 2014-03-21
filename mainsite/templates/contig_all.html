@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2 class="list">Contigs</h2>
-    <p>X number of results OR All records</p>
-    <table class="list">
+        {% if contig_list %}
+        <h2 class="list">Contigs</h2>
+        <p>X number of results OR All records</p>
+        <table class="list">
             <tr>
                 <th>Contig Name</th>
                 <th>Pool ID</th>
@@ -23,5 +24,6 @@
                 <td>{{ contig.image }}</td>
             </tr>
         {% endfor %}
-    </table>
+        </table>
+        {% endif %}
 {% endblock %}

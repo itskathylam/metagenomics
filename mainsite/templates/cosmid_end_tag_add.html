@@ -11,8 +11,28 @@
 {% endblock %}
 
 {% block form %}
-    {{cosmid_form}}
-    {{end_tag_formset}}
+    <table>
+    {% for field in cosmid_form %}
+        <tr>
+            <th>
+            {% if field.field.required %}
+                *{{ field.label }}
+            {% else %}
+                {{ field.label }}
+            {% endif %}
+            </th>
+            <td>
+            {{ field }}
+            </td>
+    {% endfor %}
+
+    </table>
+    {% for form in end_tag_formset %}
+        <h3>End Tag</h3>
+        <table>
+            {{ form }}
+        </table>
+    {% endfor %}
 {% endblock %}
 
 {% block link %}

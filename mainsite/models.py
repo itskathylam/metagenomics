@@ -120,8 +120,6 @@ class Contig(models.Model):
     def __unicode__(self):
         return self.contig_name
 
-    def __unicode__(self):
-        return self.contig_name
 
 class ORF(models.Model):
     orf_sequence = models.TextField("ORF Sequence") 
