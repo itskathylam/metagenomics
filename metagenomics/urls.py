@@ -66,9 +66,6 @@ urlpatterns = patterns('',
     url(r'^search/contig/$', ContigSearchView, name='contig-search'),
     url(r'^results/contig/$', ContigResults, name='contig-results'),
     
-    url(r'^search/$', SearchAll, name = 'all-search'),
-    url(r'^results/$', AllResults, name = 'all-results'),
-    
     
     url(r'^search/blast/$', BlastSearch, name='blast-search'),
     url(r'^results/blast/', BlastResults, name='blast-results'),
