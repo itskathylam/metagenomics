@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-        
-    <table border = 1>
+    {% if orf_list %}
+    <h2 class="list">ORFs</h2>   
+    <table class="list">
             <tr>
                 <th>ORF ID</th>
                 <th>ORF Sequence</th>
@@ -16,4 +17,7 @@
             </tr>
         {% endfor %}
     </table>
+    {% else %}
+        <p>0 ORFs found for search '{{ query }}' <a href="{% url 'orf-search' %}">Try another search</a>.</p>
+    {% endif%}
 {% endblock %}

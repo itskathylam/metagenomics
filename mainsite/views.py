@@ -18,6 +18,7 @@ from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 from Bio.SeqRecord import SeqRecord
 
+import types
 import StringIO
 from os import system
 import pdb
@@ -126,19 +127,23 @@ def CosmidSearchView(request):
 
 def SubcloneSearchView(request):
     form = SubcloneForm
-    return render_to_response('subclone_search.html', {'form': form}, context_instance=RequestContext(request))
+    basicform = AllSearchForm
+    return render_to_response('subclone_search.html', {'advancedform': form, 'basicform': basicform}, context_instance=RequestContext(request))
 
 def SubcloneAssaySearchView(request):
     form = SubcloneAssayForm
-    return render_to_response('subclone_assay_search.html', {'form': form}, context_instance=RequestContext(request))
+    basicform = AllSearchForm
+    return render_to_response('subclone_assay_search.html', {'advancedform': form, 'basicform': basicform}, context_instance=RequestContext(request))
 
 def CosmidAssaySearchView(request):
     form = CosmidAssayForm
-    return render_to_response('cosmid_assay_search.html', {'form': form}, context_instance=RequestContext(request))
+    basicform = AllSearchForm
+    return render_to_response('cosmid_assay_search.html', {'advancedform': form, 'basicform': basicform}, context_instance=RequestContext(request))
 
 def OrfSearchView(request):
     form = OrfSearchForm
-    return render_to_response('orf_search.html', {'form': form}, context_instance=RequestContext(request))
+    basicform = AllSearchForm
+    return render_to_response('orf_search.html', {'advancedform': form, 'basicform': basicform}, context_instance=RequestContext(request))
 
 def SearchAll(request):
     form = AllSearchForm
@@ -224,7 +229,7 @@ def OrfResults(request):
     results = ORF.objects.filter(annotation__icontains=annotation)
     return render_to_response('orf_all.html', {'orf_list': results}, context_instance=RequestContext(request))
 
-def AllResults(request):
+def CosmidBasicResults(request):
    #gets the list of words they entered
     query = request.GET.get('query')
     #splits string into a list
@@ -250,7 +255,107 @@ def AllResults(request):
         final_q = reduce(operator.or_, list_name_qs + list_host_qs + list_researcher_qs + list_library_qs + list_screen_qs + list_ec_collection_qs + list_original_media_qs + list_pool_qs + list_labbook_qs + list_comments_qs)
         results = Cosmid.objects.filter(final_q)
     return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': results, 'query': query}, context_instance=RequestContext(request))
+
+def SubcloneBasicResults(request):
+    #gets the list of words they entered
+    query = request.GET.get('query')
+    #splits string into a list
+    keywords = query.split()
     
+    #if no words entered, returns no results
+    if keywords == None:
+        results = None
+    else:
+        #builds a Q object for each word in the list
+        list_name_qs = [Q(subclone_name__icontains=word) for word in keywords]
+        list_cosmid_qs = [Q(cosmid__cosmid_name__icontains=word) for word in keywords]
+        list_orfid_qs = []
+        for word in keywords:
+            if isinstance(word, types.IntType):
+                list_orfid_qs.append(Q(orf__id__exact=word))
+        list_orfanno_qs = [Q(orf__annotation__icontains=word) for word in keywords]
+        list_vector_qs = [Q(vector__vector_name__icontains=word) for word in keywords]
+        list_researcher_qs = [Q(researcher__researcher_name__icontains=word) for word in keywords]
+        list_ec_collection_qs = [Q(ec_collection__icontains=word) for word in keywords] 
+        list_primer1_qs = [Q(primer1_name__icontains=word) for word in keywords]
+        list_primer2_qs = [Q(primer2_name__icontains=word) for word in keywords]        
+        #combines all the Q objects with the OR operator
+        final_q = reduce(operator.or_, list_name_qs + list_cosmid_qs + list_orfid_qs + list_orfanno_qs + list_vector_qs + list_ec_collection_qs + list_researcher_qs + list_primer1_qs + list_primer2_qs)
+        results = Subclone.objects.filter(final_q)
+    return render_to_response('subclone_all.html', {'subclone_list': results, 'query': query}, context_instance=RequestContext(request))
+
+def CosmidAssayBasicResults(request):
+    #gets the list of words they entered
+    query = request.GET.get('query')
+    #splits string into a list
+    keywords = query.split()
+    
+    #if no words entered, returns no results
+    if keywords == None:
+        results = None
+    else:
+        #builds a Q object for each word in the list
+        list_name_qs = [Q(cosmid__cosmid_name__icontains=word) for word in keywords]
+        list_host_qs = [Q(host__host_name__icontains=word) for word in keywords]
+        list_substrate_qs = [Q(substrate__substrate_name__icontains=word) for word in keywords]
+        list_antibiotic_qs = [Q(antibiotic__antibiotic_name__icontains=word) for word in keywords]
+        list_researcher_qs = [Q(researcher__researcher_name__icontains=word) for word in keywords]
+        list_km_qs = [Q(cosmid_km__icontains=word) for word in keywords] 
+        list_temp_qs = [Q(cosmid_temp__icontains=word) for word in keywords]
+        list_ph_qs = [Q(cosmid_ph__icontains=word) for word in keywords]        
+        list_comments_qs = [Q(cosmid_comments__icontains=word) for word in keywords]
+        #combines all the Q objects with the OR operator
+        final_q = reduce(operator.or_, list_name_qs + list_host_qs + list_substrate_qs + list_antibiotic_qs + list_researcher_qs + list_km_qs + list_temp_qs + list_ph_qs + list_comments_qs)
+        results = Cosmid_Assay.objects.filter(final_q)
+    return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': results, 'query': query}, context_instance=RequestContext(request))
+
+def SubcloneAssayBasicResults(request):
+    #gets the list of words they entered
+    query = request.GET.get('query')
+    #splits string into a list
+    keywords = query.split()
+    
+    #if no words entered, returns no results
+    if keywords == None:
+        results = None
+    else:
+        #builds a Q object for each word in the list
+        list_subclone_qs = [Q(subclone__subclone_name__icontains=word) for word in keywords]
+        list_host_qs = [Q(host__host_name__icontains=word) for word in keywords]
+        list_substrate_qs = [Q(substrate__substrate_name__icontains=word) for word in keywords]
+        list_antibiotic_qs = [Q(antibiotic__antibiotic_name__icontains=word) for word in keywords]
+        list_researcher_qs = [Q(researcher__researcher_name__icontains=word) for word in keywords]
+        list_km_qs = [Q(subclone_km__icontains=word) for word in keywords] 
+        list_temp_qs = [Q(subclone_temp__icontains=word) for word in keywords]
+        list_ph_qs = [Q(subclone_ph__icontains=word) for word in keywords]        
+        list_comments_qs = [Q(subclone_comments__icontains=word) for word in keywords]
+        #combines all the Q objects with the OR operator
+        final_q = reduce(operator.or_, list_subclone_qs + list_host_qs + list_substrate_qs + list_antibiotic_qs + list_researcher_qs + list_km_qs + list_temp_qs + list_ph_qs + list_comments_qs)
+        results = Subclone_Assay.objects.filter(final_q)   
+    return render_to_response('subclone_assay_all.html', {'subclone_assay_list': results, 'query': query}, context_instance=RequestContext(request))
+
+def OrfBasicResults(request):
+    #gets the list of words they entered
+    query = request.GET.get('query')
+    #splits string into a list
+    keywords = query.split()
+    
+    #if no words entered, returns no results
+    if keywords == None:
+        results = None
+    else:
+        #builds a Q object for each word in the list
+        list_orfid_qs = []
+        for word in keywords:
+            if isinstance(word, types.IntType):
+                list_orfid_qs.append(Q(orf__id__exact=word))
+        list_orfanno_qs = [Q(annotation__icontains=word) for word in keywords]
+        list_subclone_qs = [Q(subclone__subclone_name__icontains=word) for word in keywords]
+        final_q = reduce(operator.or_, list_subclone_qs + list_orfanno_qs + list_orfid_qs)
+        results = ORF.objects.filter(final_q)
+        
+    return render_to_response('orf_all.html', {'orf_list': results, 'query': query}, context_instance=RequestContext(request))
+
 #detail views
 def CosmidDetail(request, cosmid_name):
     #returns the Cosmid object requested
