@@ -5,6 +5,8 @@ from django.forms import widgets
 from django.contrib.auth.models import User
 from django.forms.models import BaseFormSet, inlineformset_factory
 
+from django.contrib.auth.forms import SetPasswordForm
+
 # For Cosmid-End Tag add
 class CosmidForm(ModelForm):
     class Meta:
@@ -57,10 +59,13 @@ class ContigSearchForm(ModelForm):
         
 #Change user preferences    
 class UserForm(ModelForm):
+    #confirm_password = forms.CharField(widget=forms.PasswordInput())
+    
     class Meta:
         model = User
-        exclude = ('last_login', 'is_superuser', 'username', 'is_staff', 'is_active', 'date_joined', 'groups', 'user_permissions',)
-        
+        fields = ('username', 'first_name', 'last_name', 'email')
+        #widgets = {'password': forms.PasswordInput(),}
+
 # For Contig-Pool add
 class ContigForm(ModelForm):
     class Meta:

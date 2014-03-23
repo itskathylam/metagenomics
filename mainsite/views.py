@@ -44,8 +44,19 @@ def Logout(request):
     return HttpResponseRedirect('/login')
 
 def UserSettings(request):
-    form = UserForm
-    return render_to_response('usersettings.html', {'form': form}, context_instance=RequestContext(request))
+    form_errors = {}
+    
+    if request.method == "POST":
+        user_form = UserForm(request.POST, instance = request.user)
+        if user_form.is_valid():
+            user_form.save()
+            return HttpResponseRedirect('/')
+        else:
+            form = UserForm
+            form_errors['invalid'] = "something went wrong"
+    else:
+        form = UserForm(initial={'first_name': request.user.first_name, 'last_name': request.user.last_name, 'username': request.user.username, 'email': request.user.email, 'password': "testtt", 'confirm_password': "test"})
+    return render_to_response('usersettings.html', {'form': form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
 def Faq(request):
     return (render(request, 'faq.html'))

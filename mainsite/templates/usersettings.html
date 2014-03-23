@@ -9,34 +9,16 @@
 {% endblock %}
 
 {% block content %}
-    <table>
-        {{ form }}
-    </table>
-    <form action="" method="POST">
+    {% for key,value in form_errors.items %}
+        {{ value }}
+    {% endfor %}
+    
+    <form action="{% url "usersettings" %}" method="POST">
         {% csrf_token %}
-        
         <table>
-           <tr>
-                <td><label for="first">First name</label></td>
-                <td><input type="text" id="first" name="first" value="{{ user.first_name }}"></td>
-           </tr>
-           <tr>
-                <td><label for="first">Last name</label></td>
-                <td><input type="text" id="last" name="last" value="{{ user.last_name }}"></td>
-           </tr>
-           <tr>
-                <td><label for="email">Email address</label></td>
-                 <td><input type="email" id="email" name="email" value="{{ user.email }}"></td>
-           </tr> 
-           <tr>
-                <td><label for="pass">Password</label></td>
-                <td><input type="password" id="pass" name="pass" value="{{ user.password }}"></td>
-           </tr>
-           <tr>
-                <td><label for="first">Confirm Password</label></td>
-                <td><input type="password" id="passc" name="passc" value="{{ user.password }}"></td>
-           </tr>
+            {{ form }}
         </table>
         <input type="submit" value="Save changes">
     </form>
+    <a href="/user/password/change">Change Password</a>
 {% endblock %}
