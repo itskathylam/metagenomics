@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block subtitle %}
+    <img src="{{ STATIC_URL }}icons/add64.png"><h2 class="add">Host</h2>
+{% endblock %}
+
 {% block content %}
     <form action="{% url "host-add" %}" method="POST">{% csrf_token %}
         <table border = 1>    

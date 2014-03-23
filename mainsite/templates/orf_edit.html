@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block subtitle %}
+    <img src="{{ STATIC_URL }}icons/edit64.png"><h2 class="edit">Edit ORF {{ orf.pk }}</h2>
+{% endblock %}
+
 {% block content %}
     <form action="{% url 'orf-list' %}{{ orf.pk }}/" method="POST">
     {% csrf_token %}

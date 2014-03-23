@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
-{% block content %}
-
+{% block subtitle %}
 <h2>Cosmid {{ name }}</h2>
+{% endblock %}
+
+{% block content %}
 <p>Host: {{ host }}</p>
 <p>Researcher: {{ researcher }}</p>
 <p>Library: {{ library }}</p>

@@ -1,4 +1,56 @@
-{% extends "search.html" %}
+{% extends "base.html" %}
+
+{% block head %}
+    <title>
+        Search ORFs
+    </title>
+    <script  src="{{ STATIC_URL }}tabs.js"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}tabs.css" type="text/css" />
+{% endblock %}
+
+{% block subtitle %}
+<img src="{{ STATIC_URL }}icons/search64.png"><h2 class="search">Search ORFs</h2>
+{% endblock %}
+
+{% block content %}
+
+    <ul id="tabs">
+        <li><a href="#Basic">Basic Search</a></li>
+        <li><a href="#Advanced">Advanced Search</a></li>
+        <li><a href="#BLAST">BLAST</a></li>
+    </ul>
+    <div class="tabContent" id="Advanced">
+        <form action="{% url 'orf-results' %}" method="get">
+            <table class="search">
+                {{ advancedform }}
+            </table>
+            <input type="submit" value="Search">
+        </form>
+    </div>
+    
+    <div class="tabContent" id="Basic">
+        <form action="{% url 'orf-basic-results' %}" method="get">
+            <table class="search">
+                {{ basicform }}
+            </table>
+            <input type="submit" value="Search">
+        </form>
+    </div>
+    
+    <div class="tabContent" id="BLAST">
+        <p>BLAST</p>
+    </div>
+{% endblock %}
+
+{% block second %}
+    <section id="second">
+        <h3>Quick Links</h3>
+        <a href="{% url 'orf-list' %}"><img class="viewall" src="{{ STATIC_URL }}icons/allblack.png" alt="all">View All</a><br>
+    </section>
+{% endblock %}
+
+{#
+extends "search.html"
 
 {% block urlform %}
     {% url 'orf-results' %}
@@ -20,3 +72,4 @@
 {% block link %}
 <a href="{% url 'orf-list' %}"><img class="viewall" src="{{ STATIC_URL }}icons/allblack.png" alt="all">View All</a><br>
 {% endblock %}
+#}

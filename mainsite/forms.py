@@ -41,7 +41,7 @@ class SubcloneForm(ModelForm):
 class OrfSearchForm(ModelForm):
     class Meta:
         model = ORF
-        exclude = ('orf_sequence', 'contig',)
+        fields = ['annotation', 'id'] #need to fix this so ID shows in form. it doesnt work as is.
 
 #For subclone assay search
 class SubcloneAssayForm(ModelForm):

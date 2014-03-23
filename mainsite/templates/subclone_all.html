@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 
+{% block subtitle %}
+<h2 class="list">Subclones</h2>
+{% endblock %}
+
 {% block content %}
     {% if subclone_list %}
-        <h2 class="list">Subclones</h2>
         <p>X number of results OR All records</p>
         <table class="list">
                 <tr>

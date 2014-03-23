@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block subtitle %}
+    <img src="{{ STATIC_URL }}icons/edit64.png"><h2 class="edit">Edit {{ contig.contig_name }}</h2>
+{% endblock %}
+
 {% block content %}
     <form action="{% url 'contig-list' %}{{ contig.pk }}/" method="POST">
     {% csrf_token %}

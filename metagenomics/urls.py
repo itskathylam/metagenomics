@@ -44,21 +44,32 @@ urlpatterns = patterns('',
     
     #Search views
     url(r'^search/cosmid/$', CosmidSearchView, name='cosmid-search'),
-    url(r'^results/cosmid/', CosmidResults, name='cosmid-results'),
+    url(r'^results/cosmid/$', CosmidResults, name='cosmid-results'),
+    url(r'^results/basic/cosmid$', CosmidBasicResults, name = 'cosmid-basic-results'),
+    
     url(r'^search/subclone/$', SubcloneSearchView, name='subclone-search'),
-    url(r'^results/subclone/', SubcloneResults, name='subclone-results'),
+    url(r'^results/subclone/$', SubcloneResults, name='subclone-results'),
+    url(r'^results/basic/subclone/$', SubcloneBasicResults, name='subclone-basic-results'),
+    
     url(r'^search/assay/subclone$', SubcloneAssaySearchView, name = 'subclone-assay-search'),
     url(r'^results/assay/subclone$', SubcloneAssayResults, name='subclone-assay-results'),
+    url(r'^results/basic/assay$', SubcloneAssayBasicResults, name='subclone-assay-basic-results'), #need to add the view and template for this
+    
     url(r'^search/assay/cosmid$', CosmidAssaySearchView, name = 'cosmid-assay-search'),
     url(r'^results/assay/cosmid$', CosmidAssayResults, name='cosmid-assay-results'),
+    url(r'^results/basic/assay/cosmid$', CosmidAssayBasicResults, name='cosmid-assay-basic-results'),
+    
     url(r'^search/orf/$', OrfSearchView, name='orf-search'),
-    url(r'^results/orf/$', OrfResults, name='orf-results'),
+    url(r'^results/orf/$', OrfResults, name = 'orf-results'),
+    url(r'^results/basic/orf$', OrfBasicResults, name = 'orf-basic-results'), # add view and template for this
+    
     url(r'^search/contig/$', ContigSearchView, name='contig-search'),
     url(r'^results/contig/$', ContigResults, name='contig-results'),
-    url(r'^search/$', SearchAll, name = 'all-search'),
-    url(r'^results/$', AllResults, name = 'all-results'),
+    
+    
     url(r'^search/blast/$', BlastSearch, name='blast-search'),
     url(r'^results/blast/', BlastResults, name='blast-results'),
+
     
     #listviews for lookup tables 
     url(r'^primer/$', PrimerListView.as_view(), name='primer-list'),

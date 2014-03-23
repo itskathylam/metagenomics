@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
+{% block subtitle %}
+<h2><img src="{{ STATIC_URL }}icons/edit64.png" alt="">Edit Cosmid</h2>
+{% endblock %}
+
 {% block content %}
-    <h2><img src="{{ STATIC_URL }}icons/edit64.png" alt="">Edit Cosmid</h2>
+
     <form action="{% url 'cosmid-end-tag-list' %}{{ cosmid.pk }}/" method="POST">
     {% csrf_token %}
         <table border = 1>    

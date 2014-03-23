@@ -3,10 +3,13 @@
 {% block head %}
 <title>Change User Settings</title>
 {% endblock %}
+
+{% block subtitle %}
+<h2><img src="{{ STATIC_URL }}/gear.png">Change User Settings</h2>
+{% endblock %}
+
 {% block content %}
-    <h2><img src="{{ STATIC_URL }}/gear.png">Change User Settings</h2>
     <table>
-    
         {{ form }}
     </table>
     <form action="" method="POST">
