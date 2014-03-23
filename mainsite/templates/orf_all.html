@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 
+{% block subtitle %}
+<h2 class="list">ORFs</h2>  
+{% endblock %}
+
 {% block content %}
     {% if orf_list %}
-    <h2 class="list">ORFs</h2>   
     <table class="list">
             <tr>
                 <th>ORF ID</th>

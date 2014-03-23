@@ -1,6 +1,10 @@
 {% extends "detail.html" %}
+
+{% block subtitle %}
+<h2><img src="{{ STATIC_URL }}icons/detail64.png" alt="">Cosmid Assay</h2>
+{% endblock %}
+
 {% block record %}
-    <h2><img src="{{ STATIC_URL }}icons/detail64.png" alt="">Cosmid Assay</h2>
     <table>
         <tr><th>Cosmid</th><td><a href="{% url 'cosmid-end-tag-list' %}{{cosmid_assay.cosmid}}">{{ cosmid_assay.cosmid }}</a></td></tr>
         <tr><th>Host</th><td>{{ cosmid_assay.host }}</td></tr>

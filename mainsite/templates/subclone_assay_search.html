@@ -8,8 +8,11 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}tabs.css" type="text/css" />
 {% endblock %}
 
+{% block subtitle %}
+<img src="{{ STATIC_URL }}icons/search64.png"><h2 class="search">Search Subclone Assays</h2>
+{% endblock %}
+
 {% block content %}
-    <img src="{{ STATIC_URL }}icons/search64.png"><h2 class="search">Search Subclone Assays</h2>
     <ul id="tabs">
         <li><a href="#Basic">Basic Search</a></li>
         <li><a href="#Advanced">Advanced Search</a></li>

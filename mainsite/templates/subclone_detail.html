@@ -1,6 +1,10 @@
 {% extends "detail.html" %}
+
+{% block titletext %}
+Subclone {{ subclone.subclone_name }}
+{% endblock %}
+
 {% block record %}
-    <h2><img src="{{ STATIC_URL }}icons/detail64.png" alt="edit">Subclone {{ subclone.subclone_name }}</h2>
     <table>
         <tr><th>Subclone</th><td>{{ subclone.subclone_name }}</td></tr>
         <tr><th>Cosmid</th><td>{{ subclone.cosmid }}</td></tr>
