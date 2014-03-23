@@ -51,10 +51,10 @@ def UserSettings(request):
             user_form.save()
             return HttpResponseRedirect('/')
         else:
-            form = UserForm
-            form_errors['invalid'] = "something went wrong"
+            form = UserForm(initial={'first_name': request.user.first_name, 'last_name': request.user.last_name, 'username': request.user.username, 'email': request.user.email})
+            form_errors['invalid'] = "Error on form."
     else:
-        form = UserForm(initial={'first_name': request.user.first_name, 'last_name': request.user.last_name, 'username': request.user.username, 'email': request.user.email, 'password': "testtt", 'confirm_password': "test"})
+        form = UserForm(initial={'first_name': request.user.first_name, 'last_name': request.user.last_name, 'username': request.user.username, 'email': request.user.email})
     return render_to_response('usersettings.html', {'form': form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
 def Faq(request):

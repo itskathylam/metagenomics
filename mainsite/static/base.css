@@ -328,7 +328,6 @@ input[type=submit] {
 /* for tabs on cosmid page */
 .tabs {
   position: relative; 
-  min-height: 1500px;
   clear: both;
  /* width: 100%;*/
  
