@@ -1,14 +1,10 @@
 {% extends "add.html" %}
 
-{% block pagetitle%}
-    Add Cosmid
-{% endblock %}
+{% block pagetitle%}Add Cosmid{% endblock %}
 
 {% block titletext %}Add Cosmid{% endblock %}
 
-{% block urlform %}
-    {% url "cosmid-end-tag-add" %}
-{% endblock %}
+{% block urlform %}{% url "cosmid-end-tag-add" %}{% endblock %}
 
 {% block form %}
     <table>
@@ -27,13 +23,10 @@
     {% endfor %}
 
     </table>
-    {% for form in end_tag_formset %}
-        <h3>End Tag</h3>
-        <table>
-            {{ form }}
-        </table>
-    {% endfor %}
+    <h3>End Tags</h3>
+    <table>
+        {{ end_tag_formset }}
+    </table>
 {% endblock %}
 
-{% block link %}
-{% endblock %}
+{% block link %}{% endblock %}

@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import ModelForm
+from django.forms import ModelForm, RadioSelect, ChoiceField
 from mainsite.models import *
 from django.forms import widgets
 from django.contrib.auth.models import User
@@ -21,12 +21,16 @@ class ORFForm(ModelForm):
     class Meta:
         model = ORF
         exclude = ('contig', 'id',)
+        
 
 #For ORF-Contig add
 class ContigORFJoinForm(ModelForm):
     class Meta:
         model = Contig_ORF_Join
         exclude = ('orf', 'start', 'stop', 'predicted', 'prediction_score')
+        labels = {
+            'complement': ('*ORF on Contig complement?'),
+        }
 
 #For Subclone search
 class SubcloneForm(ModelForm):

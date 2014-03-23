@@ -137,8 +137,8 @@ class Contig_ORF_Join(models.Model):
     orf = models.ForeignKey(ORF)
     start = models.PositiveIntegerField()
     stop = models.PositiveIntegerField()
-    complement = models.BooleanField()
-    orf_accession = models.CharField("ORF Accession", max_length=50, blank=True, null=True)
+    complement = models.BooleanField("ORF on complement strand")
+    orf_accession = models.CharField("ORF Accession if submitted to GenBank", max_length=50, blank=True, null=True)
     predicted = models.BooleanField()
     prediction_score = models.FloatField(blank=True, null=True)
 

@@ -80,7 +80,7 @@ urlpatterns = patterns('',
     
     #listviews for multiple-table-based views
     url(r'^cosmid/$', CosmidEndTagListView.as_view(), name='cosmid-end-tag-list'), # for cosmid and endtags (Kathy)
-    url(r'^orfcontig/$', ORFContigListView.as_view(), name='orf-contig-list'), # not a useful view; may remove (Kathy)
+    url(r'^orfcontig/$', ORFContigListView.as_view(), name='orf-contig-list'), # not a useful view? may remove (Kathy)
     
     #createviews - form to add data to database table  
     url(r'^add/subclone/$', permission_required('mainsite.cosmid.can_add_subclone')(SubcloneCreateView.as_view()), name='subclone-add'),
@@ -102,6 +102,8 @@ urlpatterns = patterns('',
     url(r'^export/vector', vector_queryset),
     url(r'^export/pool', pool_queryset),
     url(r'^export/substrate', substrate_queryset),
+    
+  
 
 
 )

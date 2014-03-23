@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block titletext %}
-Add Open Reading Frame
+Manually Add Open Reading Frame
 {% endblock %}
 
 {% block urlform %}
@@ -13,8 +13,32 @@ Add Open Reading Frame
 {% endblock %}
 
 {% block form %}
-    {{contig_orf_form}}
-    {{orf_form}}
+    {% for field in contig_orf_form %}
+        <tr>
+            <th>
+            {% if field.field.required %}
+                *{{ field.label }}
+            {% else %}
+                {{ field.label }}
+            {% endif %}
+            </th>
+            <td>
+            {{ field }}
+            </td>
+    {% endfor %}   
+    {% for field in orf_form %}
+        <tr>
+            <th>
+            {% if field.field.required %}
+                *{{ field.label }}
+            {% else %}
+                {{ field.label }}
+            {% endif %}
+            </th>
+            <td>
+            {{ field }}
+            </td>
+    {% endfor %}
 {% endblock %}
 
 {% block errors %}
