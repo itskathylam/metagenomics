@@ -8,13 +8,13 @@ from django.contrib.auth.views import login, password_change
 urlpatterns = patterns('',
     #Admin and Static Pages (Main, About, and Logging in and Out) 
     url(r'^$', MainPage, name='home'),
-    url(r'^admin/$', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)), #can not add a $ to end of the regular expression here
     url(r'^about/$', AboutPage, name='about'),
     
     url(r'^login/$', 'django.contrib.auth.views.login'),
     url(r'^logout/$', Logout, name='logout'),
     url(r'^user/settings/$', UserSettings, name='usersettings'),
-    url(r'^user/password/change/$', 'django.contrib.auth.views.password_change', {}),
+    url(r'^user/password/change/$', 'django.contrib.auth.views.password_change'),
     url(r'^user/password/changed/$', 'django.contrib.auth.views.password_change_done', name="password_change_done"),
     
     url(r'^help/faq/$', Faq, name='faq'),

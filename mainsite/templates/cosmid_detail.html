@@ -64,25 +64,35 @@
                 <p>Open reading frames in {{ list.contig_name }}</p>
                 <table>
                     <tr>
-                        <th>Accession</th>
-                        <th>Start</th>
-                        <th>Stop</th>
                         <th>ID</th>
                         <th>Annotation</th>
                         <th>Sequence</th>
+                        <th>Accession (if submitted to GenBank)</th>
+                        <th>Start</th>
+                        <th>Stop</th>
+                        <th>ORF on complement strand?</th>
+                        <th>Predicted by FGS</th>
+                        <th>Prediction Score</th>
+                        <th>Remove</th>
                     </tr>
                 {% for orf in orfs %}
                     {% if orf.contig_id = list.id %}
-                        <tr><td>{{ orf.orf_accession }}</td>
-                        <td>{{ orf.start }}</td>
-                        <td>{{ orf.stop }}</td>
                         {% for s in seq %}
                             {% if s.id = orf.orf_id %}
-                                 <td><a href="{% url 'orf-list' %}{{ s.id }}">{{ s.id }}</a></td>
+                                 <tr><td><a href="{% url 'orf-list' %}{{ s.id }}">{{ s.id }}</a></td>
                                  <td>{{ s.annotation }}</td>
-                                <td><textarea rows="4" cols"10" readonly=true>{{ s.orf_sequence }}</textarea></td></tr>
+                                <td><textarea rows="4" cols"10" readonly=true>{{ s.orf_sequence }}</textarea></td>
                             {% endif %}
                         {% endfor %}
+
+                        <td>{{ orf.orf_accession }}</td>
+                        <td>{{ orf.start }}</td>
+                        <td>{{ orf.stop }}</td>
+                        <td>{{ orf.complement }}</td>
+                        <td>{{ orf.predicted }}</td>
+                        <td>{{ orf.prediction_score }}</td>
+                        <td><a href="/delete/contig-orf/{{ orf.id }}">Remove</a></td>
+                        </tr>
                     {% endif %}
                 {% endfor %}
                 </table>
