@@ -10,7 +10,8 @@ class CosmidForm(ModelForm):
     class Meta:
         model = Cosmid
     
-EndTagFormSet = inlineformset_factory(Cosmid, 
+EndTagFormSet = inlineformset_factory(
+    Cosmid, 
     End_Tag, 
     can_delete=False,
     extra=2,

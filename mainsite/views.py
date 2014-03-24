@@ -500,6 +500,8 @@ class CosmidAssayDetailView(DetailView):
 
 class SubcloneDetailView(DetailView):
     model = Subclone
+    slug_field = 'subclone_name'
+    slug_url_kwarg = 'subclone_name'
     template_name = 'subclone_detail.html'
   
 class VectorDetailView(DetailView) :
@@ -507,14 +509,21 @@ class VectorDetailView(DetailView) :
     template_name = 'vector_detail.html'
     
 #edit views (updateview class)
+#nb: slug fields required for using names in the urls instead of primary keys (Kathy)
+
+#custom class to handle editing cosmid and end-tag models at once (Kathy)
 class CosmidEditView(UpdateView):
     model = Cosmid
     template_name = 'cosmid_edit.html'
+    slug_field = 'cosmid_name'
+    slug_url_kwarg = 'cosmid_name'
     success_url = reverse_lazy('cosmid-end-tag-list')
     
 class SubcloneEditView(UpdateView):
     model = Subclone
     template_name = 'subclone_edit.html'
+    slug_field = 'subclone_name'
+    slug_url_kwarg = 'subclone_name'
     success_url = reverse_lazy('subclone-list')
     
 class CosmidAssayEditView(UpdateView):

@@ -15,6 +15,7 @@
                 <th>Prediction Score</th>
                 <th>ORF Start</th>
                 <th>ORF Stop</th>
+                <th>ORF on complement strand?</th>
                 <th>ORF Accession (if submitted to GenBank)</th>
                 <th>ORF Seqeunce</th>
             </tr>
@@ -28,6 +29,7 @@
                 <td>{{ contig_orf_join.prediction_score }}</td>
                 <td>{{ contig_orf_join.start }}</td>
                 <td>{{ contig_orf_join.stop }}</td>
+                <td>{{ contig_orf_join.complement }}</td>
                 <td>{{ contig_orf_join.orf_accession }}</td>
                 <td><textarea rows="5" cols="50" readonly=true>{{ contig_orf_join.orf.orf_sequence }}</textarea></td></td>
             </tr>

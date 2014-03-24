@@ -5,11 +5,11 @@
 {% endblock %}
 
 {% block content %}
-    <form action="{% url 'subclone-list' %}{{ subclone.pk }}/" method="POST">
+    <form action="" method="post">
     {% csrf_token %}
-        <table border = 1>    
+        <table>    
             {{form}}
         </table>
-        <input type="submit">
+        <input type="submit" value="Update">
     </form>
 {% endblock %}
