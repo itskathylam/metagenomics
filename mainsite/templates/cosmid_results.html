@@ -17,7 +17,7 @@
                 <th>End Tag 1 (optional)</th>
                 <th>End Tag 2 (optional)</th>
             </tr>
-        {% for cosmid in cosmid_list %}
+        {% for cos in cosmid %}
             <tr>
                 <td><a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.cosmid_name }}</a></td>
                 <td>{{ cosmid.researcher.researcher_name }}</td>
@@ -35,4 +35,17 @@
             </tr>
         {% endfor %}
     </table>
+    <div class="pagination">
+        <span class="step-links">
+                {% if cosmid.has_previous %}
+                        <a href="?page={{cosmid.previous_page_number}}">Previous</a>
+                {% endif %}
+                <span class="current">
+                        Page {{cosmid.number}} of {{ cosmid.paginator.num_pages}}
+                </span>
+                {% if cosmid.has_next %}
+                        <a href="?page={{cosmid.next_page_number}}">Next</a>
+                {% endif %}
+        </span>
+    </div>
 {% endblock %}

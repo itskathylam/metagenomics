@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <form action="{% url 'contig-list' %}{{ contig.pk }}/" method="POST">
+    <form action="" method="POST">
     {% csrf_token %}
         <table border = 1>
             <tr><td> Contig Name </td><td>{{contig.contig_name}}</td></tr>

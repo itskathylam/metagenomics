@@ -28,17 +28,17 @@ urlpatterns = patterns('',
 
     
     #Detail views
-    url(r'^cosmid/(?P<cosmid_name>[\w-]+)/$', CosmidDetail, name='cosmid-detail'),
+    url(r'^cosmid/(?P<cosmid_name>.*)/$', CosmidDetail, name='cosmid-detail'),
     url(r'^assay/subclone/(?P<pk>\d+)/$', SubcloneAssayDetailView.as_view(), name='sublcone-assay-detail'),
     url(r'^assay/cosmid/(?P<pk>\d+)/$', CosmidAssayDetailView.as_view(), name='cosmid-assay-detail'),
-    url(r'^subclone/(?P<pk>\d+)/$', SubcloneDetailView.as_view(), name='subclone-detail'),
+    url(r'^subclone/(?P<subclone_name>.*)/$', SubcloneDetailView.as_view(), name='subclone-detail'),
     url(r'^contig/(?P<contig_name>[\w-]+)/$', ContigDetail, name='contig-detail'),
     url(r'^orf/(?P<pk>\d+)/$', OrfDetailView.as_view(), name='orf-detail'),
     url(r'^vector/(?P<pk>\d+)/$', VectorDetailView.as_view(), name='vector-detail'),
     
     #Edit views (Updateviews)
-    url(r'^edit/cosmid/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_cosmid')(CosmidEditView.as_view()), name='cosmid-edit'),
-    url(r'^edit/subclone/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_subclone')(SubcloneEditView.as_view()), name='subclone-edit'),
+    url(r'^edit/cosmid/(?P<cosmid_name>.*)/$', permission_required('mainsite.cosmid.can_change_cosmid')(CosmidEditView.as_view()), name='cosmid-edit'),
+    url(r'^edit/subclone/(?P<subclone_name>.*)$', permission_required('mainsite.cosmid.can_change_subclone')(SubcloneEditView.as_view()), name='subclone-edit'),
     url(r'^edit/assay/cosmid/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_cosmid_assay')(CosmidAssayEditView.as_view()), name='cosmid-assay-edit'),
     url(r'^edit/assay/subclone/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_subclone_assay')(SubcloneAssayEditView.as_view()), name='subclone-assay-edit'),
     url(r'^edit/orf/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_orf')(ORFEditView.as_view()), name='orf-edit'),
@@ -51,7 +51,6 @@ urlpatterns = patterns('',
     url(r'^search/cosmid/$', CosmidSearchView, name='cosmid-search'),
     url(r'^results/cosmid/$', CosmidResults, name='cosmid-results'),
     url(r'^results/basic/cosmid$', CosmidBasicResults, name = 'cosmid-basic-results'),
-    
     url(r'^search/subclone/$', SubcloneSearchView, name='subclone-search'),
     url(r'^results/subclone/$', SubcloneResults, name='subclone-results'),
     url(r'^results/basic/subclone/$', SubcloneBasicResults, name='subclone-basic-results'),
@@ -83,7 +82,7 @@ urlpatterns = patterns('',
     url(r'^library/$', LibraryListView.as_view(), name='library-list'),
     url(r'^researcher/$', ResearcherListView.as_view(), name='researcher-list'),
     url(r'^vector/$', VectorListView.as_view(), name='vector-list'),
-    url(r'^pool/$', PoolListView.as_view(), name='pool-list'),
+    url(r'^pool?page=n/$', PoolListView.as_view(), name='pool-list'),
     url(r'^substrate/$', SubstrateListView.as_view(), name='substrate-list'),
     url(r'^antibiotic/$', AntibioticListView.as_view(), name='antibiotic-list'),
     

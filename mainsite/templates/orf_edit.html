@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <form action="{% url 'orf-list' %}{{ orf.pk }}/" method="POST">
+    <form action="" method="POST">
     {% csrf_token %}
         <table border = 1>    
             {{form}}

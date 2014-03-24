@@ -1,13 +1,41 @@
 {% extends "base.html" %}
 
 {% block head %}
-<title>Metagenomics Clone Bank</title>
+<title>Metagenomic Clone Bank</title>
 {% endblock %}
 
 {% block subtitle %}
-<h2>Subtitle</h2>
 {% endblock %}
 
 {% block content %}
-    <p>Add main message here.</p>
+    
+    <div style="float:right; padding:100px">
+    <a href="{{ STATIC_URL }}cloning.png"><img src="{{ STATIC_URL }}cloning.png" width="400px"></a><br>
+    </div>
+    
+    <div style="margin-left:30px; padding:20px; line-height:140%">
+    
+    <h2>Welcome</h2><br>
+    
+    <h3><font color="#888888">Overview</font></h3>
+    
+    <p>The <b>Metagenomic Clone Bank</b> is currently the Charles Lab's primary data management system and custom anlaysis pipeline
+    for cosmid clones that have been isolated from metagenomic libraries. The metagenomic libraries used in screening have been constructed
+    using DNA from environmental sources and include,but are not restricted to, those from the <a href="http://www.cm2bl.org/">Canadian
+    MetaMicrobiome Library</a> collection.</p>
+    
+    <h3><font color="#888888">Clone information</font></h3>
+    
+    <p>Metagenomic (or genomic) libraries are subjected to <a href="{{ STATIC_URL }}cloning.png"> function-based screening</a> to isolate
+    individual clones. Cosmid clones can be logged in this database along with their relevant metadata and sequence information.
+    This database also includes information for Subclones, and biochemical assays that have been carried out on clones.</p>
+
+    <h3><font color="#888888">Automated sequence retrieval and gene annotation</font></h3>
+    
+    <p>Custom tools are available to aid in the analysis of clones, including a tool for retrieval of clone sequences from
+    assembled pooled sequencing data, as well as automated ORF identification and annotation. Please see the Tools pages for
+    details.</p>
+    </div>
+    
+    
 {% endblock %}

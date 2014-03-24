@@ -6,7 +6,7 @@
 
 {% block content %}
 
-    <form action="{% url 'cosmid-assay-list' %}{{ cosmid_assay.pk }}/" method="POST">
+    <form action="" method="POST">
     {% csrf_token %}
         <table border = 1>    
             {{form}}
