@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
+{% block head %}
+    <title>
+        Cosmid {{ name }}
+    </title>
+    <script  src="{{ STATIC_URL }}tabs.js"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}tabs.css" type="text/css" />
+{% endblock %}
+
 {% block subtitle %}
 <h2>Cosmid {{ name }}</h2>
 {% endblock %}
@@ -23,17 +31,19 @@
     <label>End Tag:<br>
     <textarea rows="10" cols="80" readonly>{{ endtag.end_tag_sequence }}</textarea></label><br>
 {% endfor %}
+<br>
 {% endblock %}
 
 {% block third %}
 <div class="tabs">
-{% for list in contigs %}
-    <div class="tab">
-        <input type="radio" id="{% cycle 'tab1' 'tab2' %}" name="contigtabs" checked>
-        <label for="{% cycle 'tab1' 'tab2' %}" class ="tab">{{ list.contig_name }}</label>
-        <div class="tab-panel"> 
-            <div class="content">
-                <h3>Contig: <a href="/contig/{{ list.contig_name }}">{{ list.contig_name }}</a></h3><br>
+    <ul id="tabs">
+        {% for list in contigs %}
+            <li><a href="#{{ list.contig_name }}">{{ list.contig_name }}</a></li>
+        {% endfor %}
+    </ul>
+    {% for list in contigs %}
+        <div class="tabContent" id="{{ list.contig_name }}">
+            <h3>Contig: <a href="/contig/{{ list.contig_name }}">{{ list.contig_name }}</a></h3><br>
                 Pool: {{ list.pool }}<br>   
                 Accession: {{ list.contig_accession }}<br>
                 <label>Sequence: <br>
@@ -66,11 +76,25 @@
                     {% endif %}
                 {% endfor %}
                 </table>
+        </div>
+    {% endfor %}
+
+</div>    
+<!-- {#
+<div class="tabs">
+{% for list in contigs %}
+    <div class="tab">
+        <input type="radio" id="{% cycle 'tab1' 'tab2' %}" name="contigtabs" checked>
+        <label for="{% cycle 'tab1' 'tab2' %}" class ="tab">{{ list.contig_name }}</label>
+        <div class="tab-panel"> 
+            <div class="content">
+                
             </div>
         </div>
     </div>
 {% endfor %}
 </div>
+ #} -->
 {% endblock %}
 
 {% block second %}
