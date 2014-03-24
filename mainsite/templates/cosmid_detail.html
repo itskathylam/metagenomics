@@ -13,24 +13,34 @@
 {% endblock %}
 
 {% block content %}
-<p>Host: {{ host }}</p>
-<p>Researcher: {{ researcher }}</p>
-<p>Library: {{ library }}</p>
-<p>Screen: {{ screen }}</p>
-<p>Ec Collection: {{ ec_collection }}</p>
-<p>Original Media: {{ media }}</p>
-<p>Pool: {{ pool }}</p>
-<p>Lab Book Reference: {{ lab_book }}</p>
-<p>Cosmid Comments: {{ cosmid_comments }}</p>
+<table>  
+<tr><th>Host:</th><td>{{ host }}</td></tr> 
+<tr><th>Researcher: </th><td>{{ researcher }}</td></tr>  
+<tr><th>Library: </th><td>{{ library }}</td> </tr> 
+<tr><th>Screen: </th><td>{{ screen }}</td> </tr> 
+<tr><th>Ec Collection: </th><td>{{ ec_collection }}</td> </tr> 
+<tr><th>Original Media: </th><td>{{ media }}</td> </tr> 
+<tr><th>Pool: </th><td>{{ pool }}</td> </tr> 
+<tr><th>Lab Book Reference: </th><td>{{ lab_book }}</td> </tr> 
+<tr><th>Cosmid Comments: </th><td>{{ cosmid_comments }}</td> </tr> 
+</table>
+
+<h3>End Tags</h3>
+
+
 {% for endtag in endtags %}
+    <table>
     {% for p in primers %}
         {% if endtag.primer_id = p.id %}
-            Primer: {{ p.primer_name }}<br>
+            <tr><th>Primer: </th><td>{{ p.primer_name }}</td></tr>
         {% endif %}
     {% endfor %}
-    <label>End Tag:<br>
-    <textarea rows="10" cols="80" readonly>{{ endtag.end_tag_sequence }}</textarea></label><br>
+    <th><label>End Tag:</th><td><textarea rows="10" cols="80" readonly>{{ endtag.end_tag_sequence }}</textarea></label></td></tr>
+    <th><label>Vector Trimmed?</th><td>{{ endtag.vector_trimmed }}</td>
+    </table>
+    <br>
 {% endfor %}
+
 <br>
 {% endblock %}
 
