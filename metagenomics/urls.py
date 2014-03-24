@@ -46,7 +46,7 @@ urlpatterns = patterns('',
     
     #Search views
     url(r'^search/cosmid/$', CosmidSearchView, name='cosmid-search'),
-    url(r'^results/cosmid/', CosmidResults, name='cosmid-results'),
+    url(r'^results/cosmid?page=n/', CosmidResults, name='cosmid-results'),
     url(r'^search/subclone/$', SubcloneSearchView, name='subclone-search'),
     url(r'^results/subclone/', SubcloneResults, name='subclone-results'),
     url(r'^search/assay/subclone$', SubcloneAssaySearchView, name = 'subclone-assay-search'),
@@ -66,7 +66,7 @@ urlpatterns = patterns('',
     url(r'^library/$', LibraryListView.as_view(), name='library-list'),
     url(r'^researcher/$', ResearcherListView.as_view(), name='researcher-list'),
     url(r'^vector/$', VectorListView.as_view(), name='vector-list'),
-    url(r'^pool/$', PoolListView.as_view(), name='pool-list'),
+    url(r'^pool?page=n/$', PoolListView.as_view(), name='pool-list'),
     url(r'^substrate/$', SubstrateListView.as_view(), name='substrate-list'),
     url(r'^antibiotic/$', AntibioticListView.as_view(), name='antibiotic-list'),
     

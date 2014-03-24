@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.template import RequestContext
 from django.core.urlresolvers import reverse_lazy
 from operator import attrgetter
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from mainsite.models import *
 from mainsite.forms import *
@@ -17,6 +18,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 from Bio.SeqRecord import SeqRecord
+
 
 import StringIO
 from os import system
@@ -160,8 +162,11 @@ def CosmidResults(request):
     for k, v in values.items():
         if v:
             args[k] = v
-    results = Cosmid.objects.filter(**args)
-    return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': results}, context_instance=RequestContext(request))
+    cosmid_list = Cosmid.objects.filter(**args)
+    paginator = Paginator(cosmid_list, 20)
+    page = request.GET.get('page')
+    cosmid = paginator.page()
+    return render_to_response('cosmid_end_tag_all.html', {'cosmid': cosmid}, context_instance=RequestContext(request))
 
 def SubcloneResults(request):
     name = request.GET.get('subclone_name')
@@ -374,32 +379,39 @@ class ContigORFDeleteView(DeleteView):
 class SubcloneListView(ListView):
     model = Subclone
     template_name = 'subclone_all.html'
+    paginate_by = 20
     
 class CosmidAssayListView(ListView):
     model = Cosmid_Assay
     template_name = 'cosmid_assay_all.html'
+    paginate_by = 20
     
 class SubcloneAssayListView(ListView):
     model = Subclone_Assay
     template_name = 'subclone_assay_all.html'
+    paginate_by = 20
 
 class ORFListView (ListView):
     model = ORF
     template_name = 'orf_all.html'
+    paginate_by = 20
     
 class ContigListView (ListView):
     model = Contig
-    template_name = 'contig_all.html' 
+    template_name = 'contig_all.html'
+    paginate_by = 20
   
 # List views for multi-table views (Kathy)
 
 class CosmidEndTagListView(ListView):
     model = Cosmid
     template_name = 'cosmid_end_tag_all.html'
+    paginate_by = 20
     
 class ORFContigListView(ListView):
     model = Contig_ORF_Join
     template_name = 'orf_contig_all.html'
+    paginate_by = 20
     
 # Create views for adding data to one model (Kathy)
 class SubcloneCreateView(CreateView):
@@ -556,10 +568,12 @@ def queryset_export_csv(qs):
 class PrimerListView(ListView):
     model = Primer
     template_name = 'primer_all.html'
+    paginate_by = 20
     
 class AntibioticListView(ListView):
     model = Antibiotic
     template_name = 'antibiotic_all.html'
+    paginate_by = 20
 
 #retrieve PrimerListView queryset to export as csv
 def primer_queryset(response):
@@ -569,6 +583,8 @@ def primer_queryset(response):
 class HostListView(ListView):
     model = Host
     template_name = 'host_all.html'
+    paginate_by = 20
+
     
 #retrieve HostListView queryset to export as csv
 def host_queryset(response):
@@ -578,6 +594,8 @@ def host_queryset(response):
 class ScreenListView(ListView):
     model = Screen
     template_name = 'screen_all.html'
+    paginate_by = 20
+
     
 #retrieve ScreenListView queryset to export as csv
 def screen_queryset(response):
@@ -587,6 +605,8 @@ def screen_queryset(response):
 class LibraryListView(ListView):
     model = Library
     template_name = 'library_all.html'
+    paginate_by = 20
+
     
 #retrieve LibraryListView queryset to export as csv
 def library_queryset(response):
@@ -596,6 +616,8 @@ def library_queryset(response):
 class ResearcherListView(ListView):
     model = Researcher
     template_name = 'researcher_all.html'
+    paginate_by = 20
+
     
 #retrieve ResearcherListView queryset to export as csv
 def researcher_queryset(response):
@@ -605,6 +627,8 @@ def researcher_queryset(response):
 class VectorListView(ListView):
     model = Vector
     template_name = 'vector_all.html'
+    paginate_by = 20
+
     
 #retrieve VectorListView queryset to export as csv
 def vector_queryset(response):
@@ -614,6 +638,7 @@ def vector_queryset(response):
 class PoolListView(ListView):
     model = Pooled_Sequencing
     template_name = 'pool_all.html'
+    paginate_by = 20
     
 #retrieve PoolListView queryset to export as csv
 def pool_queryset(response):
@@ -623,6 +648,8 @@ def pool_queryset(response):
 class SubstrateListView(ListView):
     model = Substrate
     template_name = 'substrate_all.html'
+    paginate_by = 20
+
     
 #retrieve SubstrateListView queryset to export as csv
 def substrate_queryset(response):
