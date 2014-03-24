@@ -66,11 +66,11 @@ urlpatterns = patterns('',
     
     url(r'^search/orf/$', OrfSearchView, name='orf-search'),
     url(r'^results/orf/$', OrfResults, name = 'orf-results'),
-    url(r'^results/basic/orf$', OrfBasicResults, name = 'orf-basic-results'), # add view and template for this
+    url(r'^results/basic/orf$', OrfBasicResults, name = 'orf-basic-results'),
     
     url(r'^search/contig/$', ContigSearchView, name='contig-search'),
     url(r'^results/contig/$', ContigResults, name='contig-results'),
-    
+    url(r'^results/basic/contig$', ContigBasicResults, name = 'contig-basic-results'),
     
     url(r'^search/blast/$', BlastSearch, name='blast-search'),
     url(r'^results/blast/', BlastResults, name='blast-results'),

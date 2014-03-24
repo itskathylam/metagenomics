@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.template import RequestContext
 from django.core.urlresolvers import reverse_lazy
 from operator import attrgetter
+import operator
 
 from mainsite.models import *
 from mainsite.forms import *
@@ -42,6 +43,7 @@ def Logout(request):
     logout(request)
     return HttpResponseRedirect('/login')
 
+@login_required
 def UserSettings(request):
     form_errors = {}
     
@@ -57,19 +59,24 @@ def UserSettings(request):
         form = UserForm(initial={'first_name': request.user.first_name, 'last_name': request.user.last_name, 'username': request.user.username, 'email': request.user.email})
     return render_to_response('usersettings.html', {'form': form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
+@login_required
 def Faq(request):
     return (render(request, 'faq.html'))
 
+@login_required
 def UserDoc(request):
     return (render(request, 'userdoc.html'))
 
+@login_required
 def ContigTool(request):
     return (render(request, 'contig.html'))
 
+@login_required
 def Pooling(request):
     return (render(request, 'pooling.html'))
 
 #sequence search
+@login_required
 def BlastSearch(request):
     ##collect errors in a dictionary
     #errors = {}
@@ -87,6 +94,7 @@ def BlastSearch(request):
     blastform = BlastForm()
     return render_to_response('blast_search.html', {'blastform': blastform}, context_instance=RequestContext(request))
 
+@login_required
 def BlastResults(request):
 
     #get query sequence parameters, and write to file
@@ -192,7 +200,8 @@ def CosmidSearchView(request):
 def SubcloneSearchView(request):
     form = SubcloneForm
     basicform = AllSearchForm
-    return render_to_response('subclone_search.html', {'advancedform': form, 'basicform': basicform}, context_instance=RequestContext(request))
+    blast_form = BlastForm
+    return render_to_response('subclone_search.html', {'advancedform': form, 'basicform': basicform, 'blast_form':blast_form}, context_instance=RequestContext(request))
 
 def SubcloneAssaySearchView(request):
     form = SubcloneAssayForm
@@ -207,12 +216,16 @@ def CosmidAssaySearchView(request):
 def OrfSearchView(request):
     form = OrfSearchForm
     basicform = AllSearchForm
-    return render_to_response('orf_search.html', {'advancedform': form, 'basicform': basicform}, context_instance=RequestContext(request))
+    blast_form = BlastForm
+    return render_to_response('orf_search.html', {'advancedform': form, 'basicform': basicform, 'blast_form':blast_form}, context_instance=RequestContext(request))
 
 def ContigSearchView(request):
     form = ContigSearchForm
-    return render_to_response('contig_search.html', {'form': form}, context_instance=RequestContext(request))
+    basicform = AllSearchForm
+    blast_form = BlastForm
+    return render_to_response('contig_search.html', {'advancedform': form, 'basicform': basicform, 'blast_form':blast_form}, context_instance=RequestContext(request))
 
+#can delete this view
 def SearchAll(request):
     form = AllSearchForm
     return render_to_response('all_search.html', {'form': form}, context_instance=RequestContext(request))
@@ -435,6 +448,27 @@ def OrfBasicResults(request):
         results = ORF.objects.filter(final_q)
         
     return render_to_response('orf_all.html', {'orf_list': results, 'query': query}, context_instance=RequestContext(request))
+
+def ContigBasicResults(request):
+    #gets the list of words they entered
+    query = request.GET.get('query')
+    #splits string into a list
+    keywords = query.split()
+    
+    #if no words entered, returns no results
+    if keywords == None:
+        results = None
+    else:
+        #builds a Q object for each word in the list
+        list_poolid_qs = []
+        for word in keywords:
+            if isinstance(word, types.IntType):
+                list_poolid_qs.append(Q(pool__id__exact=word))
+        list_name_qs = [Q(contig_name__icontains=word) for word in keywords]
+        list_accession_qs = [Q(contig_accession__icontains=word) for word in keywords]
+        final_q = reduce(operator.or_, list_poolid_qs + list_name_qs + list_accession_qs)
+        results = Contig.objects.filter(final_q)    
+    return render_to_response('contig_all.html', {'contig_list': results, 'query': query}, context_instance=RequestContext(request))
 
 #detail views
 def CosmidDetail(request, cosmid_name):

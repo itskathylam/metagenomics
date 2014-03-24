@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-    <title>
-        Search Subclones
-    </title>
+    <title>Search Subclones</title>
     <script  src="{{ STATIC_URL }}tabs.js"></script>
     <link rel="stylesheet" href="{{ STATIC_URL }}tabs.css" type="text/css" />
 {% endblock %}
@@ -37,7 +35,13 @@
     </div>
     
     <div class="tabContent" id="BLAST">
-        <p>BLAST</p>
+        <form action="{% url 'blast-results' %}?from={{ request.path}}" method="post">
+            <table class="search">
+                {% csrf_token %}
+                {{ blast_form }}
+            </table>
+            <input type="submit" value="BLAST">
+        </form>
     </div>
 {% endblock %}
 
