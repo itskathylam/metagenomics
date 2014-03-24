@@ -1,6 +1,10 @@
 {% extends "detail.html" %}
+
+{% block subtitle %}
+<h2><img src="{{ STATIC_URL }}icons/detail64.png" alt="detail">ORF</h2>
+{% endblock %}
+
 {% block record %}
-    <h2><img src="{{ STATIC_URL }}icons/detail64.png" alt="detail">ORF</h2>
     <table>
         <tr><th>ID</th><td>{{ orf.id }}</td></tr>
         <tr><th>Annotation</th><td>{{ orf.annotation }}</td></tr>

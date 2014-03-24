@@ -1,23 +1,45 @@
 {% extends "base.html" %}
+
+{% block subtitle %}
+<h2>BLAST Results</h2>
+{% endblock %}
+
 {% block content %}
 
-<p><b>Query:</b></p>
-<p><font face="courier" size=2pt>{{ query }}</font></p>
-<p><b>Results:</b></p>
-<table> 
-{% for result in results_list %}
-    <tr>
-            <td>
-                <font face="courier" size=2pt>
-                    Contig Description: {{ result.title }}<br>
-                    Contig Length: {{ result.length }}<br>
-                    e-value: {{ result.evalue }}<br><br>
-                    {{ result.hq }}<br>
-                    {{ result.hm }}<br>
-                    {{ result.hs }}<br>
-                </font>
-            </td>
-    </tr>
-{% endfor %}
-</table>
+    <p><b>Query:</b></p>
+    <p><font face="courier" size=2pt>{{ query }}</font></p>
+    <p><b>Results:</b></p>
+    <table style="width: 100%">
+    {% if results_list %}
+        {% for result in results_list %}
+            <tr>
+                <td style="background-color:transparent"><font face="courier" size=2pt>
+                    Hit&nbsp;Description:&nbsp;{{ result.title }}<br>
+                    Hit&nbsp;Length:&nbsp{{ result.length }}<br>
+                    E-value:&nbsp{{ result.evalue }}<br>
+                    Alignment&nbsp;Length:&nbsp;{{result.align_length}}
+                </td>
+            </tr>
+            <tr>
+                <td style="background-color:transparent; text-align: right"><font face="courier" size=2pt>
+                    Query&nbsp;{{ result.query_start }}<br>
+                    <br>
+                    Subject&nbsp;{{ result.subject_start }}    
+                <td style="background-color:transparent"><font face="courier" size=2pt>
+                    {{ result.hsp_query }}&nbsp;Query&nbsp;{{ result.query_end }}<br>
+                    {{ result.hsp_match }}<br>
+                    {{ result.hsp_subject }}&nbsp;Subject&nbsp;{{ result.subject_end}}
+                </td>
+                <td style="background-color:transparent; text-align: right"><font face="courier" size=2pt>
+                    
+                    <br>
+                    
+                </td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <p><font face="courier" size=2pt>No results found.</p>
+    {% endif %}
+    </table>
 {% endblock %}
+

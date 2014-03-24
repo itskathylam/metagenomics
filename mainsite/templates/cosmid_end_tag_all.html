@@ -1,7 +1,11 @@
 {% extends "base.html" %}
+
+{% block subtitle %}
+<h2 class="list">Cosmids</h2>
+{% endblock %}
+
 {% block content %}
     {% if cosmid_list %}
-    <h2 class="list">Cosmids</h2>
     <p>Search for: '{{ query }}' returned {{ cosmid_list.count }} results</p>    
         <table class="list">
             <tr>

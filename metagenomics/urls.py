@@ -3,39 +3,42 @@ from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 admin.autodiscover()
 from mainsite.views import *
+from django.contrib.auth.views import login, password_change
 
 urlpatterns = patterns('',
     #Admin and Static Pages (Main, About, and Logging in and Out) 
     url(r'^$', MainPage, name='home'),
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^about/', AboutPage, name='about'),
-    url(r'^login/', 'django.contrib.auth.views.login'),
-    url(r'^logout/', Logout, name='logout'),
-    url(r'^user/settings/', UserSettings, name= 'usersettings'),
-    url(r'^help/faq', Faq, name='faq'),
-    url(r'^help/userdoc', UserDoc, name='userdoc'),
+    url(r'^admin/$', include(admin.site.urls)),
+    url(r'^about/$', AboutPage, name='about'),
+    
+    url(r'^login/$', 'django.contrib.auth.views.login'),
+    url(r'^logout/$', Logout, name='logout'),
+    url(r'^user/settings/$', UserSettings, name='usersettings'),
+    url(r'^user/password/change/$', 'django.contrib.auth.views.password_change', {}),
+    url(r'^user/password/changed/$', 'django.contrib.auth.views.password_change_done', name="password_change_done"),
+    
+    url(r'^help/faq/$', Faq, name='faq'),
+    url(r'^help/userdoc/$', UserDoc, name='userdoc'),
     
     #login_required( ) - add to all views below
     
     #Tools Views
     url(r'^tools/contig', ContigTool, name='contig'),
     url(r'^tools/pooling', Pooling, name='pool'),
-    
-    url(r'^blast/search', BlastSearch, name='blast'),
-    url(r'^blast/results', BlastResults, name='blast-results'),
+
     
     #Detail views
-    url(r'^cosmid/(?P<cosmid_name>[\w-]+)/$', CosmidDetail, name='cosmid-detail'),
+    url(r'^cosmid/(?P<cosmid_name>.*)/$', CosmidDetail, name='cosmid-detail'),
     url(r'^assay/subclone/(?P<pk>\d+)/$', SubcloneAssayDetailView.as_view(), name='sublcone-assay-detail'),
     url(r'^assay/cosmid/(?P<pk>\d+)/$', CosmidAssayDetailView.as_view(), name='cosmid-assay-detail'),
-    url(r'^subclone/(?P<pk>\d+)/$', SubcloneDetailView.as_view(), name='subclone-detail'),
+    url(r'^subclone/(?P<subclone_name>.*)/$', SubcloneDetailView.as_view(), name='subclone-detail'),
     url(r'^contig/(?P<contig_name>[\w-]+)/$', ContigDetail, name='contig-detail'),
     url(r'^orf/(?P<pk>\d+)/$', OrfDetailView.as_view(), name='orf-detail'),
     url(r'^vector/(?P<pk>\d+)/$', VectorDetailView.as_view(), name='vector-detail'),
     
     #Edit views (Updateviews)
-    url(r'^edit/cosmid/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_cosmid')(CosmidEditView.as_view()), name='cosmid-edit'),
-    url(r'^edit/subclone/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_subclone')(SubcloneEditView.as_view()), name='subclone-edit'),
+    url(r'^edit/cosmid/(?P<cosmid_name>.*)/$', permission_required('mainsite.cosmid.can_change_cosmid')(CosmidEditView.as_view()), name='cosmid-edit'),
+    url(r'^edit/subclone/(?P<subclone_name>.*)$', permission_required('mainsite.cosmid.can_change_subclone')(SubcloneEditView.as_view()), name='subclone-edit'),
     url(r'^edit/assay/cosmid/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_cosmid_assay')(CosmidAssayEditView.as_view()), name='cosmid-assay-edit'),
     url(r'^edit/assay/subclone/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_subclone_assay')(SubcloneAssayEditView.as_view()), name='subclone-assay-edit'),
     url(r'^edit/orf/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_orf')(ORFEditView.as_view()), name='orf-edit'),
@@ -46,18 +49,31 @@ urlpatterns = patterns('',
     
     #Search views
     url(r'^search/cosmid/$', CosmidSearchView, name='cosmid-search'),
-    url(r'^results/cosmid?page=n/', CosmidResults, name='cosmid-results'),
+    url(r'^results/cosmid/$', CosmidResults, name='cosmid-results'),
+    url(r'^results/basic/cosmid$', CosmidBasicResults, name = 'cosmid-basic-results'),
     url(r'^search/subclone/$', SubcloneSearchView, name='subclone-search'),
-    url(r'^results/subclone/', SubcloneResults, name='subclone-results'),
+    url(r'^results/subclone/$', SubcloneResults, name='subclone-results'),
+    url(r'^results/basic/subclone/$', SubcloneBasicResults, name='subclone-basic-results'),
+    
     url(r'^search/assay/subclone$', SubcloneAssaySearchView, name = 'subclone-assay-search'),
     url(r'^results/assay/subclone$', SubcloneAssayResults, name='subclone-assay-results'),
+    url(r'^results/basic/assay$', SubcloneAssayBasicResults, name='subclone-assay-basic-results'), #need to add the view and template for this
+    
     url(r'^search/assay/cosmid$', CosmidAssaySearchView, name = 'cosmid-assay-search'),
     url(r'^results/assay/cosmid$', CosmidAssayResults, name='cosmid-assay-results'),
+    url(r'^results/basic/assay/cosmid$', CosmidAssayBasicResults, name='cosmid-assay-basic-results'),
+    
     url(r'^search/orf/$', OrfSearchView, name='orf-search'),
     url(r'^results/orf/$', OrfResults, name = 'orf-results'),
+    url(r'^results/basic/orf$', OrfBasicResults, name = 'orf-basic-results'),
     
-    url(r'^search/$', SearchAll, name = 'all-search'),
-    url(r'^results/$', AllResults, name = 'all-results'),
+    url(r'^search/contig/$', ContigSearchView, name='contig-search'),
+    url(r'^results/contig/$', ContigResults, name='contig-results'),
+    url(r'^results/basic/contig$', ContigBasicResults, name = 'contig-basic-results'),
+    
+    url(r'^search/blast/$', BlastSearch, name='blast-search'),
+    url(r'^results/blast/', BlastResults, name='blast-results'),
+
     
     #listviews for lookup tables 
     url(r'^primer/$', PrimerListView.as_view(), name='primer-list'),
@@ -79,7 +95,7 @@ urlpatterns = patterns('',
     
     #listviews for multiple-table-based views
     url(r'^cosmid/$', CosmidEndTagListView.as_view(), name='cosmid-end-tag-list'), # for cosmid and endtags (Kathy)
-    url(r'^orfcontig/$', ORFContigListView.as_view(), name='orf-contig-list'), # not a useful view; may remove (Kathy)
+    url(r'^orfcontig/$', ORFContigListView.as_view(), name='orf-contig-list'), # not a useful view? may remove (Kathy)
     
     #createviews - form to add data to database table  
     url(r'^add/subclone/$', permission_required('mainsite.cosmid.can_add_subclone')(SubcloneCreateView.as_view()), name='subclone-add'),
@@ -101,6 +117,8 @@ urlpatterns = patterns('',
     url(r'^export/vector', vector_queryset),
     url(r'^export/pool', pool_queryset),
     url(r'^export/substrate', substrate_queryset),
+    
+  
 
 
 )

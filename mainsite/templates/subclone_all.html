@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 
+{% block subtitle %}
+<h2 class="list">Subclones</h2>
+{% endblock %}
+
 {% block content %}
     {% if subclone_list %}
-        <h2 class="list">Subclones</h2>
         <p>X number of results OR All records</p>
         <table class="list">
                 <tr>
@@ -19,7 +22,7 @@
                 </tr>
             {% for subclone in subclone_list %}
                 <tr>
-                    <td><a href="{% url 'subclone-list' %}{{ subclone.pk }}">{{ subclone.subclone_name }}</a></td>
+                    <td><a href="{% url 'subclone-list' %}{{ subclone.subclone_name }}">{{ subclone.subclone_name }}</a></td>
                     <td>{{ subclone.researcher.researcher_name }}</td>
                     <td><a href="{% url 'cosmid-end-tag-list' %}{{ subclone.cosmid.cosmid_name }}">{{ subclone.cosmid.cosmid_name }}</a></td>
                     <td>{{ subclone.orf.id }}</td>

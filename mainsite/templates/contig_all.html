@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 
+{% block subtitle %}
+<h2 class="list">Contigs</h2>
+{% endblock %}
+
 {% block content %}
-    <h2 class="list">Contigs</h2>
-    <p>X number of results OR All records</p>
-    <table class="list">
+        {% if contig_list %}
+        <p>X number of results OR All records</p>
+        <table class="list">
             <tr>
                 <th>Contig Name</th>
                 <th>Pool ID</th>
@@ -37,4 +41,6 @@
                 {% endif %}
         </span>
     </div>
+        </table>
+        {% endif %}
 {% endblock %}

@@ -7,10 +7,12 @@
     </head>
   <body onload="init()">
      <header id="head">
-            <h1>Metagenomics Clone Bank</h1>
+        <h1 id="header h1"></h1>
             <div id="user">
-                {{ user.first_name }}<br>
-                <a href="/user/settings"><img title="Settings" src="{{ STATIC_URL }}gear.png" alt="user settings"/></a> <a href="{% url 'logout' %}"><img title="Logout" src="{{ STATIC_URL }}logout.png" alt="logout"/></a>
+                <span style="vertical-align: bottom">{{ user.first_name }} {{ user.last_name }}</span><br>
+                <a href="/user/settings"><img style="width:40px; padding:10px" title="Settings" src="{{ STATIC_URL }}gear.png" alt="user settings"/></a>
+                <a href="{% url 'logout' %}"><img style="width:40px; padding:10px" title="Logout" src="{{ STATIC_URL }}logout.png" alt="logout"/></a>
+                
             </div>
             
             <nav>
@@ -40,17 +42,18 @@
                     </ul>
                 </li>
                 {% endif %}
-                <li><a href="/search">Search<img src="{{ STATIC_URL }}icons/search.png"alt="search"></a>
+                <li><a href="">Search<img src="{{ STATIC_URL }}icons/search.png"alt="search"></a>
                     <ul>
-                        <li><a href="{% url 'cosmid-search' %}">Cosmid</a></li>
-                        <li><a href="{% url 'subclone-search' %}">Subclone</a></li>
-                        <li><a href="{% url 'cosmid-assay-search' %}">Cosmid Assay</a></li>
-                        <li><a href="{% url 'subclone-assay-search' %}">Subclone Assay</a></li>
-                        <li><a href="{% url 'orf-search' %}">ORF</a></li>
-                        <li><a href="{% url 'blast' %}">Sequence (Local BLAST)</a></li>
+                        <li><a href="{% url 'cosmid-search' %}">Cosmids</a></li>
+                        <li><a href="{% url 'subclone-search' %}">Subclones</a></li>
+                        <li><a href="{% url 'cosmid-assay-search' %}">Cosmid Assays</a></li>
+                        <li><a href="{% url 'subclone-assay-search' %}">Subclone Assays</a></li>
+                        <li><a href="{% url 'contig-search' %}">Contigs</a></li>
+                        <li><a href="{% url 'orf-search' %}">ORFs</a></li>
+                        <li><a href="{% url 'blast-search' %}">Sequences (BLAST)</a></li>
                     </ul>
                 </li>
-                <li><a href="/viewall">View All<img src="{{ STATIC_URL }}icons/all.png"alt="all"></a>
+                <li><a href="">View All<img src="{{ STATIC_URL }}icons/all.png"alt="all"></a>
                     <ul>
                         <li><a href="{% url 'cosmid-end-tag-list' %}">Cosmids</a></li>
                         <li><a href="{% url 'subclone-list' %}">Subclones</a></li>
@@ -58,6 +61,7 @@
                         <li><a href="{% url 'subclone-assay-list' %}">Subclone Assays</a></li>
                         <li><a href="{% url 'contig-list' %}">Contigs</a></li>
                         <li><a href="{% url 'orf-list' %}">ORFs</a></li>
+                        <li><a href="{% url 'orf-contig-list' %}">ORF-Contig Pairs</a></li>
                         <li><a href="{% url 'cosmid-end-tag-list' %}">Static Data >> </a>
                             <ul>
                                 <li><a href="{% url 'primer-list' %}">Primers</a></li>
@@ -72,10 +76,10 @@
                         </li>
                     </ul>
                 </li>
-                <li><a href="/tools">Tools<img src="{{ STATIC_URL }}icons/tools.png"alt="tools"></a>
+                <li><a href="">Tools<img src="{{ STATIC_URL }}icons/tools.png"alt="tools"></a>
                     <ul>
                         <li><a href="/tools/contig">Contig Retrieval Tool</a></li>                  
-                        <li><a href="/tools/pooling">Pooling Tool</a></li>           
+                        <li><a href="/tools/pooling">Gene Annotation Tool</a></li>           
                     </ul>
                 </li>
                 <li><a href="">Help<img src="{{ STATIC_URL }}icons/help.png"alt="help"></a>

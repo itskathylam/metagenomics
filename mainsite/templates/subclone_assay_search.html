@@ -1,4 +1,49 @@
-{% extends "search.html" %}
+{% extends "base.html" %}
+
+{% block head %}
+    <title>
+        Search Subclone Assays
+    </title>
+    <script  src="{{ STATIC_URL }}tabs.js"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}tabs.css" type="text/css" />
+{% endblock %}
+
+{% block subtitle %}
+<img src="{{ STATIC_URL }}icons/search64.png"><h2 class="search">Search Subclone Assays</h2>
+{% endblock %}
+
+{% block content %}
+    <ul id="tabs">
+        <li><a href="#Basic">Basic Search</a></li>
+        <li><a href="#Advanced">Advanced Search</a></li>
+    </ul>
+    <div class="tabContent" id="Advanced">
+        <form action="{% url 'subclone-assay-results' %}" method="get">
+            <table class="search">
+                {{ advancedform }}
+            </table>
+            <input type="submit" value="Search">
+        </form>
+    </div>
+    
+    <div class="tabContent" id="Basic">
+        <form action="{% url 'subclone-assay-basic-results' %}" method="get">
+            <table class="search">
+                {{ basicform }}
+            </table>
+            <input type="submit" value="Search">
+        </form>
+    </div>
+{% endblock %}
+
+{% block second %}
+    <section id="second">
+        <h3>Quick Links</h3>
+        <a href="{% url 'subclone-assay-list' %}"><img class="viewall" src="{{ STATIC_URL }}icons/allblack.png" alt="all">View All</a><br>
+    </section>
+{% endblock %}
+{#
+extends "search.html"
 
 {% block pagetitle%}
     Search Subclone Assays
@@ -23,3 +68,4 @@
 {% block link %}
 <a href="{% url 'subclone-assay-list' %}"><img class="viewall" src="{{ STATIC_URL }}icons/allblack.png" alt="all">View All</a><br>
 {% endblock %}
+#}

@@ -33,6 +33,18 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 )
 
+#required for request.GET.get in views.py (Kathy)
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    "django.core.context_processors.request",
+)
+
 ALLOWED_HOSTS = []
 
 LOGIN_URL = '/login/'
@@ -64,7 +76,7 @@ ROOT_URLCONF = 'metagenomics.urls'
 WSGI_APPLICATION = 'metagenomics.wsgi.application'
 
 # Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
+# https://docs.djangoproject.com/en/1.6/ref/settings/#databases (Kathy(
 
 DATABASES = {
     'default': {
@@ -92,7 +104,7 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.6/howto/static-files/
+# https://docs.djangoproject.com/en/1.6/howto/static-files/ (Kathy)
 STATIC_URL = '/static/'
 
 # For uploaded files

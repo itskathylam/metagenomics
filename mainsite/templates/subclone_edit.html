@@ -1,12 +1,15 @@
 {% extends "base.html" %}
 
+{% block subtitle %}
+<h2><img src="{{ STATIC_URL }}icons/edit64.png" alt="edit">Edit Subclone {{ subclone.subclone_name }}</h2>
+{% endblock %}
+
 {% block content %}
-    <h2><img src="{{ STATIC_URL }}icons/edit64.png" alt="edit">Edit Subclone {{ subclone.subclone_name }}</h2>
-    <form action="{% url 'subclone-list' %}{{ subclone.pk }}/" method="POST">
+    <form action="" method="post">
     {% csrf_token %}
-        <table border = 1>    
+        <table>    
             {{form}}
         </table>
-        <input type="submit">
+        <input type="submit" value="Update">
     </form>
 {% endblock %}

@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
+{% block subtitle %}
+<h2 class="list">orf contig all</h2>
+{% endblock %}
+
 {% block content %}
-    <table border = 1>
+    <table class="list">
             <tr>
                 <th>Contig Name</th>
                 <th>Contig Sequence</th>
@@ -11,7 +15,8 @@
                 <th>Prediction Score</th>
                 <th>ORF Start</th>
                 <th>ORF Stop</th>
-                <th>ORF Accession</th>
+                <th>ORF on complement strand?</th>
+                <th>ORF Accession (if submitted to GenBank)</th>
                 <th>ORF Seqeunce</th>
             </tr>
         {% for contig_orf_join in contig_orf_join_list %}
@@ -24,6 +29,7 @@
                 <td>{{ contig_orf_join.prediction_score }}</td>
                 <td>{{ contig_orf_join.start }}</td>
                 <td>{{ contig_orf_join.stop }}</td>
+                <td>{{ contig_orf_join.complement }}</td>
                 <td>{{ contig_orf_join.orf_accession }}</td>
                 <td><textarea rows="5" cols="50" readonly=true>{{ contig_orf_join.orf.orf_sequence }}</textarea></td></td>
             </tr>
