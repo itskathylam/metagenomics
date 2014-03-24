@@ -7,9 +7,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.template import RequestContext
 from django.core.urlresolvers import reverse_lazy
 from operator import attrgetter
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import operator
-
 
 from mainsite.models import *
 from mainsite.forms import *
@@ -248,11 +246,8 @@ def CosmidResults(request):
     for k, v in values.items():
         if v:
             args[k] = v
-    cosmid_list = Cosmid.objects.filter(**args)
-    paginator = Paginator(cosmid_list, 20)
-    page = request.GET.get('page')
-    cosmid = paginator.page()
-    return render_to_response('cosmid_end_tag_all.html', {'cosmid': cosmid}, context_instance=RequestContext(request))
+    results = Cosmid.objects.filter(**args)
+    return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': results}, context_instance=RequestContext(request))
 
 def SubcloneResults(request):
     name = request.GET.get('subclone_name')
@@ -413,60 +408,7 @@ def SubcloneAssayBasicResults(request):
     #splits string into a list
     keywords = query.split()
     
-    #if no words entered, retur    template_name = 'subclone_detail.html'
-  
-class VectorDetailView(DetailView) :
-    model = Vector
-    template_name = 'vector_detail.html'
-    
-#edit views (updateview class)
-#nb: slug fields required for using names in the urls instead of primary keys (Kathy)
-
-#custom class to handle editing cosmid and end-tag models at once (Kathy)
-class CosmidEditView(UpdateView):
-    model = Cosmid
-    template_name = 'cosmid_edit.html'
-    slug_field = 'cosmid_name'
-    slug_url_kwarg = 'cosmid_name'
-    success_url = reverse_lazy('cosmid-end-tag-list')
-    
-class SubcloneEditView(UpdateView):
-    model = Subclone
-    template_name = 'subclone_edit.html'
-    slug_field = 'subclone_name'
-    slug_url_kwarg = 'subclone_name'
-    success_url = reverse_lazy('subclone-list')
-    
-class CosmidAssayEditView(UpdateView):
-    model = Cosmid_Assay
-    template_name = 'cosmid_assay_edit.html'
-    success_url = reverse_lazy('cosmid-assay-list')
-
-class SubcloneAssayEditView(UpdateView):
-    model = Subclone_Assay
-    template_name = 'subclone_assay_edit.html'
-    success_url = reverse_lazy('subclone-assay-list')
-    
-class ORFEditView(UpdateView):
-    model = ORF
-    template_name = 'orf_edit.html'
-    success_url = reverse_lazy('orf-list')
-
-class ContigEditView(UpdateView):
-    model = Contig
-    fields = ['contig_accession']
-    template_name = 'contig_edit.html'
-    success_url = reverse_lazy('contig-list')
-    
-#Delete views (Katelyn)
-class ContigORFDeleteView(DeleteView):
-    model=Contig_ORF_Join
-    template_name = 'contig_orf_delete.html'
-    success_url = reverse_lazy('orf-contig-list')
-
-# List views for non-lookup tables (Kathy)
-class SubcloneListView(ListView):
-ns no results
+    #if no words entered, returns no results
     if keywords == None:
         results = None
     else:
@@ -517,59 +459,6 @@ def ContigBasicResults(request):
     if keywords == None:
         results = None
     else:
-# Add to Cosmid and End_Tag tables (Kathy)
-@permission_required('mainsite.cosmid.can_add_cosmid')
-def CosmidEndTagCreate(request):
-    if request.method == "POST":
-        cosmid_form = CosmidForm(request.POST)
-        if cosmid_form.is_valid():
-            
-            #do not commit new cosmid input until end tag form inputs have been checked 
-            new_cosmid = cosmid_form.save(commit=False)
-            end_tag_formset = EndTagFormSet(request.POST, instance=new_cosmid)
-
-            #validation for the two primers chosen: primers cannot be the same (defined in the model)  
-            if end_tag_formset.is_valid():
-                
-                #save cosmid, and process end tags
-                new_cosmid.save()
-                new_end_tags = end_tag_formset.save(commit=False)
-                
-                #remove whitespace from end tag sequences and save 
-                new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
-                new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
-                new_end_tags[0].save()
-                new_end_tags[1].save()
-                return HttpResponseRedirect('/cosmid/') 
-        
-    else:
-        cosmid_form = CosmidForm(instance=Cosmid())
-        end_tag_formset = EndTagFormSet(instance=Cosmid())
-    return render_to_response('cosmid_end_tag_add.html', {'cosmid_form': cosmid_form, 'end_tag_formset': end_tag_formset}, context_instance=RequestContext(request))
-    
-# Add to ORF and Contig-ORF-Join tables (Kathy)
-@permission_required('mainsite.cosmid.can_add_orf')
-def ORFContigCreate(request):
-    
-    #track errors with dict
-    form_errors = {}
-    
-    if request.method == "POST":
-        contig_orf_form = ContigORFJoinForm(request.POST, instance=Contig_ORF_Join())
-        orf_form = ORFForm(request.POST, instance=ORF())
-        if contig_orf_form.is_valid() and orf_form.is_valid():
-            
-            #save the new ORF and new contig but do not commit to the database tables yet
-            new_orf = orf_form.save(commit=False)
-            new_contig_orf = contig_orf_form.save(commit=False)
-            orf_seq = new_orf.orf_sequence
-            
-            #remove all whitespace chars in string
-            orf_seq = ''.join(orf_seq.split())
-            
-            #if complement was indicated on form, get rev-com of ORF (for validation)
-            complement = new_contig_orf.complement
-
         #builds a Q object for each word in the list
         list_poolid_qs = []
         for word in keywords:
@@ -651,7 +540,67 @@ class SubcloneAssayDetailView(DetailView):
     template_name = 'subclone_assay_detail.html'
     
 class CosmidAssayDetailView(DetailView):
-    model = Cosmid_Assay    model = Subclone
+    model = Cosmid_Assay
+    template_name = 'cosmid_assay_detail.html'
+
+class SubcloneDetailView(DetailView):
+    model = Subclone
+    slug_field = 'subclone_name'
+    slug_url_kwarg = 'subclone_name'
+    template_name = 'subclone_detail.html'
+  
+class VectorDetailView(DetailView) :
+    model = Vector
+    template_name = 'vector_detail.html'
+    
+#edit views (updateview class)
+#nb: slug fields required for using names in the urls instead of primary keys (Kathy)
+
+#custom class to handle editing cosmid and end-tag models at once (Kathy)
+class CosmidEditView(UpdateView):
+    model = Cosmid
+    template_name = 'cosmid_edit.html'
+    slug_field = 'cosmid_name'
+    slug_url_kwarg = 'cosmid_name'
+    success_url = reverse_lazy('cosmid-end-tag-list')
+    
+class SubcloneEditView(UpdateView):
+    model = Subclone
+    template_name = 'subclone_edit.html'
+    slug_field = 'subclone_name'
+    slug_url_kwarg = 'subclone_name'
+    success_url = reverse_lazy('subclone-list')
+    
+class CosmidAssayEditView(UpdateView):
+    model = Cosmid_Assay
+    template_name = 'cosmid_assay_edit.html'
+    success_url = reverse_lazy('cosmid-assay-list')
+
+class SubcloneAssayEditView(UpdateView):
+    model = Subclone_Assay
+    template_name = 'subclone_assay_edit.html'
+    success_url = reverse_lazy('subclone-assay-list')
+    
+class ORFEditView(UpdateView):
+    model = ORF
+    template_name = 'orf_edit.html'
+    success_url = reverse_lazy('orf-list')
+
+class ContigEditView(UpdateView):
+    model = Contig
+    fields = ['contig_accession']
+    template_name = 'contig_edit.html'
+    success_url = reverse_lazy('contig-list')
+    
+#Delete views (Katelyn)
+class ContigORFDeleteView(DeleteView):
+    model=Contig_ORF_Join
+    template_name = 'contig_orf_delete.html'
+    success_url = reverse_lazy('orf-contig-list')
+
+# List views for non-lookup tables (Kathy)
+class SubcloneListView(ListView):
+    model = Subclone
     template_name = 'subclone_all.html'
     paginate_by = 20
     
@@ -705,12 +654,58 @@ class SubcloneAssayCreateView(CreateView):
     
 # Create views for adding data to multiple models with the same template
 
-    template_name = 'cosmid_assay_detail.html'
+# Add to Cosmid and End_Tag tables (Kathy)
+@permission_required('mainsite.cosmid.can_add_cosmid')
+def CosmidEndTagCreate(request):
+    if request.method == "POST":
+        cosmid_form = CosmidForm(request.POST)
+        if cosmid_form.is_valid():
+            
+            #do not commit new cosmid input until end tag form inputs have been checked 
+            new_cosmid = cosmid_form.save(commit=False)
+            end_tag_formset = EndTagFormSet(request.POST, instance=new_cosmid)
 
-class SubcloneDetailView(DetailView):
-    model = Subclone
-    slug_field = 'subclone_name'
-    slug_url_kwarg = 'subclone_name'
+            #validation for the two primers chosen: primers cannot be the same (defined in the model)  
+            if end_tag_formset.is_valid():
+                
+                #save cosmid, and process end tags
+                new_cosmid.save()
+                new_end_tags = end_tag_formset.save(commit=False)
+                
+                #remove whitespace from end tag sequences and save 
+                new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
+                new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
+                new_end_tags[0].save()
+                new_end_tags[1].save()
+                return HttpResponseRedirect('/cosmid/') 
+        
+    else:
+        cosmid_form = CosmidForm(instance=Cosmid())
+        end_tag_formset = EndTagFormSet(instance=Cosmid())
+    return render_to_response('cosmid_end_tag_add.html', {'cosmid_form': cosmid_form, 'end_tag_formset': end_tag_formset}, context_instance=RequestContext(request))
+    
+# Add to ORF and Contig-ORF-Join tables (Kathy)
+@permission_required('mainsite.cosmid.can_add_orf')
+def ORFContigCreate(request):
+    
+    #track errors with dict
+    form_errors = {}
+    
+    if request.method == "POST":
+        contig_orf_form = ContigORFJoinForm(request.POST, instance=Contig_ORF_Join())
+        orf_form = ORFForm(request.POST, instance=ORF())
+        if contig_orf_form.is_valid() and orf_form.is_valid():
+            
+            #save the new ORF and new contig but do not commit to the database tables yet
+            new_orf = orf_form.save(commit=False)
+            new_contig_orf = contig_orf_form.save(commit=False)
+            orf_seq = new_orf.orf_sequence
+            
+            #remove all whitespace chars in string
+            orf_seq = ''.join(orf_seq.split())
+            
+            #if complement was indicated on form, get rev-com of ORF (for validation)
+            complement = new_contig_orf.complement
             new_seq = ""
             if complement == True:
                 rc = {'A':'T', 'T':'A', 'G':'C', 'C':'G'}
@@ -839,7 +834,6 @@ class HostListView(ListView):
     model = Host
     template_name = 'host_all.html'
     paginate_by = 20
-
     
 #retrieve HostListView queryset to export as csv
 def host_queryset(response):
@@ -850,7 +844,6 @@ class ScreenListView(ListView):
     model = Screen
     template_name = 'screen_all.html'
     paginate_by = 20
-
     
 #retrieve ScreenListView queryset to export as csv
 def screen_queryset(response):
@@ -861,7 +854,6 @@ class LibraryListView(ListView):
     model = Library
     template_name = 'library_all.html'
     paginate_by = 20
-
     
 #retrieve LibraryListView queryset to export as csv
 def library_queryset(response):
@@ -872,7 +864,6 @@ class ResearcherListView(ListView):
     model = Researcher
     template_name = 'researcher_all.html'
     paginate_by = 20
-
     
 #retrieve ResearcherListView queryset to export as csv
 def researcher_queryset(response):
@@ -883,7 +874,6 @@ class VectorListView(ListView):
     model = Vector
     template_name = 'vector_all.html'
     paginate_by = 20
-
     
 #retrieve VectorListView queryset to export as csv
 def vector_queryset(response):
@@ -904,11 +894,9 @@ class SubstrateListView(ListView):
     model = Substrate
     template_name = 'substrate_all.html'
     paginate_by = 20
-
     
 #retrieve SubstrateListView queryset to export as csv
 def substrate_queryset(response):
     qs = Substrate.objects.all()
     return queryset_export_csv(qs)
-
 
