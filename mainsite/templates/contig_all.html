@@ -30,8 +30,8 @@
                 <td>{{ contig.image }}</td>
             </tr>
         {% endfor %}
-    </table>
-    {% if search %}
+         </table>
+        {% if search %}
                 <div class="pagination">
                     <span class="page-links">
                             {% if contig_list.has_previous %}
@@ -61,7 +61,7 @@
                 </div>
         {% endif %}
         </table>
-    {% else %}
-        <p>0 Contigs found for search '{{ query }}' <a href="{% url 'contig-search' %}">Try another search</a>.</p>
-    {% endif %}
+        {% else %}
+            <p>0 Contigs found for search '{{ query }}' <a href="{% url 'contig-search' %}">Try another search</a>.</p>
+        {% endif %}
 {% endblock %}
