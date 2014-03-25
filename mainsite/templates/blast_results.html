@@ -1,15 +1,18 @@
 {% extends "base.html" %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ STATIC_URL }}blast.css" type="text/css" />
+{% endblock %}
+
 {% block subtitle %}
 <h2>BLAST Results</h2>
 {% endblock %}
 
 {% block content %}
-
     <p><b>Query:</b></p>
     <p><font face="courier" size=2pt>{{ query }}</font></p>
     <p><b>Results:</b></p>
-    <table style="width: 100%">
+    <table class="blast" style="width: 100%">
     {% if results_list %}
         {% for result in results_list %}
             <tr>
@@ -30,11 +33,13 @@
                     {{ result.hsp_match }}<br>
                     {{ result.hsp_subject }}&nbsp;Subject&nbsp;{{ result.subject_end}}
                 </td>
+                <!-- what is this for?
                 <td style="background-color:transparent; text-align: right"><font face="courier" size=2pt>
                     
                     <br>
                     
                 </td>
+                -->
             </tr>
         {% endfor %}
     {% else %}

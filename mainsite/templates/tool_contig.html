@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Metagenomics Clone Bank</title>
+{% endblock %}
+
+{% block pagetitle%}
+    <title>Contig Tool</title>
+{% endblock %}
+
+{% block content %}
+    
+    <h1>Contig Retrieval Tool</h1>
+    
+    <table border = 1>
+    <form action="{% url "contig" %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+   
+    <tr><th>Select Pool</th>
+        <td><select id="pool" name="pool">
+            {% for entry in pool %}
+                <option value="{{entry.id}}"{% if entry.id == pool %}selected="selected"{% endif %}>{{entry.id}}</option>
+            {% endfor %}
+        </select></td>
+    </tr>
+        
+    <script type="text/javascript" src="/usr/local/lib/python2.7/dist-packages/jquery/static/jquery"></script>
+    <script type="text/javascript">
+        //$(document).getElementById('pool').value = "<?php echo $_GET['pool'];?>";
+        $(document).ready(function() {
+            $("select#pool").submit(function(event){
+                $.ajax({
+                    type:"POST",
+                    url:"/contigtool/",
+                    data: {'pool': $('#pool').find(":selected").text()},
+                });
+                return false;
+            });
+        });
+        
+        //function deselect() {
+        //    $(".pop").slideFadeToggle(function() { 
+        //        $("#contact").removeClass("selected");
+        //    });    
+        //}
+        //
+        //$(function() {
+        //    $("#contact").live('click', function() {
+        //        if($(this).hasClass("selected")) {
+        //            deselect();               
+        //        }
+        //        else {
+        //            $(this).addClass("selected");
+        //            $(".pop").slideFadeToggle(function() { 
+        //                $("#email").focus();
+        //            });
+        //        }
+        //        return false;
+        //    });
+        //
+        //    $(".close").live('click', function() {
+        //        deselect();
+        //        return false;
+        //    });
+        //});
+        //
+        //$.fn.slideFadeToggle = function(easing, callback) {
+        //    return this.animate({ opacity: 'toggle', height: 'toggle' }, "fast", easing, callback);
+        //};
+    </script>
+        
+        {% for selected in detail %}
+            <tr><th>Service Provider</th><td>{{selected.service_provider}}</td></tr>
+            <tr><th>Max Clones for Pool</th><td>{{selected.max_number}}</td></tr>
+            <tr><th>NCBI SRA Accession</th><td>{{selected.ncbi_sra_accession}}</td></tr>
+            <tr><th>Comments</th><td>{{selected.pool_comments}}</td></tr>
+        {% endfor %}
+            
+            {{ ContigForm }}
+            {{ contig_upload_form }}
+        </table>
+        
+    <table border = 1>
+ 
+    <tr><th>Select Clones</th>
+        <td><select id="clones" name="clones">
+            {% for clone in clones %}
+                <option value="{{entry.id}}"{% if entry.id == pool %}selected="selected"{% endif %}>{{entry.id}}</option>
+            {% endfor %}
+        </select></td>
+    </tr>
+    
+    <input type="submit" name="detail" value="Display Pool" />   
+    <input type="submit" name="submit" value="Submit" />
+        
+    </form>
+    
+{% endblock %}
+

@@ -5,9 +5,12 @@
 {% endblock %}
 
 {% block content %}
-     {% if contig_list %}
-        <p>X number of results OR All records</p>
+
+    <a href="/export/contig" >Download CSV File</a>
+    <p>X number of results OR All records</p>
+    {% if contig_list %} 
         <table class="list">
+
             <tr>
                 <th>Contig Name</th>
                 <th>Pool ID</th>
@@ -27,8 +30,8 @@
                 <td>{{ contig.image }}</td>
             </tr>
         {% endfor %}
-    </table>
-    {% if search %}
+        </table>
+        {% if search %}
                 <div class="pagination">
                     <span class="page-links">
                             {% if contig_list.has_previous %}

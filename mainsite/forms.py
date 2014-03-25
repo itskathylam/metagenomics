@@ -25,7 +25,8 @@ EndTagFormSetUpdate = inlineformset_factory(
     Cosmid, 
     End_Tag,
     extra=0,
-    can_delete=False)
+    can_delete=False,)
+
     
 #For ORF-Contig add
 class ORFForm(ModelForm):
@@ -86,6 +87,7 @@ class ContigForm(ModelForm):
         
     class Meta:
         model = Contig
+        pool = forms.Select()
         exclude = ('contig_name', 'contig_sequence', 'cosmid', 'contig_accession', 'blast_hit_accession')
 
 # For Contig-Pool add
