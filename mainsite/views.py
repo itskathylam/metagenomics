@@ -263,7 +263,7 @@ def CosmidResults(request):
         cosmid_list = p.page(page)
     except PageNotAnInteger:
         cosmid_list = p.page(1)
-    return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': results, 'queries':queries, 'search':search}, context_instance=RequestContext(request))
+    return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': cosmid_list, 'queries':queries, 'search':search}, context_instance=RequestContext(request))
 
 
 def SubcloneResults(request):
@@ -344,7 +344,7 @@ def CosmidAssayResults(request):
     #iterates through dictionary and assigns an arg value if it was entered
     qargs = {}
     for k, v in values.items():
-            if v != '':
+        if v != '':
             qargs[k] = v
     if any(qargs):
         results = Cosmid_Assay.objects.filter(**qargs) #returns queryset of results based on qargs
@@ -363,15 +363,6 @@ def CosmidAssayResults(request):
     except PageNotAnInteger:
         cosmid_assay_list = p.page(1)
     return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': cosmid_assay_list, 'search':search, 'queries':queries}, context_instance=RequestContext(request))
-
-
-        if v != '':
-            qargs[k] = v
-    if any(qargs):
-        results = Cosmid_Assay.objects.filter(**qargs) #returns queryset of results based on qargs
-    else:
-        results = None; 
-    return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': results}, context_instance=RequestContext(request))
 
 def OrfResults(request):
     annotation = request.GET.get('annotation')
