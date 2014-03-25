@@ -468,6 +468,8 @@ def SubcloneBasicResults(request):
     #if no words entered, returns no results
     if query == '':
         results = None
+        subclone_list = results
+        search = ''
     else:
         #builds a Q object for each word in the list
         list_name_qs = [Q(subclone_name__icontains=word) for word in keywords]
@@ -486,13 +488,13 @@ def SubcloneBasicResults(request):
         final_q = reduce(operator.or_, list_name_qs + list_cosmid_qs + list_orfid_qs + list_orfanno_qs + list_vector_qs + list_ec_collection_qs + list_researcher_qs + list_primer1_qs + list_primer2_qs)
         results = Subclone.objects.filter(final_q)
         
-    p= Paginator(results, 20)
-    page = request.GET.get('page')
-    search = 'true'
-    try:
-        subclone_list = p.page(page)
-    except PageNotAnInteger:
-        subclone_list = p.page(1)   
+        p= Paginator(results, 20)
+        page = request.GET.get('page')
+        search = 'true'
+        try:
+            subclone_list = p.page(page)
+        except PageNotAnInteger:
+            subclone_list = p.page(1)
     return render_to_response('subclone_all.html', {'subclone_list': subclone_list, 'query': query, 'queries':queries, 'search':search}, context_instance=RequestContext(request))
 
 def CosmidAssayBasicResults(request):
