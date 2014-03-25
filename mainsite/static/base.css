@@ -328,7 +328,7 @@ input[type=submit] {
     margin: 20px;
 }
 
-/* for tabs on cosmid page */
+/* for tabs on cosmid page - this entire section is no longer in use*/
 .tabs {
   position: relative; 
   clear: both;
