@@ -220,6 +220,23 @@ nav ul ul ul {
     margin: 0;
 }
 
+#tool1 {
+    border: solid;
+    border-width: thin;
+    border-radius: 4px;
+    box-shadow: 3px 3px 5px #888;
+}
+#tool2 {
+    float: left;
+    margin-top: 133px;
+    border: solid;
+    border-width: thin;
+    margin-left: 70px;
+    margin-bottom: 20px;
+    padding: 40px;
+    border-radius: 4px;
+}
+
 /* Login area in the top right of every page*/ 
 #user {
     font-family: verdana, arial, sans-serif;
