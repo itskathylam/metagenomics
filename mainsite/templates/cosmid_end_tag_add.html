@@ -7,7 +7,7 @@
 {% block urlform %}{% url "cosmid-end-tag-add" %}{% endblock %}
 
 {% block form %}
-    <table>
+
     {% for field in cosmid_form %}
         <tr>
             <th>
@@ -20,6 +20,7 @@
             <td>
             {{ field }}
             </td>
+        </tr>
     {% endfor %}
 
     </table>

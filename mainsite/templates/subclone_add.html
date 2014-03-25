@@ -13,7 +13,22 @@ Add Subclone
 {% endblock %}
 
 {% block form %}
-{{form}}
+    
+    {% for field in form %}
+            <tr>
+                <th>
+                {% if field.field.required %}
+                    *{{ field.label }}
+                {% else %}
+                    {{ field.label }}
+                {% endif %}
+                </th>
+                <td>
+                {{ field }}
+                </td>
+            </tr>
+        {% endfor %}
+        
 {% endblock %}
 
 {% block link %}

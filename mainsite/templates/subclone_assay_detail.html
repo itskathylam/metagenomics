@@ -7,7 +7,9 @@
 {% block record %}
     <table>
         <tr><th>Subclone</th><td><a href="{% url 'subclone-list' %}{{subclone_assay.subclone_id}}">{{ subclone_assay.subclone }}</a></td></tr>
+        <tr><th>Host</th><td>{{ subclone_assay.host }}</td></tr>
         <tr><th>Substrate</th><td>{{ subclone_assay.substrate }}</td></tr>
+        <tr><th>Antibiotic</th><td>{{ subclone_assay.antibiotic}}</td></tr>
         <tr><th>Researcher</th><td>{{ subclone_assay.researcher }}</td></tr>
         <tr><th>Km</th><td>{{ subclone_assay.subclone_km }}</td></tr>
         <tr><th>Optimum Temperature</th><td>{{ subclone_assay.subclone_temp }}</td></tr>
