@@ -33,19 +33,35 @@
                     </tr>
                 {% endfor %}
             </table>
+                {% if search %}
                 <div class="pagination">
-                        <span class="page-links">
-                                {% if page_obj.has_previous %}
-                                        <a href="?page={{page_obj.previous_page_number}}">Previous</a>
-                                {% endif %}
-                                <span class="page-current">
-                                        Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
-                                </span>
-                                {% if page_obj.has_next %}
-                                         <a href="?page={{page_obj.next_page_number}}">Next</a>
-                                {% endif %}
+                    <span class="page-links">
+                            {% if subclone_assay_list.has_previous %}
+                                    <a href="?{{queries.urlencode}}&page={{subclone_assay_list.previous_page_number}}">Previous</a>
+                            {% endif %}
+                            <span class="page-current">
+                                    Page {{subclone_assay_list.number}} of {{ subclone_assay_list.paginator.num_pages}}
+                            </span>
+                            {% if subclone_assay_list.has_next %}
+                                    <a href="?{{queries.urlencode}}&page={{subclone_assay_list.next_page_number}}">Next</a>
+                            {% endif %}
+                    </span>
+                </div>
+        {% else %}
+                <div class="pagination">
+                    <span class="page-links">
+                        {% if page_obj.has_previous %}
+                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
+                        {% endif %}
+                        <span class="page-current">
+                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
                         </span>
-                 </div>
+                        {% if page_obj.has_next %}
+                                <a href="?page={{page_obj.next_page_number}}">Next</a>
+                        {% endif %}
+                    </span>
+                </div>
+        {% endif %}
         {% else %}
             <p>0 Subclone assays found. <a href="{% url 'subclone-assay-search' %}">Try another search</a>.</p>
         {% endif %}
