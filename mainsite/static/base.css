@@ -8,6 +8,7 @@
 /*@import url("reset.css");*/
 
 
+
 /* images */
 img.download {
     margin: 3px;
@@ -37,6 +38,21 @@ h2.search {
     position: relative;
     top: -24px;
 }
+/*
+h2.list {
+    margin: 0 10px 20px 10px;
+    display: inline;
+    position: relative;
+    top: -24px;
+}
+*/
+
+h2.detail {
+    margin: 0 10px 20px 10px;
+    display: inline;
+    position: relative;
+    top: -24px;
+}
 
 h2 img {
     margin: 30px;
@@ -51,7 +67,7 @@ header {
     top: 0;
     left: 0;
     right: 0;
-    height: 122px;
+    height: 100px;
     background-color: #FCD450;
     font-family: verdana, arial, sans-serif;
     box-shadow: 0px 8px 6px -6px #888888;
@@ -59,7 +75,10 @@ header {
 }
 
 header h1 {
-    padding-left: 30px;
+    padding-left: 50px;
+    background: url('title.png') top left no-repeat;
+    height: 58px;
+    margin-left: 25px;
 }
 header img {
     float: left;
@@ -72,7 +91,6 @@ header img {
 nav {
     width: 100%;
     background-color: #000000;
-	
 }
 nav ul ul {
     display: none
@@ -155,18 +173,20 @@ nav ul ul ul {
     top: 125px;
     display: block;
     padding: 10px;
+    margin-top: 40px;
+    margin-left: 30px;
     font-family: verdana, arial, sans-serif;}
  
 /* Main content section*/ 
 #main {
     float: left;
     font-family: verdana, arial, sans-serif;
-    margin-left: 10px;
+    margin-left: 30px;
     margin-right: 0px;
     max-width:98%; /* added to stop large tables from overflowing past right hand side edge of footer and header. this isnt perfect. effectively the right margin is relative to total width. it should be a fixed size.*/
     padding: 0;
     margin-top: 132px;
-    margin-bottom: 5px;
+    margin-bottom: 25px;
     overflow: auto;
     background-color: #fff;
 }
@@ -175,9 +195,9 @@ nav ul ul ul {
     float: left;
     margin-top: 135px;
     font-family: verdana, arial, sans-serif;
-    margin-left: 10px;
+    margin-left: 50px;
     margin-bottom: 20px;
-    padding: 10px;
+    padding: 40px;
     border-radius: 4px;
     box-shadow: 3px 3px 5px #888;
     background-color: #eee;
@@ -193,7 +213,7 @@ nav ul ul ul {
     top: 20px;
     padding: 0;
     margin-right: 5px;
-            margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 #second h3 {
     padding: 0;
@@ -208,22 +228,22 @@ nav ul ul ul {
     top: 0px;
     height: 61px;
     padding: 10px 10px 10px 20px;
-    background-color: #0073CF;
-    text-align: center;
+    background-color: #FCD450;
     font-weight: bold;
-    border-left: solid;
+    /*border-left: solid;*/
 }
 
 
 /*Footer at the bottom of every page*/ 
 #footer {
-    font-family: verdana, arial, sans-serif;
+    font-family: verdanaHB, arial, sans-serif;
    /* position: relative;
-    bottom: 0px;
-    left: 0px; */
+    bottom: -13px;
+    left: -8px;
+    width: 101%; */
     clear: both;
-    width: 100%;
-    margin-bottom: 10px;
+    margin: 0;
+    padding: 0;
     background-color: #000000;
     color: #fff;
     text-align: center;
@@ -232,7 +252,7 @@ nav ul ul ul {
 }
 
 #footer a {
-    text-decoration: none;
+    /*text-decoration: none;*/
     color: #fff;
     margin: 0 10px;
 }
@@ -273,7 +293,7 @@ table.search {
 
 table.search td{
     padding:5px;
-    background-color: #fff;
+    background-color: transparent;
     border: 0px;
 }
 
@@ -291,10 +311,10 @@ table.list td {
 }
 
 table.list td a {
+    vertical-align: center /* to center links in table cell --Kathy*/
     display: inline-block;
     width:100%;
     height:100%;
-    text-decoration: none;
     color: #000;
 }
 
@@ -311,11 +331,11 @@ input[type=submit] {
 /* for tabs on cosmid page */
 .tabs {
   position: relative; 
-  min-height: 1500px;
   clear: both;
  /* width: 100%;*/
- 
+
   margin: 25px 0;
+  
 }
 .tab {
   float: left;
@@ -325,10 +345,11 @@ input[type=submit] {
     overflow: hidden;
     position: relative;
     display: inline;
+    
 }
 
 .tab label.tab  {
-  background: #eee; 
+  background: white; 
   padding: 10px; 
   border: 1px solid #ccc; 
   margin-left: -1px; 
@@ -344,11 +365,11 @@ input[type=submit] {
   left: 0;
   right: 0;
   bottom: 0; */
- float: left;  /*SWITCH WITH 5 ABOVE for this and width*/
+  float: left;  /*SWITCH WITH 5 ABOVE for this and width*/
   width: 100%; 
   background: white;
-  padding: 20px;
-  border: 1px solid #ccc; 
+  padding: 30px;
+  border: 1px solid #ccc;
 }
 [type=radio]:checked ~ label {
   background: white;
@@ -358,3 +379,6 @@ input[type=submit] {
 [type=radio]:checked ~ label ~ .content {
   z-index: 1;  */
 /* for tabs on cosmid page */
+
+
+

@@ -1,9 +1,15 @@
 {% extends "detail.html" %}
+
+{% block subtitle %}
+<h2><img src="{{ STATIC_URL }}icons/detail64.png" alt="">Subclone Assay</h2>
+{% endblock %}
+
 {% block record %}
-    <h2><img src="{{ STATIC_URL }}icons/detail64.png" alt="">Subclone Assay</h2>
     <table>
-        <tr><th>Subclone</th><td>{{ subclone_assay.subclone }}</td></tr>
+        <tr><th>Subclone</th><td><a href="{% url 'subclone-list' %}{{subclone_assay.subclone_id}}">{{ subclone_assay.subclone }}</a></td></tr>
+        <tr><th>Host</th><td>{{ subclone_assay.host }}</td></tr>
         <tr><th>Substrate</th><td>{{ subclone_assay.substrate }}</td></tr>
+        <tr><th>Antibiotic</th><td>{{ subclone_assay.antibiotic}}</td></tr>
         <tr><th>Researcher</th><td>{{ subclone_assay.researcher }}</td></tr>
         <tr><th>Km</th><td>{{ subclone_assay.subclone_km }}</td></tr>
         <tr><th>Optimum Temperature</th><td>{{ subclone_assay.subclone_temp }}</td></tr>
@@ -13,6 +19,8 @@
 {% endblock %}
 
 {% block link %}
-    <a href="/edit{% url 'subclone-assay-list' %}{{ subclone_assay.pk }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit">Edit</a><br>
+    {% if perms.mainsite.change_subclone_assay %}
+        <a href="/edit{% url 'subclone-assay-list' %}{{ subclone_assay.pk }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit">Edit</a><br>
+    {% endif %}
     <a href="export/" ><img src="{{ STATIC_URL }}icons/download.png" alt="edit">CSV File</a><br>
 {% endblock %}

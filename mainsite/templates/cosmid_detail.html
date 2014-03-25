@@ -1,37 +1,59 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block head %}
+    <title>
+        Cosmid {{ name }}
+    </title>
+    <script  src="{{ STATIC_URL }}tabs.js"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}tabs.css" type="text/css" />
+{% endblock %}
 
+{% block subtitle %}
 <h2>Cosmid {{ name }}</h2>
-<p>Host: {{ host }}</p>
-<p>Researcher: {{ researcher }}</p>
-<p>Library: {{ library }}</p>
-<p>Screen: {{ screen }}</p>
-<p>Ec Collection: {{ ec_collection }}</p>
-<p>Original Media: {{ media }}</p>
-<p>Pool: {{ pool }}</p>
-<p>Lab Book Reference: {{ lab_book }}</p>
-<p>Cosmid Comments: {{ cosmid_comments }}</p>
+{% endblock %}
+
+{% block content %}
+<table>  
+<tr><th>Host:</th><td>{{ host }}</td></tr> 
+<tr><th>Researcher: </th><td>{{ researcher }}</td></tr>  
+<tr><th>Library: </th><td>{{ library }}</td> </tr> 
+<tr><th>Screen: </th><td>{{ screen }}</td> </tr> 
+<tr><th>Ec Collection: </th><td>{{ ec_collection }}</td> </tr> 
+<tr><th>Original Media: </th><td>{{ media }}</td> </tr> 
+<tr><th>Pool: </th><td>{{ pool }}</td> </tr> 
+<tr><th>Lab Book Reference: </th><td>{{ lab_book }}</td> </tr> 
+<tr><th>Cosmid Comments: </th><td>{{ cosmid_comments }}</td> </tr> 
+</table>
+
+<h3>End Tags</h3>
+
+
 {% for endtag in endtags %}
+    <table>
     {% for p in primers %}
         {% if endtag.primer_id = p.id %}
-            Primer: {{ p.primer_name }}<br>
+            <tr><th>Primer: </th><td>{{ p.primer_name }}</td></tr>
         {% endif %}
     {% endfor %}
-    <label>End Tag:<br>
-    <textarea rows="10" cols="80" readonly>{{ endtag.end_tag_sequence }}</textarea></label><br>
+    <th><label>End Tag:</th><td><textarea rows="10" cols="80" readonly>{{ endtag.end_tag_sequence }}</textarea></label></td></tr>
+    <th><label>Vector Trimmed?</th><td>{{ endtag.vector_trimmed }}</td>
+    </table>
+    <br>
 {% endfor %}
+
+<br>
 {% endblock %}
 
 {% block third %}
 <div class="tabs">
-{% for list in contigs %}
-    <div class="tab">
-        <input type="radio" id="{% cycle 'tab1' 'tab2' %}" name="contigtabs" checked>
-        <label for="{% cycle 'tab1' 'tab2' %}" class ="tab">{{ list.contig_name }}</label>
-        <div class="tab-panel"> 
-            <div class="content">
-                <h3>Contig: <a href="/contig/{{ list.contig_name }}">{{ list.contig_name }}</a></h3><br>
+    <ul id="tabs">
+        {% for list in contigs %}
+            <li><a href="#{{ list.contig_name }}">{{ list.contig_name }}</a></li>
+        {% endfor %}
+    </ul>
+    {% for list in contigs %}
+        <div class="tabContent" id="{{ list.contig_name }}">
+            <h3>Contig: <a href="/contig/{{ list.contig_name }}">{{ list.contig_name }}</a></h3><br>
                 Pool: {{ list.pool }}<br>   
                 Accession: {{ list.contig_accession }}<br>
                 <label>Sequence: <br>
@@ -42,39 +64,65 @@
                 <p>Open reading frames in {{ list.contig_name }}</p>
                 <table>
                     <tr>
-                        <th>Accession</th>
-                        <th>Start</th>
-                        <th>Stop</th>
                         <th>ID</th>
                         <th>Annotation</th>
                         <th>Sequence</th>
+                        <th>Accession (if submitted to GenBank)</th>
+                        <th>Start</th>
+                        <th>Stop</th>
+                        <th>ORF on complement strand?</th>
+                        <th>Predicted by FGS</th>
+                        <th>Prediction Score</th>
+                        <th>Remove</th>
                     </tr>
                 {% for orf in orfs %}
                     {% if orf.contig_id = list.id %}
-                        <tr><td>{{ orf.orf_accession }}</td>
-                        <td>{{ orf.start }}</td>
-                        <td>{{ orf.stop }}</td>
                         {% for s in seq %}
                             {% if s.id = orf.orf_id %}
-                                 <td><a href="{% url 'orf-list' %}{{ s.id }}">{{ s.id }}</a></td>
+                                 <tr><td><a href="{% url 'orf-list' %}{{ s.id }}">{{ s.id }}</a></td>
                                  <td>{{ s.annotation }}</td>
-                                <td><textarea rows="4" cols"10" readonly=true>{{ s.orf_sequence }}</textarea></td></tr>
+                                <td><textarea rows="4" cols"10" readonly=true>{{ s.orf_sequence }}</textarea></td>
                             {% endif %}
                         {% endfor %}
+
+                        <td>{{ orf.orf_accession }}</td>
+                        <td>{{ orf.start }}</td>
+                        <td>{{ orf.stop }}</td>
+                        <td>{{ orf.complement }}</td>
+                        <td>{{ orf.predicted }}</td>
+                        <td>{{ orf.prediction_score }}</td>
+                        <td><a href="/delete/contig-orf/{{ orf.id }}">Remove</a></td>
+                        </tr>
                     {% endif %}
                 {% endfor %}
                 </table>
+        </div>
+    {% endfor %}
+
+</div>    
+<!-- {#
+<div class="tabs">
+{% for list in contigs %}
+    <div class="tab">
+        <input type="radio" id="{% cycle 'tab1' 'tab2' %}" name="contigtabs" checked>
+        <label for="{% cycle 'tab1' 'tab2' %}" class ="tab">{{ list.contig_name }}</label>
+        <div class="tab-panel"> 
+            <div class="content">
+                
             </div>
         </div>
     </div>
 {% endfor %}
 </div>
+ #} -->
 {% endblock %}
 
 {% block second %}
     <section id="second">
         <h3>Links</h3>
-        <a href="/edit{% url 'cosmid-end-tag-list' %}{{ cosmidpk }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit"> Edit {{ name }}</a><br>
+        {% if perms.mainsite.change_cosmid %}
+        <a href="/edit/cosmid/{{ name }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit"> Edit {{ name }}</a><br>
+        {% endif %}
         <a href="/export"><img src="{{ STATIC_URL }}icons/download.png" alt="download"> CSV File</a>
     </section>
 {% endblock %}

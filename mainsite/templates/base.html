@@ -5,40 +5,55 @@
         <link rel="stylesheet" href="{{ STATIC_URL }}base.css" type="text/css" />
         {% block head %}{% endblock %}
     </head>
-  <body>
+  <body onload="init()">
      <header id="head">
-            <h1>Metagenomics Clone Bank</h1>
+        <h1 id="header h1"></h1>
             <div id="user">
-                {{ user.first_name }}<br>
-                <a href="/user/settings"><img title="Settings" src="{{ STATIC_URL }}gear.png" alt="user settings"/></a> <a href="{% url 'logout' %}"><img title="Logout" src="{{ STATIC_URL }}logout.png" alt="logout"/></a>
+                <span style="vertical-align: bottom">{{ user.first_name }} {{ user.last_name }}</span><br>
+                <a href="/user/settings"><img style="width:40px; padding:10px" title="Settings" src="{{ STATIC_URL }}gear.png" alt="user settings"/></a>
+                <a href="{% url 'logout' %}"><img style="width:40px; padding:10px" title="Logout" src="{{ STATIC_URL }}logout.png" alt="logout"/></a>
+                
             </div>
             
             <nav>
             <ul>
                 <li><a href="/">Home<img src="{{ STATIC_URL }}icons/home.png"alt="home"></a></li>
-                {% if perms.mainsite.can_add_cosmid %}
+                {% if perms.mainsite.add_cosmid or perms.mainsite.add_subclone or perms.mainsite.add_subclone_assay or perms.mainsite.add_cosmid_assay or perms.mainsite.add_orf or perms.mainsite.add_contig %}
                 <li><a href="">Add<img src="{{ STATIC_URL }}icons/add.png"alt="add"></a>
                     <ul>
-                        <li><a href="{% url 'cosmid-end-tag-add' %}">Cosmid</a></li>
-                        <li><a href="{% url 'subclone-add' %}">Subclone</a></li>
-                        <li><a href="{% url 'subclone-assay-add' %}">Subclone Assay</a></li>
-                        <li><a href="{% url 'cosmid-assay-add' %}">Cosmid Assay</a></li>
-                        <li><a href="{% url 'orf-contig-add' %}">ORF</a></li>
-                        <li><a href="{% url 'contig-pool-add' %}">Contigs</a></li>
+                        {% if perms.mainsite.add_cosmid %}
+                                <li><a href="{% url 'cosmid-end-tag-add' %}">Cosmid</a></li>
+                        {% endif %}
+                        {% if perms.mainsite.add_subclone %}
+                                <li><a href="{% url 'subclone-add' %}">Subclone</a></li>
+                        {% endif%}
+                        {% if perms.mainsite.add_subclone_assay %}
+                                <li><a href="{% url 'subclone-assay-add' %}">Subclone Assay</a></li>
+                        {% endif %}
+                        {% if perms.mainsite.add_cosmid_assay %}
+                                <li><a href="{% url 'cosmid-assay-add' %}">Cosmid Assay</a></li>
+                        {% endif %}
+                        {% if perms.mainsite.add_orf %}
+                                <li><a href="{% url 'orf-contig-add' %}">ORF</a></li>
+                        {% endif %}
+                        {% if perms.mainsite.add_contig %}
+                                <li><a href="{% url 'contig-pool-add' %}">Contigs</a></li>
+                        {% endif %}
                     </ul>
                 </li>
                 {% endif %}
-                <li><a href="/search">Search<img src="{{ STATIC_URL }}icons/search.png"alt="search"></a>
+                <li><a href="">Search<img src="{{ STATIC_URL }}icons/search.png"alt="search"></a>
                     <ul>
-                        <li><a href="{% url 'cosmid-search' %}">Cosmid</a></li>
-                        <li><a href="{% url 'subclone-search' %}">Subclone</a></li>
-                        <li><a href="{% url 'cosmid-assay-search' %}">Cosmid Assay</a></li>
-                        <li><a href="{% url 'subclone-assay-search' %}">Subclone Assay</a></li>
-                        <li><a href="{% url 'orf-search' %}">ORF</a></li>
-                        <li><a href="{% url 'blast' %}">Sequence (Local BLAST)</a></li>
+                        <li><a href="{% url 'cosmid-search' %}">Cosmids</a></li>
+                        <li><a href="{% url 'subclone-search' %}">Subclones</a></li>
+                        <li><a href="{% url 'cosmid-assay-search' %}">Cosmid Assays</a></li>
+                        <li><a href="{% url 'subclone-assay-search' %}">Subclone Assays</a></li>
+                        <li><a href="{% url 'contig-search' %}">Contigs</a></li>
+                        <li><a href="{% url 'orf-search' %}">ORFs</a></li>
+                        <li><a href="{% url 'blast-search' %}">Sequences (BLAST)</a></li>
                     </ul>
                 </li>
-                <li><a href="/viewall">View All<img src="{{ STATIC_URL }}icons/all.png"alt="all"></a>
+                <li><a href="">View All<img src="{{ STATIC_URL }}icons/all.png"alt="all"></a>
                     <ul>
                         <li><a href="{% url 'cosmid-end-tag-list' %}">Cosmids</a></li>
                         <li><a href="{% url 'subclone-list' %}">Subclones</a></li>
@@ -46,6 +61,7 @@
                         <li><a href="{% url 'subclone-assay-list' %}">Subclone Assays</a></li>
                         <li><a href="{% url 'contig-list' %}">Contigs</a></li>
                         <li><a href="{% url 'orf-list' %}">ORFs</a></li>
+                        <li><a href="{% url 'orf-contig-list' %}">ORF-Contig Pairs</a></li>
                         <li><a href="{% url 'cosmid-end-tag-list' %}">Static Data >> </a>
                             <ul>
                                 <li><a href="{% url 'primer-list' %}">Primers</a></li>
@@ -56,14 +72,15 @@
                                 <li><a href="{% url 'substrate-list' %}">Substrates</a></li>
                                 <li><a href="{% url 'vector-list' %}">Vectors</a></li>
                                 <li><a href="{% url 'pool-list' %}">Sequencing Pools</a></li>
+                                <li><a href="{% url 'antibiotic-list' %}">Antibiotics</a></li>
                             </ul>
                         </li>
                     </ul>
                 </li>
-                <li><a href="/tools">Tools<img src="{{ STATIC_URL }}icons/tools.png"alt="tools"></a>
+                <li><a href="">Tools<img src="{{ STATIC_URL }}icons/tools.png"alt="tools"></a>
                     <ul>
                         <li><a href="/tools/contig">Contig Retrieval Tool</a></li>                  
-                        <li><a href="/tools/pooling">Pooling Tool</a></li>           
+                        <li><a href="/tools/pooling">Gene Annotation Tool</a></li>           
                     </ul>
                 </li>
                 <li><a href="">Help<img src="{{ STATIC_URL }}icons/help.png"alt="help"></a>
@@ -89,7 +106,7 @@
         
         {% block third %}
         {% endblock %}
- 
+
         <footer id="footer">
             <p><a href="/about">About</a>
              {% if user.is_staff %}

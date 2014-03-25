@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 
+{% block subtitle %}
+<h2 class="list">Cosmid Assays</h2>
+{% endblock %}
+
 {% block content %}
-<<<<<<< HEAD
+
      <a href="/export/cosmid_assay" >Download CSV File</a>
-    <table border = 1>
-=======
-    <h2 class="list">Cosmid Assays</h2>
+
     <p>X number of results OR All records</p>
     <table class="list">
->>>>>>> ad98ecb9cc72568d7b20bf16a592aa67d6a6483b
             <tr>
                 <th>Cosmid Name</th>
                 <th>Expression Host</th>
@@ -34,4 +35,33 @@
             </tr>
         {% endfor %}
     </table>
+    {% if search %}
+                <div class="pagination">
+                    <span class="page-links">
+                            {% if cosmid_assay_list.has_previous %}
+                                    <a href="?{{queries.urlencode}}&page={{cosmid_assay_list.previous_page_number}}">Previous</a>
+                            {% endif %}
+                            <span class="page-current">
+                                    Page {{cosmid_assay_list.number}} of {{ cosmid_assay_list.paginator.num_pages}}
+                            </span>
+                            {% if cosmid_assay_list.has_next %}
+                                    <a href="?{{queries.urlencode}}&page={{cosmid_assay_list.next_page_number}}">Next</a>
+                            {% endif %}
+                    </span>
+                </div>
+        {% else %}
+                <div class="pagination">
+                    <span class="page-links">
+                        {% if page_obj.has_previous %}
+                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
+                        {% endif %}
+                        <span class="page-current">
+                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
+                        </span>
+                        {% if page_obj.has_next %}
+                                <a href="?page={{page_obj.next_page_number}}">Next</a>
+                        {% endif %}
+                    </span>
+                </div>
+        {% endif %}
 {% endblock %}

@@ -1,6 +1,11 @@
 {% extends "base.html" %}
-{% block content %}
-    <h2 class="list">Substrates</h2>    
+
+
+{% block subtitle %}
+<h2 class="list">Substrates</h2>
+{% endblock %}
+
+{% block content %}   
     <table class="list">
             <tr>
                 <th>Substrate Name</th>
@@ -11,6 +16,19 @@
             </tr>
         {% endfor %}
     </table>
+    <div class="pagination">
+        <span class="page-links"><p>
+                {% if page_obj.has_previous %}
+                        <a href="?page={{page_obj.previous_page_number}}">Previous</a>
+                {% endif %}
+                <span class="page-current">
+                        Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
+                </span>
+                {% if page_obj.has_next %}
+                        <a href="?page={{page_obj.next_page_number}}">Next</a>
+                {% endif %}
+        </p></span>
+    </div>
 {% endblock %}
 
 {% block second %}

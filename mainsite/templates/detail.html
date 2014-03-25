@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block subtitle %}
+<h2 class="detail"><img src="{{ STATIC_URL }}icons/detail64.png" alt="edit">{% block titletext %}{% endblock %}</h2>
+{% endblock %}
+
 {% block content %}
     {% block record %}
     {% endblock %}

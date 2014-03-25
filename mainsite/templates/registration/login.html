@@ -1,14 +1,16 @@
 {% block head %}
   <title>Metagenomic Clonebank Login</title>
+  <link rel="stylesheet" href="{{ STATIC_URL }}login.css" type="text/css" />
 {% endblock %}
 
 {% block body %}
+  <div class="login">
   <header>
-    <h1>Metagenomic Clonebank Login</h1>
+    <h1>Metagenomic Clonebank</h1>
     <h2>Login Page</h2>
   </header>
 
-  <section>
+  <section class="loginform">
     {% if form.errors %}
       <p>Your username and password didn't match, please try again.</p>
     {% endif %}
@@ -31,4 +33,5 @@
       <input type="submit" value="login" />
     </form>
   </section>
+  </div>
 {% endblock %}

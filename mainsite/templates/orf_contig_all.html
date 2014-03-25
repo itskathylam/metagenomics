@@ -1,31 +1,54 @@
 {% extends "base.html" %}
 
+{% block subtitle %}
+<h2 class="list">orf contig all</h2>
+{% endblock %}
+
 {% block content %}
+
         <a href="/export/orf_contig" >Download CSV File</a>
-    <table border = 1>
+
+    <table class="list">
             <tr>
                 <th>Contig Name</th>
                 <th>Contig Sequence</th>
                 <th>ORF ID</th>
                 <th>ORF Annotation</th>
                 <th>Predicted by FGS</th>
+                <th>Prediction Score</th>
                 <th>ORF Start</th>
                 <th>ORF Stop</th>
-                <th>ORF Accession</th>
+                <th>ORF on complement strand?</th>
+                <th>ORF Accession (if submitted to GenBank)</th>
                 <th>ORF Seqeunce</th>
             </tr>
         {% for contig_orf_join in contig_orf_join_list %}
             <tr>
-                <td>{{ contig_orf_join.contig.contig_name }}</td>
+                <td><a href="{% url 'contig-list' %}{{ contig_orf_join.contig.contig_name }}">{{ contig_orf_join.contig.contig_name }}</a></td>
                 <td><textarea rows="5" cols="50" readonly=true>{{ contig_orf_join.contig.contig_sequence }}</textarea></td>
-                <td>{{ contig_orf_join.orf_id }}</td>
+                <td><a href="{%url 'orf-list' %}{{contig_orf_join.orf_id}}">{{ contig_orf_join.orf_id }}</a></td>
                 <td>{{ contig_orf_join.orf.annotation }}</td>
                 <td>{{ contig_orf_join.predicted }}</td>
+                <td>{{ contig_orf_join.prediction_score }}</td>
                 <td>{{ contig_orf_join.start }}</td>
                 <td>{{ contig_orf_join.stop }}</td>
+                <td>{{ contig_orf_join.complement }}</td>
                 <td>{{ contig_orf_join.orf_accession }}</td>
                 <td><textarea rows="5" cols="50" readonly=true>{{ contig_orf_join.orf.orf_sequence }}</textarea></td></td>
             </tr>
         {% endfor %}
     </table>
+    <div class="pagination">
+        <span class="page-links"><p>
+                {% if page_obj.has_previous %}
+                        <a href="?page={{page_obj.previous_page_number}}">Previous</a>
+                {% endif %}
+                <span class="page-current">
+                        Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
+                </span>
+                {% if page_obj.has_next %}
+                        <a href="?page={{page_obj.next_page_number}}">Next</a>
+                {% endif %}
+        </p></span>
+    </div>
 {% endblock %}

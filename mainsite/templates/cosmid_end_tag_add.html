@@ -1,19 +1,33 @@
 {% extends "add.html" %}
 
-{% block pagetitle%}
-    Add Cosmid
-{% endblock %}
+{% block pagetitle%}Add Cosmid{% endblock %}
 
 {% block titletext %}Add Cosmid{% endblock %}
 
-{% block urlform %}
-    {% url "cosmid-end-tag-add" %}
-{% endblock %}
+{% block urlform %}{% url "cosmid-end-tag-add" %}{% endblock %}
 
 {% block form %}
-    {{cosmid_form}}
-    {{end_tag_formset}}
+
+    {% for field in cosmid_form %}
+        <tr>
+            <th>
+            {% if field.field.required %}
+                *{{ field.label }}
+            {% else %}
+                {{ field.label }}
+            {% endif %}
+            </th>
+            <td>
+            {{ field }}
+            </td>
+        </tr>
+    {% endfor %}
+
+    </table>
+    <h3>End Tags</h3>
+    <table>
+        {{ end_tag_formset }}
+    </table>
 {% endblock %}
 
-{% block link %}
-{% endblock %}
+{% block link %}{% endblock %}

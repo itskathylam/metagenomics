@@ -1,7 +1,7 @@
 {% extends "add.html" %}
 
 {% block pagetitle%}
-    Add Subclone
+Add Subclone
 {% endblock %}
 
 {% block titletext %}
@@ -9,11 +9,26 @@ Add Subclone
 {% endblock %}
 
 {% block urlform %}
-    {% url "subclone-add" %}
+{% url "subclone-add" %}
 {% endblock %}
 
 {% block form %}
-    {{form}}
+    
+    {% for field in form %}
+            <tr>
+                <th>
+                {% if field.field.required %}
+                    *{{ field.label }}
+                {% else %}
+                    {{ field.label }}
+                {% endif %}
+                </th>
+                <td>
+                {{ field }}
+                </td>
+            </tr>
+        {% endfor %}
+        
 {% endblock %}
 
 {% block link %}
