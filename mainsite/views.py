@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse
@@ -9,7 +10,7 @@ from django.core.urlresolvers import reverse_lazy
 from operator import attrgetter
 import operator
 from django.core.paginator import Paginator, PageNotAnInteger
-
+from django.core.files import File
 from mainsite.models import *
 from mainsite.forms import *
 
@@ -75,6 +76,106 @@ def ContigTool(request):
 @login_required
 def Pooling(request):
     return (render(request, 'pooling.html'))
+
+
+def ContigTool(request):
+    #contigs = Contig.objects.filter('cosmid')
+    #cosmids = Cosmid.objects.exclude(contig =contigs)
+    context = {'pool':Pooled_Sequencing.objects.all()}
+    if request.method == "POST":
+        if 'detail' in request.POST:
+            pool_id =  request.POST['pool']                         
+            context = {'pool': Pooled_Sequencing.objects.all(), 'detail': Pooled_Sequencing.objects.filter(id = pool_id)}
+    
+        if 'submit' in request.POST:
+            form = ContigForm(request.POST)
+            if form.is_valid():
+                pool = form.cleaned_data['pool']
+                Contig_tool_test(pool)
+    
+    variables = RequestContext(request, context)
+    return render_to_response('tool_contig.html', variables)
+
+   
+
+#read csv file into array
+def read_csv(filename):
+    import csv
+    with open(filename, 'rb') as csvfile:
+        reader = csv.reader(csvfile, delimiter = ',')
+        rows = []
+        for row in reader:
+            rows.append(row)
+    csvfile.closed
+
+
+
+def Contig_tool_test(pool):
+    pool_id = pool
+    contigs = Contig.objects.filter(pool = pool_id).values_list('contig_name', 'contig_sequence')
+    cosmids = Cosmid.objects.filter(pool = pool_id).values_list('id', 'cosmid_name')
+    seqs = End_Tag.objects.select_related('cosmids').values_list('id', 'primer', 'end_tag_sequence')
+    primer_set1 = Primer.objects.select_related('primer').filter(primer_pair = '1').values_list('id','primer_name')
+    primer_set2 = Primer.objects.select_related('primer').filter(primer_pair = '2').values_list('id','primer_name')
+
+    HttpResponse(write_fasta(contigs), write_csv('primers_1', cosmids, primer_set1, seqs), write_csv('primers_2', cosmids, primer_set2, seqs))
+    return HttpResponse(system("perl retrieval_pipeline.pl primers_1.csv primers_2.csv contigs.fa"))
+
+    
+def write_csv(file_name, cosmids, primer_set, seqs):
+    with open("./%s.csv" %file_name, 'w') as f:
+        csv = File(f)
+        seqs = list(seqs)
+        cos = dict(cosmids)
+        primers = dict(primer_set)
+        for x, y, z in seqs:
+            for c_id, csmd in cos.iteritems():
+                for p_id, prmr in primers.iteritems():
+                    if y == c_id and x == p_id:
+                        csv.write(csmd + ',' + prmr + ',' + z + '\n')
+        csv.closed
+        f.closed
+
+#writes contigs to fasta file(text.fa)    
+def write_fasta(contigs):
+    with open('./contigs.fa', 'w') as f:
+        fasta = File(f)
+        contigs = list(contigs)
+        for contig, seq in contigs:
+            fasta.write('>' + contig + '\n' + seq + '\n')
+        fasta.closed
+        f.closed
+
+
+def orf_data(request):
+    contig_id = Contig.objects.filter(contig_name = 'scaffold58_1').values('id')
+    contigs = Contig.objects.filter(contig_name = 'scaffold58_1').values_list('contig_name', 'contig_sequence')
+    orfs = Contig_ORF_Join.objects.filter(contig = contig_id).values_list('start', 'stop', 'complement', 'prediction_score')
+    anno = ORF.objects.filter(contig = contig_id).values_list('annotation', 'orf_sequence')
+   
+    return HttpResponse(write_lib(contigs, orfs, anno))
+
+def write_lib(contigs, orfs, anno):
+    with open('./data.lib', 'w') as f:
+        data = File(f)
+        data.write('#!/usr/bin/perl \n sub data{\n')
+        contig = ''
+        count = 1
+        for name, seq in contigs:
+            contig = name
+            data.write('$contig_orf{' + name + '}\n = [\'' + seq + '\',\n')
+        data.write('{\'glimmer\' => {},\n')
+        data.write('\'genbank\' => {},\n')
+        for start, stop, comp, score in orfs:
+            for ann, seqs in anno:
+                    comp = -1 if comp == 1 else 1
+                    data.write('\'manual\' =>{\'' + contig + '-' + str(++count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
+                    data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
+                    data.write('annotation =>\'' + ann + '\',\n sequence =>\'' + seqs + '\'\n}}}];\n')
+        data.write('return(\%contig_orf);} \n 1;') 
+        data.closed
+        f.closed
+
 
 #sequence search
 @login_required
@@ -754,9 +855,7 @@ class CosmidEditView(UpdateView):
     slug_field = 'cosmid_name' 
     slug_url_kwarg = 'cosmid_name'
     success_url = reverse_lazy('cosmid-end-tag-list')
-    
-    #def CosmidEditView.queryset():
-    
+  
     
     
 class SubcloneEditView(UpdateView):
@@ -803,6 +902,11 @@ class CosmidAssayListView(ListView):
     model = Cosmid_Assay
     template_name = 'cosmid_assay_all.html'
     paginate_by = 20
+
+#retrieve CosmidAssayListView queryset to export as csv
+def cosmid_assay_queryset(response):
+    qs = Cosmid_Assay.objects.all()
+    return queryset_export_csv(qs)
     
 class SubcloneAssayListView(ListView):
     model = Subclone_Assay
@@ -813,6 +917,11 @@ class ORFListView (ListView):
     model = ORF
     template_name = 'orf_all.html'
     paginate_by = 20
+
+#retrieve ORFListView queryset to export as csv
+def orf_queryset(response):
+    qs = ORF.objects.all()
+    return queryset_export_csv(qs)
     
 class ContigListView (ListView):
     model = Contig
@@ -992,7 +1101,8 @@ def queryset_export_csv(qs):
     
     headers = []
     for field in qs_model._meta.fields:
-        headers.append(field.name)
+        if not field.name == 'id':
+            headers.append(field.name)
     writer.writerow(headers)
 
     for obj in qs:
@@ -1012,15 +1122,20 @@ class PrimerListView(ListView):
     model = Primer
     template_name = 'primer_all.html'
     paginate_by = 20
+
+#retrieve PrimerListView queryset to export as csv
+def primer_queryset(response):
+    qs = Primer.objects.all()
+    return queryset_export_csv(qs)
     
 class AntibioticListView(ListView):
     model = Antibiotic
     template_name = 'antibiotic_all.html'
     paginate_by = 20
 
-#retrieve PrimerListView queryset to export as csv
-def primer_queryset(response):
-    qs = Primer.objects.all()
+#retrieve AntibioticListView queryset to export as csv
+def antibiotic_queryset(response):
+    qs = Antibiotic.objects.all()
     return queryset_export_csv(qs)
 
 class HostListView(ListView):
@@ -1092,4 +1207,3 @@ class SubstrateListView(ListView):
 def substrate_queryset(response):
     qs = Substrate.objects.all()
     return queryset_export_csv(qs)
-

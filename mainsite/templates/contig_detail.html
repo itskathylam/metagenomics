@@ -1,7 +1,8 @@
 {% extends "detail.html" %}
 
+{% block titletext %}Contig {{ name }}{% endblock %}
+
 {% block record %}
-    <h3>Contig {{ name }}</h3>
     Pool: {{ pool }} <br>
     Accession: {{ accession }}<br>
     Associated Cosmids:

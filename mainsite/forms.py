@@ -86,6 +86,7 @@ class ContigForm(ModelForm):
         
     class Meta:
         model = Contig
+        pool = forms.Select()
         exclude = ('contig_name', 'contig_sequence', 'cosmid', 'contig_accession', 'blast_hit_accession')
 
 # For Contig-Pool add

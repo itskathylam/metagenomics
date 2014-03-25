@@ -5,20 +5,22 @@
 {% endblock %}
 
 {% block content %}
-    {% if subclone_assay_list %}    
+    {% if subclone_assay_list %}   
+        <a href="/export/cosmid_assay" >Download CSV File</a>
+
         <p>X number of results OR All records</p>
         <table class="list">
-                <tr>
-                    <th>Cosmid Name</th>
-                    <th>Expression Host</th>
-                    <th>Substrate</th>
-                    <th>Antibiotic</th>
-                    <th>Researcher Name</th>
-                    <th>Km (mM)</th>
-                    <th>Temp Optimum</th>
-                    <th>pH Optimum</th>
-                    <th>Comments/Observations</th>
-                </tr>
+            <tr>
+                <th>Cosmid Name</th>
+                <th>Expression Host</th>
+                <th>Substrate</th>
+                <th>Antibiotic</th>
+                <th>Researcher Name</th>
+                <th>Km (mM)</th>
+                <th>Temp Optimum</th>
+                <th>pH Optimum</th>
+                <th>Comments/Observations</th>
+            </tr>
         {% for cosmid_assay in cosmid_assay_list %}
             <tr>
                 <td><a href="{% url 'cosmid-assay-list' %}{{ cosmid_assay.pk }}">{{ cosmid_assay.cosmid.cosmid_name }}</a></td>

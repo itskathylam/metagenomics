@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block content %}
+
+        <a href="/export/cosmid_end_tag" >Download CSV File</a>
+
     {% if cosmid_list %}
     <p>Search for: '{{ query }}' returned {{ cosmid_list.count }} results</p>    
         <table class="list">
@@ -81,6 +84,7 @@
                 </div>
     {% endif %}
     {% else %}
+
         <p>0 Cosmids found for search '{{ query }}' <a href="{% url 'cosmid-search' %}">Try another search</a>.</p>
     {% endif %}
 {% endblock %}
