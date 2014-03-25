@@ -21,18 +21,19 @@
     <p>Open reading frames in {{ name }}</p>
     <table>
         <tr>
-        <th>Accession</th>
-        <th>Start</th>
-        <th>Stop</th>
         <th>ID</th>
         <th>Annotation</th>
         <th>Sequence</th>
+        <th>Accession (if submitted to GenBank)</th>
+        <th>Start</th>
+        <th>Stop</th>
+        <th>ORF on complement strand?</th>
+        <th>Predicted by FGS</th>
+        <th>Prediction Score</th>
+        <th>Remove</th>
         </tr>
     {% for orf in orfresults %}
         <tr>
-            <td>{{ orf.orf_accession }}</td>
-            <td>{{ orf.start }}</td>
-            <td>{{ orf.stop }}</td>
         {% for s in orfseq %}
             {% if s.id = orf.orf_id %}
                 <td><a href="{% url 'orf-list' %}{{ s.id }}">{{s.id }}</a></td>
@@ -42,6 +43,13 @@
                 </td>   
             {% endif %}
         {% endfor %}
+            <td>{{ orf.orf_accession }}</td>
+            <td>{{ orf.start }}</td>
+            <td>{{ orf.stop }}</td>
+            <td>{{ orf.complement }}</td>
+            <td>{{ orf.predicted }}</td>
+            <td>{{ orf.prediction_score }}</td>
+            <td><a href="/delete/contig-orf/{{ orf.id }}">Remove</a></td>
         </tr>
     {% endfor %}
     </table>

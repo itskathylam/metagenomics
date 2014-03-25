@@ -47,7 +47,7 @@
                             {% endif %}
                     </span>
                 </div>
-        {% else %}
+                {% else %}
                 <div class="pagination">
                     <span class="page-links">
                         {% if page_obj.has_previous %}
@@ -61,7 +61,7 @@
                         {% endif %}
                     </span>
                 </div>
-        {% endif %}
+                {% endif %}
         {% else %}
             <p>0 Subclone assays found. <a href="{% url 'subclone-assay-search' %}">Try another search</a>.</p>
         {% endif %}

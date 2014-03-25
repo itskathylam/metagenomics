@@ -5,7 +5,7 @@ from django.forms import widgets
 from django.contrib.auth.models import User
 from django.forms.models import BaseFormSet, inlineformset_factory
 
-from django.contrib.auth.forms import SetPasswordForm
+#from django.contrib.auth.forms import SetPasswordForm
 
 # For Cosmid-End Tag add
 class CosmidForm(ModelForm):
@@ -64,15 +64,18 @@ class ContigSearchForm(ModelForm):
         
 #Change user preferences    
 class UserForm(ModelForm):
-    #confirm_password = forms.CharField(widget=forms.PasswordInput())
-    
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email')
-        #widgets = {'password': forms.PasswordInput(),}
 
 # For Contig-Pool add
 class ContigForm(ModelForm):
+    
+    #only shows pool id options that have no contigs yet
+    def __init__(self, *args, **kwargs):
+        super(ContigForm, self).__init__(*args, **kwargs)
+        self.fields['pool'].queryset = Pooled_Sequencing.objects.exclude(contig__pool_id=True)
+        
     class Meta:
         model = Contig
         exclude = ('contig_name', 'contig_sequence', 'cosmid', 'contig_accession', 'blast_hit_accession')

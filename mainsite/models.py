@@ -153,10 +153,10 @@ class Subclone(models.Model):
     vector = models.ForeignKey(Vector, verbose_name="Vector Name")
     researcher = models.ForeignKey(Researcher)
     ec_collection = models.CharField(max_length=50, verbose_name="E. coli Stock Location")
-    primer1_name = models.CharField("Primer 1 Name", max_length=50, blank=True, null=True)
-    primer1_seq = models.CharField("Primer 1 Sequence", max_length=200, blank=True, null=True)
-    primer2_name = models.CharField("Primer 2 Name", max_length=50, blank=True, null=True)
-    primer2_seq = models.CharField("Primer 2 Sequence", max_length=200, blank=True, null=True)
+    primer1_name = models.CharField("Primer 1 Name", max_length=50)
+    primer1_seq = models.CharField("Primer 1 Sequence", max_length=200)
+    primer2_name = models.CharField("Primer 2 Name", max_length=50)
+    primer2_seq = models.CharField("Primer 2 Sequence", max_length=200)
     
     def __unicode__(self):
         return self.subclone_name

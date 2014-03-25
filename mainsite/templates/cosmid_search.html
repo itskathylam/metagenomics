@@ -18,15 +18,6 @@
         <li><a href="#Advanced">Advanced Search</a></li>
         <li><a href="#BLAST">BLAST</a></li>
     </ul>
-    <div class="tabContent" id="Advanced">
-        <form action="{% url 'cosmid-results' %}" method="get">
-            <table class="search">
-                {{ advancedform }}
-            </table>
-            <input type="submit" value="Search">
-        </form>
-    </div>
-    
     <div class="tabContent" id="Basic">
         <form action="{% url 'cosmid-basic-results' %}" method="get">
             <table class="search">
@@ -35,7 +26,14 @@
             <input type="submit" value="Search">
         </form>
     </div>
-    
+    <div class="tabContent" id="Advanced">
+        <form action="{% url 'cosmid-results' %}" method="get">
+            <table class="search">
+                {{ advancedform }}
+            </table>
+            <input type="submit" value="Search">
+        </form>
+    </div>
     <div class="tabContent" id="BLAST">
         <form action="{% url 'blast-results' %}?from={{ request.path}}" method="post">
             <table class="search">

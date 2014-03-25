@@ -17,9 +17,40 @@
 {% endblock %}
 
 {% block form %}
-        <p>Select a FASTA file of contigs to associate with a sequencing pool.</p>
-    {{ contig_form }}
-    {{ contig_upload_form }}
+    <p>Select a FASTA file of contigs to associate with a sequencing pool. Only pools that currently have no associated contigs can be operated on. </p>
+    
+    <table>
+    {% for field in contig_form %}
+        <tr>
+            <th>
+            {% if field.field.required %}
+                *{{ field.label }}
+            {% else %}
+                {{ field.label }}
+            {% endif %}
+            </th>
+            <td>
+            {{ field }}
+            </td>
+        </tr>
+    {% endfor %}
+    
+    {% for field in contig_upload_form %}
+        <tr>
+            <th>
+            {% if field.field.required %}
+                *{{ field.label }}
+            {% else %}
+                {{ field.label }}
+            {% endif %}
+            </th>
+            <td>
+            {{ field }}
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+    
 {% endblock %}
 
 {% block errors %}

@@ -242,13 +242,16 @@ def CosmidResults(request):
     original_media = request.GET.get('original_media')
     pool = request.GET.get('pool')
     lab_book_ref = request.GET.get('lab_book_ref')
-    values = { 'cosmid_name__icontains' : cosmid_name, 'host': host, 'researcher' : researcher, 'library': library, 'screen': screen, 'ec_collection__icontains': ec_collection, 'original_media__icontains': original_media, 'pool': pool, 'lab_book_ref__icontains': lab_book_ref}
-    args = {}
+    comments = request.GET.get('cosmid_comments')
+    values = { 'cosmid_name__icontains' : cosmid_name, 'host': host, 'researcher' : researcher, 'library': library, 'screen': screen, 'ec_collection__icontains': ec_collection, 'original_media__icontains': original_media, 'pool': pool, 'lab_book_ref__icontains': lab_book_ref, 'comments__icontains': comments}
+    qargs = {}
     for k, v in values.items():
-        if v:
-            args[k] = v
-    results = Cosmid.objects.filter(**args)
-    
+        if v != '':
+            qargs[k] = v
+    if any(qargs):
+        results = Cosmid.objects.filter(**qargs)
+    else:
+        results = None;
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
@@ -260,8 +263,8 @@ def CosmidResults(request):
         cosmid_list = p.page(page)
     except PageNotAnInteger:
         cosmid_list = p.page(1)
-    
-    return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': cosmid_list, 'queries':queries, 'search':search}, context_instance=RequestContext(request))
+    return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': results, 'queries':queries, 'search':search}, context_instance=RequestContext(request))
+
 
 def SubcloneResults(request):
     name = request.GET.get('subclone_name')
@@ -272,12 +275,14 @@ def SubcloneResults(request):
     ec_collection = request.GET.get('ec_collection')
     
     values = {'subclone_name__icontains' : name, 'cosmid': cosmid, 'researcher' : researcher, 'orf': orf, 'vector': vector, 'researcher': researcher, 'ec_collection__icontains': ec_collection}
-    args = {}
+    qargs = {}
     for k, v in values.items():
-        if v:
-            args[k] = v
-    results = Subclone.objects.filter(**args)
-    
+        if v != '':
+            qargs[k] = v
+    if any(qargs):
+            results = Subclone.objects.filter(**qargs)
+    else:
+        results = None;
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
@@ -302,12 +307,14 @@ def SubcloneAssayResults(request):
     subclone_comments = request.GET.get('subclone_comments')
     
     values = { 'subclone' : subclone, 'host': host, 'researcher' : researcher, 'substrate': substrate, 'subclone_km': subclone_km, 'subclone_temp': subclone_temp, 'subclone_ph': subclone_ph, 'subclone_comments__icontains': subclone_comments}
-    args = {}
+    qargs = {}
     for k, v in values.items():
-        if v:
-            args[k] = v
-    results = Subclone_Assay.objects.filter(**args)
-    
+        if v != '':
+            qargs[k] = v
+    if any(qargs):
+        results = Subclone_Assay.objects.filter(**qargs)
+    else:
+        results = None;
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
@@ -334,13 +341,15 @@ def CosmidAssayResults(request):
     
     #converts it to dictionary
     values = {'cosmid': cosmid, 'host': host, 'researcher' : researcher, 'substrate': substrate, 'cosmid_km': cosmid_km, 'cosmid_temp': cosmid_temp, 'cosmid_ph': cosmid_ph, 'cosmid_comments__icontains': cosmid_comments}
-    args = {}
     #iterates through dictionary and assigns an arg value if it was entered
+    qargs = {}
     for k, v in values.items():
-        if v:
-            args[k] = v
-    #returns queryset of results based on args
-    results = Cosmid_Assay.objects.filter(**args)
+            if v != '':
+            qargs[k] = v
+    if any(qargs):
+        results = Cosmid_Assay.objects.filter(**qargs) #returns queryset of results based on qargs
+    else:
+        results = None; 
     
     queries = request.GET.copy();
     if queries.has_key('page'):
@@ -355,9 +364,21 @@ def CosmidAssayResults(request):
         cosmid_assay_list = p.page(1)
     return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': cosmid_assay_list, 'search':search, 'queries':queries}, context_instance=RequestContext(request))
 
+
+        if v != '':
+            qargs[k] = v
+    if any(qargs):
+        results = Cosmid_Assay.objects.filter(**qargs) #returns queryset of results based on qargs
+    else:
+        results = None; 
+    return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': results}, context_instance=RequestContext(request))
+
 def OrfResults(request):
     annotation = request.GET.get('annotation')
-    results = ORF.objects.filter(annotation__icontains=annotation)
+    if (annotation):
+        results = ORF.objects.filter(annotation__icontains=annotation)
+    else:
+        results = None
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
@@ -369,7 +390,6 @@ def OrfResults(request):
         orf_list = p.page(page)
     except PageNotAnInteger:
         orf_list = p.page(1)
-    
     return render_to_response('orf_all.html', {'orf_list': orf_list, 'search':search, 'queries':queries}, context_instance=RequestContext(request))
 
 def ContigResults(request):
@@ -377,11 +397,14 @@ def ContigResults(request):
     contig_name = request.GET.get('contig_name')
     contig_accession = request.GET.get('contig_accession')
     values = {'pool' : pool, 'contig_name__icontains': contig_name, 'contig_accession' : contig_accession}
-    args = {}
+    qargs = {}
     for k, v in values.items():
-        if v:
-            args[k] = v
-    results = Contig.objects.filter(**args)
+        if v != '':
+            qargs[k] = v
+    if any(qargs):
+        results = Contig.objects.filter(**qargs) #returns queryset of results based on qargs
+    else:
+        results = None     
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
@@ -404,10 +427,19 @@ def CosmidBasicResults(request):
     if queries.has_key('page'):
         del queries['page']
     
+
+def CosmidBasicResults(request):
+   #gets the list of words they entered
+    query = request.GET.get('query')
+    queries = request.GET.copy();
+    if queries.has_key('page'):
+        del queries['page']
     #if no words entered, returns no results
-    if keywords == None:
+    if query == '':
         results = None
     else:
+        #splits string into a list
+        keywords = query.split()
         #builds a Q object for each word in the list
         list_name_qs = [Q(cosmid_name__icontains=word) for word in keywords]
         list_host_qs = [Q(host__host_name__icontains=word) for word in keywords]
@@ -443,7 +475,7 @@ def SubcloneBasicResults(request):
         del queries['page']
     
     #if no words entered, returns no results
-    if keywords == None:
+    if query == '':
         results = None
     else:
         #builds a Q object for each word in the list
@@ -482,7 +514,7 @@ def CosmidAssayBasicResults(request):
         del queries['page']
     
     #if no words entered, returns no results
-    if keywords == None:
+    if query == '':
         results = None
     else:
         #builds a Q object for each word in the list
@@ -518,7 +550,7 @@ def SubcloneAssayBasicResults(request):
         del queries['page']
     
     #if no words entered, returns no results
-    if keywords == None:
+    if query == '':
         results = None
     else:
         #builds a Q object for each word in the list
@@ -554,7 +586,7 @@ def OrfBasicResults(request):
     
     
     #if no words entered, returns no results
-    if keywords == None:
+    if query == '':
         results = None
     else:
         #builds a Q object for each word in the list
@@ -586,7 +618,7 @@ def ContigBasicResults(request):
         del queries['page']
     
     #if no words entered, returns no results
-    if keywords == None:
+    if query == '':
         results = None
     else:
         #builds a Q object for each word in the list
@@ -667,8 +699,19 @@ def ContigDetail(request, contig_name):
     orfseq = ORF.objects.filter(id__in=orfids)
     return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
 
+
+def OrfDetail(request, pk):
+    orf = ORF.objects.get(id = pk)
+    contigorfs = Contig_ORF_Join.objects.filter(orf_id = orf.id)
+    
+    contigids = []
+    for c in contigorfs:
+        contigids.append(c.contig_id)
+    contigs = Contig.objects.filter(id__in = contigids)
+    return render_to_response('orf_detail.html', {'orf': orf, 'contigs': contigs} , context_instance=RequestContext(request))
+
 #the 5 classes below all use the generic DetailView to generate a detailed listing of the requested object from the database
-class OrfDetailView(DetailView):
+class OrfDetailView(DetailView): #can delete this view
     model = ORF
     template_name = 'orf_detail.html'
  
