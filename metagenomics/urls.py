@@ -33,7 +33,8 @@ urlpatterns = patterns('',
     url(r'^assay/cosmid/(?P<pk>\d+)/$', CosmidAssayDetailView.as_view(), name='cosmid-assay-detail'),
     url(r'^subclone/(?P<subclone_name>.*)/$', SubcloneDetailView.as_view(), name='subclone-detail'),
     url(r'^contig/(?P<contig_name>[\w-]+)/$', ContigDetail, name='contig-detail'),
-    url(r'^orf/(?P<pk>\d+)/$', OrfDetailView.as_view(), name='orf-detail'),
+    #url(r'^orf/(?P<pk>\d+)/$', OrfDetailView.as_view(), name='orf-detail'), #can delete this line
+    url(r'^orf/(?P<pk>\d+)/$', OrfDetail, name='orf-detail'),
     url(r'^vector/(?P<pk>\d+)/$', VectorDetailView.as_view(), name='vector-detail'),
     
     #Edit views (Updateviews)

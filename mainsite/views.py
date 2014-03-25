@@ -547,8 +547,19 @@ def ContigDetail(request, contig_name):
     orfseq = ORF.objects.filter(id__in=orfids)
     return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
 
+
+def OrfDetail(request, pk):
+    orf = ORF.objects.get(id = pk)
+    contigorfs = Contig_ORF_Join.objects.filter(orf_id = orf.id)
+    
+    contigids = []
+    for c in contigorfs:
+        contigids.append(c.contig_id)
+    contigs = Contig.objects.filter(id__in = contigids)
+    return render_to_response('orf_detail.html', {'orf': orf, 'contigs': contigs} , context_instance=RequestContext(request))
+
 #the 5 classes below all use the generic DetailView to generate a detailed listing of the requested object from the database
-class OrfDetailView(DetailView):
+class OrfDetailView(DetailView): #can delete this view
     model = ORF
     template_name = 'orf_detail.html'
  
