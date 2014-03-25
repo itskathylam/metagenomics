@@ -78,9 +78,9 @@ def Pooling(request):
 
 
 def ContigTool(request):
-    contigs = Contig.objects.filter(cosmid = True)
-    cosmids = Cosmid.objects.exclude(cosmid_name = contigs)
-    context = {'pool':Pooled_Sequencing.objects.all(), 'cosmids': cosmids}
+    #contigs = Contig.objects.filter(cosmid = True)
+    #cosmids = Cosmid.objects.exclude(cosmid_name = contigs)
+    context = {'pool':Pooled_Sequencing.objects.all()}
     if request.method == "POST":
         if 'detail' in request.POST:
             pool_id =  request.POST['pool']                         
@@ -181,19 +181,6 @@ def write_lib(contigs, orfs, anno):
 #sequence search
 @login_required
 def BlastSearch(request):
-    ##collect errors in a dictionary
-    #errors = {}
-    #
-    #if request.method == "POST":
-    #    blastform = BlastForm(request.POST)
-    #    seq = request.POST.get('sequence')
-    #    e = request.POST.get('expect_threshold')
-    #    if seq == "":
-    #        errors['sequence'] = "Error: sequence is required"
-    #    if e == "":
-    #        errors['evalue'] = "Error: E-value cut-off is required"
-    #        
-    #else:
     blastform = BlastForm()
     return render_to_response('blast_search.html', {'blastform': blastform}, context_instance=RequestContext(request))
 
@@ -792,6 +779,12 @@ def CosmidDetail(request, cosmid_name):
     #returns all the sequences for all the associated orfs
     seq = ORF.objects.filter(id__in=orfids)
     
+    def get_context_data(self, **kwargs):
+        context = super(CosmidEditView, self).get_context_data(**kwargs)
+        #Add in queryset of end tags
+        context['end_tag_list'] = End_Tag.objects.all()
+        return context
+    
     return render_to_response('cosmid_detail.html', {'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book, 'cosmid_comments': cosmid_comments}, context_instance=RequestContext(request))
 
 def ContigDetail(request, contig_name):
@@ -848,16 +841,23 @@ class VectorDetailView(DetailView) :
 #edit views (updateview class)
 #nb: slug fields required for using names in the urls instead of primary keys (Kathy)
 
-#custom class to handle editing cosmid and end-tag models at once (Kathy)
 class CosmidEditView(UpdateView):
     model = Cosmid
     template_name = 'cosmid_edit.html'
-    #form_class = EndTagFormSetUpdate ==> requires {{form}} and {{ form_class }}
     slug_field = 'cosmid_name' 
     slug_url_kwarg = 'cosmid_name'
     success_url = reverse_lazy('cosmid-end-tag-list')
-  
     
+#only for editing a cosmid's endtags -- ideally should be combined with cosmid edit
+class CosmidEndTagEditView(UpdateView):
+    model = Cosmid
+    form_class = EndTagFormSetUpdate #requires both {{ form }} and {{ form_class }} in template
+    template_name = 'cosmid_only_end_tag_edit.html'
+    slug_field = 'cosmid_name' 
+    slug_url_kwarg = 'cosmid_name'
+    success_url = reverse_lazy('cosmid-end-tag-list')
+    #Note: this works because change is goes to db, but results in Django page error
+    #Django error: 'list' object has no attribute '__dict__'
     
 class SubcloneEditView(UpdateView):
     model = Subclone
@@ -878,6 +878,8 @@ class SubcloneAssayEditView(UpdateView):
     
 class ORFEditView(UpdateView):
     model = ORF
+    fields = ['orf_sequence', 'annotation']
+    #exclude = ['contig']
     template_name = 'orf_edit.html'
     success_url = reverse_lazy('orf-list')
 
@@ -972,16 +974,20 @@ def CosmidEndTagCreate(request):
 
             #validation for the two primers chosen: primers cannot be the same (defined in the model)  
             if end_tag_formset.is_valid():
-                
+            
                 #save cosmid, and process end tags
                 new_cosmid.save()
                 new_end_tags = end_tag_formset.save(commit=False)
                 
-                #remove whitespace from end tag sequences and save 
-                new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
-                new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
-                new_end_tags[0].save()
-                new_end_tags[1].save()
+                #if no end-tags submitted, new_end_tags is an empty list
+                if (new_end_tags):
+                    #remove whitespace from end tag sequences and save 
+                    new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
+                    new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
+                    new_end_tags[0].save()
+                    new_end_tags[1].save()
+                else:
+                    pass
                 return HttpResponseRedirect('/cosmid/') 
         
     else:
@@ -1066,7 +1072,7 @@ def ContigPoolCreate(request):
             file_name = request.FILES['fasta_file'].name
             records = []
             for seq_record in SeqIO.parse(fasta_file, "fasta"):
-                records.append(new_seq_record)
+                records.append(seq_record)
             
             #return error message if file was not parsed successfully by SeqIO.parse
             if len(records) == 0:

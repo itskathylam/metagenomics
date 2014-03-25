@@ -7,8 +7,17 @@
 {% block content %}
     <form action="" method="POST">
     {% csrf_token %}
-        <table border = 1>    
-            {{form}}
+        <table>    
+            {% for field in form %}
+                <tr>
+                <th>{{ field.label }}</th>
+                <td>{% ifequal field.label 'ORF Sequence' %}
+                        <textarea readonly cols="40" id="id_orf_sequence" name="orf_sequence" rows="10">{{ field.value }}</textarea></td>
+                    {% else %}
+                        {{ field }}
+                    {% endifequal %}
+                </tr>
+            {% endfor %}
         </table>
         <input type="submit">
     </form>
