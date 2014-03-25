@@ -11,13 +11,21 @@ from django.forms.models import BaseFormSet, inlineformset_factory
 class CosmidForm(ModelForm):
     class Meta:
         model = Cosmid
-    
+        
+# For Cosmid-End Tag add    
 EndTagFormSet = inlineformset_factory(
     Cosmid, 
     End_Tag, 
     can_delete=False,
     extra=2,
     form=CosmidForm)
+
+# For Cosmid-End Tag update    
+EndTagFormSetUpdate = inlineformset_factory(
+    Cosmid, 
+    End_Tag,
+    extra=0,
+    can_delete=False,)
     
 #For ORF-Contig add
 class ORFForm(ModelForm):
@@ -78,6 +86,7 @@ class ContigForm(ModelForm):
         
     class Meta:
         model = Contig
+        pool = forms.Select()
         exclude = ('contig_name', 'contig_sequence', 'cosmid', 'contig_accession', 'blast_hit_accession')
 
 # For Contig-Pool add

@@ -108,9 +108,10 @@ urlpatterns = patterns('',
     url(r'^add/orfcontig/$', ORFContigCreate, name='orf-contig-add'),
     url(r'^add/contigpool/$', ContigPoolCreate, name='contig-pool-add'),
     
-    
+
     #export URLS
     url(r'^export/primer', primer_queryset),
+    url(r'^export/antibiotic', antibiotic_queryset),
     url(r'^export/host', host_queryset),
     url(r'^export/screen', screen_queryset),
     url(r'^export/library', library_queryset),
@@ -119,7 +120,11 @@ urlpatterns = patterns('',
     url(r'^export/pool', pool_queryset),
     url(r'^export/substrate', substrate_queryset),
     
-  
 
+    #exportviews for non-lookup tables
+    url(r'^export/cosmid_assay', cosmid_assay_queryset),
+    url(r'^export/orf', orf_queryset),
+
+    url(r'^/contigtool/$', ContigTool),
 
 )

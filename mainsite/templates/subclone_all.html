@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+        <a href="/export/subclone" >Download CSV File</a>
     {% if subclone_list %}
         <p>X number of results OR All records</p>
         <table class="list">
@@ -37,19 +38,36 @@
                 </tr>
             {% endfor %}
         </table>
-        <div class="pagination">
-        <span class="page-links"><p>
-                {% if page_obj.has_previous %}
-                        <a href="?page={{page_obj.previous_page_number}}">Previous</a>
-                {% endif %}
-                <span class="page-current">
-                        Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
-                </span>
-                {% if page_obj.has_next %}
-                        <a href="?page={{page_obj.next_page_number}}">Next</a>
-                {% endif %}
-        </p></span>
-    </div>
+        {% if search %}
+                <div class="pagination">
+                    <span class="page-links">
+                            {% if subclone_list.has_previous %}
+                                    <a href="?{{queries.urlencode}}&page={{subclone_list.previous_page_number}}">Previous</a>
+                            {% endif %}
+                            <span class="page-current">
+                                    Page {{subclone_list.number}} of {{ subclone_list.paginator.num_pages}}
+                            </span>
+                            {% if subclone_list.has_next %}
+                                    <a href="?{{queries.urlencode}}&page={{subclone_list.next_page_number}}">Next</a>
+                            {% endif %}
+                    </span>
+                </div>
+        {% else %}
+                <div class="pagination">
+                    <span class="page-links">
+                        {% if page_obj.has_previous %}
+                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
+                        {% endif %}
+                        <span class="page-current">
+                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
+                        </span>
+                        {% if page_obj.has_next %}
+                                <a href="?page={{page_obj.next_page_number}}">Next</a>
+                        {% endif %}
+                    </span>
+                </div>
+        {% endif %}
+
     {% else %}
         <p>0 Subclones found. <a href="{% url 'subclone-search' %}">Try another search</a>.</p>
     {% endif%}

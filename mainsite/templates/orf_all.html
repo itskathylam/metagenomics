@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block content %}
+
+        <a href="/export/orf" >Download CSV File</a>
+
     {% if orf_list %}
     <table class="list">
             <tr>
@@ -20,19 +23,35 @@
             </tr>
         {% endfor %}
     </table>
-    <div class="pagination">
-        <span class="page-links"><p>
-                {% if page_obj.has_previous %}
-                        <a href="?page={{page_obj.previous_page_number}}">Previous</a>
-                {% endif %}
-                <span class="page-current">
-                        Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
-                </span>
-                {% if page_obj.has_next %}
-                        <a href="?page={{page_obj.next_page_number}}">Next</a>
-                {% endif %}
-        </p></span>
-    </div>
+        {% if search %}
+                <div class="pagination">
+                    <span class="page-links">
+                            {% if orf_list.has_previous %}
+                                    <a href="?{{queries.urlencode}}&page={{orf_list.previous_page_number}}">Previous</a>
+                            {% endif %}
+                            <span class="page-current">
+                                    Page {{orf_list.number}} of {{ orf_list.paginator.num_pages}}
+                            </span>
+                            {% if orf_list.has_next %}
+                                    <a href="?{{queries.urlencode}}&page={{orf_list.next_page_number}}">Next</a>
+                            {% endif %}
+                    </span>
+                </div>
+        {% else %}
+                <div class="pagination">
+                    <span class="page-links">
+                        {% if page_obj.has_previous %}
+                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
+                        {% endif %}
+                        <span class="page-current">
+                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
+                        </span>
+                        {% if page_obj.has_next %}
+                                <a href="?page={{page_obj.next_page_number}}">Next</a>
+                        {% endif %}
+                    </span>
+                </div>
+        {% endif %}
     {% else %}
         <p>0 ORFs found for search '{{ query }}' <a href="{% url 'orf-search' %}">Try another search</a>.</p>
     {% endif%}
