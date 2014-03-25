@@ -20,12 +20,13 @@ EndTagFormSet = inlineformset_factory(
     extra=2,
     form=CosmidForm)
 
-# For Cosmid-End Tag update    
+# For End Tag update    
 EndTagFormSetUpdate = inlineformset_factory(
     Cosmid, 
     End_Tag,
     extra=0,
     can_delete=False,)
+
     
 #For ORF-Contig add
 class ORFForm(ModelForm):
