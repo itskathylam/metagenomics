@@ -44,6 +44,7 @@ urlpatterns = patterns('',
     url(r'^edit/assay/subclone/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_subclone_assay')(SubcloneAssayEditView.as_view()), name='subclone-assay-edit'),
     url(r'^edit/orf/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_orf')(ORFEditView.as_view()), name='orf-edit'),
     url(r'^edit/contig/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_contig')(ContigEditView.as_view()), name='contig-edit'),
+    url(r'^edit/cosmid/endtags/(?P<pk>\d+)$', (CosmidEndTagEditView.as_view()), name='cosmid-end-tag-edit'), 
     
     #Delete views (DeleteViews)
     url(r'^delete/contig-orf/(?P<pk>\d+)$', ContigORFDeleteView.as_view(), name='contig-orf-delete'),
