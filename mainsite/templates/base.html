@@ -98,14 +98,19 @@
           {% endblock %}
         </section>
         <section id="main">
-            {% block content %}{% endblock %}
+            {% block content %}
+            {% endblock %}
         </section>
         
-        {% block second %}
+        <section id="content2">
+        {% block content2 %}
         {% endblock %}
+        </section>
         
-        {% block third %}
+         <section id="content3">
+        {% block content3 %}
         {% endblock %}
+        </section>
 
         <footer id="footer">
             <p><a href="/about">About</a>

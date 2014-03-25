@@ -6,10 +6,10 @@
 
 {% block content %}
 
-        <a href="/export/contig" >Download CSV File</a>
-    <h2 class="list">Contigs</h2>
+    <a href="/export/contig" >Download CSV File</a>
     <p>X number of results OR All records</p>
-    <table class="list">
+    {% if contig_list %} 
+        <table class="list">
 
             <tr>
                 <th>Contig Name</th>
@@ -30,7 +30,9 @@
                 <td>{{ contig.image }}</td>
             </tr>
         {% endfor %}
+
          </table>
+
         {% if search %}
                 <div class="pagination">
                     <span class="page-links">

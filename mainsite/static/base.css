@@ -220,6 +220,34 @@ nav ul ul ul {
     margin: 0;
 }
 
+/* Second content section*/ 
+#content2 {
+    float: left;
+    font-family: verdana, arial, sans-serif;
+    margin-left: 30px;
+    margin-right: 0px;
+    max-width:98%; 
+    padding: 0;
+    margin-top: 132px;
+    margin-bottom: 25px;
+    overflow: auto;
+    background-color: #fff;
+}
+
+/* Third content section*/ 
+#content3 {
+    float: left;
+    font-family: verdana, arial, sans-serif;
+    margin-left: 30px;
+    margin-right: 0px;
+    max-width:98%; 
+    padding: 0;
+    margin-top: 5px;
+    margin-bottom: 25px;
+    overflow: auto;
+    background-color: #fff;
+}
+
 /* Login area in the top right of every page*/ 
 #user {
     font-family: verdana, arial, sans-serif;
@@ -328,7 +356,7 @@ input[type=submit] {
     margin: 20px;
 }
 
-/* for tabs on cosmid page */
+/* for tabs on cosmid page - this entire section is no longer in use*/
 .tabs {
   position: relative; 
   clear: both;
