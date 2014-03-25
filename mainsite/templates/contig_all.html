@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-        {% if contig_list %}
+     {% if contig_list %}
         <p>X number of results OR All records</p>
         <table class="list">
             <tr>
@@ -42,5 +42,7 @@
         </span>
     </div>
         </table>
-        {% endif %}
+    {% else %}
+        <p>0 Contigs found for search '{{ query }}' <a href="{% url 'contig-search' %}">Try another search</a>.</p>
+    {% endif %}
 {% endblock %}

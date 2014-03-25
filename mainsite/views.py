@@ -241,12 +241,16 @@ def CosmidResults(request):
     original_media = request.GET.get('original_media')
     pool = request.GET.get('pool')
     lab_book_ref = request.GET.get('lab_book_ref')
-    values = { 'cosmid_name__icontains' : cosmid_name, 'host': host, 'researcher' : researcher, 'library': library, 'screen': screen, 'ec_collection__icontains': ec_collection, 'original_media__icontains': original_media, 'pool': pool, 'lab_book_ref__icontains': lab_book_ref}
-    args = {}
+    comments = request.GET.get('cosmid_comments')
+    values = { 'cosmid_name__icontains' : cosmid_name, 'host': host, 'researcher' : researcher, 'library': library, 'screen': screen, 'ec_collection__icontains': ec_collection, 'original_media__icontains': original_media, 'pool': pool, 'lab_book_ref__icontains': lab_book_ref, 'comments__icontains': comments}
+    qargs = {}
     for k, v in values.items():
-        if v:
-            args[k] = v
-    results = Cosmid.objects.filter(**args)
+        if v != '':
+            qargs[k] = v
+    if any(qargs):
+        results = Cosmid.objects.filter(**qargs)
+    else:
+        results = None;
     return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': results}, context_instance=RequestContext(request))
 
 def SubcloneResults(request):
@@ -258,11 +262,14 @@ def SubcloneResults(request):
     ec_collection = request.GET.get('ec_collection')
     
     values = {'subclone_name__icontains' : name, 'cosmid': cosmid, 'researcher' : researcher, 'orf': orf, 'vector': vector, 'researcher': researcher, 'ec_collection__icontains': ec_collection}
-    args = {}
+    qargs = {}
     for k, v in values.items():
-        if v:
-            args[k] = v
-    results = Subclone.objects.filter(**args)
+        if v != '':
+            qargs[k] = v
+    if any(qargs):
+            results = Subclone.objects.filter(**qargs)
+    else:
+        results = None;
     return render_to_response('subclone_all.html', {'subclone_list': results}, context_instance=RequestContext(request))
 
 def SubcloneAssayResults(request):
@@ -276,11 +283,14 @@ def SubcloneAssayResults(request):
     subclone_comments = request.GET.get('subclone_comments')
     
     values = { 'subclone' : subclone, 'host': host, 'researcher' : researcher, 'substrate': substrate, 'subclone_km': subclone_km, 'subclone_temp': subclone_temp, 'subclone_ph': subclone_ph, 'subclone_comments__icontains': subclone_comments}
-    args = {}
+    qargs = {}
     for k, v in values.items():
-        if v:
-            args[k] = v
-    results = Subclone_Assay.objects.filter(**args)
+        if v != '':
+            qargs[k] = v
+    if any(qargs):
+        results = Subclone_Assay.objects.filter(**qargs)
+    else:
+        results = None;
     return render_to_response('subclone_assay_all.html', {'subclone_assay_list': results}, context_instance=RequestContext(request))
 
 def CosmidAssayResults(request):
@@ -296,18 +306,23 @@ def CosmidAssayResults(request):
     
     #converts it to dictionary
     values = {'cosmid': cosmid, 'host': host, 'researcher' : researcher, 'substrate': substrate, 'cosmid_km': cosmid_km, 'cosmid_temp': cosmid_temp, 'cosmid_ph': cosmid_ph, 'cosmid_comments__icontains': cosmid_comments}
-    args = {}
     #iterates through dictionary and assigns an arg value if it was entered
+    qargs = {}
     for k, v in values.items():
-        if v:
-            args[k] = v
-    #returns queryset of results based on args
-    results = Cosmid_Assay.objects.filter(**args)
+        if v != '':
+            qargs[k] = v
+    if any(qargs):
+        results = Cosmid_Assay.objects.filter(**qargs) #returns queryset of results based on qargs
+    else:
+        results = None; 
     return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': results}, context_instance=RequestContext(request))
 
 def OrfResults(request):
     annotation = request.GET.get('annotation')
-    results = ORF.objects.filter(annotation__icontains=annotation)
+    if (annotation):
+        results = ORF.objects.filter(annotation__icontains=annotation)
+    else:
+        results = None
     return render_to_response('orf_all.html', {'orf_list': results}, context_instance=RequestContext(request))
 
 def ContigResults(request):
@@ -315,23 +330,25 @@ def ContigResults(request):
     contig_name = request.GET.get('contig_name')
     contig_accession = request.GET.get('contig_accession')
     values = {'pool' : pool, 'contig_name__icontains': contig_name, 'contig_accession' : contig_accession}
-    args = {}
+    qargs = {}
     for k, v in values.items():
-        if v:
-            args[k] = v
-    results = Contig.objects.filter(**args)
+        if v != '':
+            qargs[k] = v
+    if any(qargs):
+        results = Contig.objects.filter(**qargs) #returns queryset of results based on qargs
+    else:
+        results = None     
     return render_to_response('contig_all.html', {'contig_list': results}, context_instance=RequestContext(request))
 
 def CosmidBasicResults(request):
    #gets the list of words they entered
-    query = request.GET.get('query')
-    #splits string into a list
-    keywords = query.split()
-    
+    query = request.GET.get('query')    
     #if no words entered, returns no results
-    if keywords == None:
+    if query == '':
         results = None
     else:
+        #splits string into a list
+        keywords = query.split()
         #builds a Q object for each word in the list
         list_name_qs = [Q(cosmid_name__icontains=word) for word in keywords]
         list_host_qs = [Q(host__host_name__icontains=word) for word in keywords]
@@ -356,7 +373,7 @@ def SubcloneBasicResults(request):
     keywords = query.split()
     
     #if no words entered, returns no results
-    if keywords == None:
+    if query == '':
         results = None
     else:
         #builds a Q object for each word in the list
@@ -384,7 +401,7 @@ def CosmidAssayBasicResults(request):
     keywords = query.split()
     
     #if no words entered, returns no results
-    if keywords == None:
+    if query == '':
         results = None
     else:
         #builds a Q object for each word in the list
@@ -409,7 +426,7 @@ def SubcloneAssayBasicResults(request):
     keywords = query.split()
     
     #if no words entered, returns no results
-    if keywords == None:
+    if query == '':
         results = None
     else:
         #builds a Q object for each word in the list
@@ -434,7 +451,7 @@ def OrfBasicResults(request):
     keywords = query.split()
     
     #if no words entered, returns no results
-    if keywords == None:
+    if query == '':
         results = None
     else:
         #builds a Q object for each word in the list
@@ -456,7 +473,7 @@ def ContigBasicResults(request):
     keywords = query.split()
     
     #if no words entered, returns no results
-    if keywords == None:
+    if query == '':
         results = None
     else:
         #builds a Q object for each word in the list
