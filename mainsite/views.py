@@ -1070,7 +1070,7 @@ def ContigPoolCreate(request):
             file_name = request.FILES['fasta_file'].name
             records = []
             for seq_record in SeqIO.parse(fasta_file, "fasta"):
-                records.append(new_seq_record)
+                records.append(seq_record)
             
             #return error message if file was not parsed successfully by SeqIO.parse
             if len(records) == 0:
