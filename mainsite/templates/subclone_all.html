@@ -2,29 +2,6 @@
 
 {% block content %}
         <a href="/export/subclone" >Download CSV File</a>
-    <table border = 1>
-            <tr>
-                <th>Subclone Name</th>
-                <th>Researcher Name</th>
-                <th>Parent Cosmid Name</th>
-                <th>ORF ID</th>
-                <th>Vector</th>
-                <th>E. coli Stock Location</th>
-            </tr>
-        {% for subclone in subclone_list %}
-            <tr>
-                <td><a href="{% url 'subclone-list' %}{{ subclone.pk }}">{{ subclone.subclone_name }}</a></td>
-                <td>{{ subclone.researcher.researcher_name }}</td>
-                <td>{{ subclone.cosmid.cosmid_name }}</td>
-                <td>{{ subclone.orf.id }}</td>
-                <td>{{ subclone.vector.vector_name }}</td>
-                <td>{{ subclone.ec_location }}</td>
-
-                
-            </tr>
-        {% endfor %}
-    </table>
-{% endblock %}
     {% if subclone_list %}
         <h2 class="list">Subclones</h2>
         <p>X number of results OR All records</p>
@@ -45,7 +22,7 @@
                 <tr>
                     <td><a href="{% url 'subclone-list' %}{{ subclone.pk }}">{{ subclone.subclone_name }}</a></td>
                     <td>{{ subclone.researcher.researcher_name }}</td>
-                    <td>{{ subclone.cosmid.cosmid_name }}</td>
+                    <td><a href="{% url 'cosmid-end-tag-list' %}{{ subclone.cosmid.cosmid_name }}">{{ subclone.cosmid.cosmid_name }}</a></td>
                     <td>{{ subclone.orf.id }}</td>
                     <td>{{ subclone.vector.vector_name }}</td>
                     <td>{{ subclone.ec_collection }}</td>
@@ -60,5 +37,5 @@
         </table>
     {% else %}
         <p>0 Subclones found. <a href="{% url 'subclone-search' %}">Try another search</a>.</p>
-    {% endif %}
+    {% endif%}
 {% endblock %}

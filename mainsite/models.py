@@ -134,11 +134,12 @@ class ORF(models.Model):
         verbose_name_plural = 'ORFs'
 
 class Contig_ORF_Join(models.Model):
-    contig = models.ForeignKey(Contig)
+    contig = models.ForeignKey(Contig, verbose_name="Contig Name")
     orf = models.ForeignKey(ORF)
     start = models.PositiveIntegerField()
     stop = models.PositiveIntegerField()
-    orf_accession = models.CharField(max_length=50, blank=True, null=True)
+    complement = models.BooleanField()
+    orf_accession = models.CharField("ORF Accession", max_length=50, blank=True, null=True)
     predicted = models.BooleanField()
     prediction_score = models.FloatField(blank=True, null=True)
 
@@ -211,20 +212,3 @@ class Subclone_Assay(models.Model):
     class Meta:
         unique_together = ("subclone", "host", "substrate", "antibiotic")
         verbose_name_plural = 'Subclone Assays'
-
-
-watson.register(Host)
-watson.register(Vector)
-watson.register(Library)
-watson.register(Researcher)
-watson.register(Pooled_Sequencing)
-watson.register(Cosmid)
-watson.register(Primer, exclude=("primer_sequence"))
-#watson.register(End_Tag, exclude=("end_tag_sequence"))
-watson.register(Contig, exclude=("contig_sequence"))
-watson.register(ORF, exclude=("orf_sequence"))
-watson.register(Contig_ORF_Join)
-watson.register(Subclone)
-watson.register(Substrate)
-watson.register(Cosmid_Assay)
-watson.register(Subclone_Assay)

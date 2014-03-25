@@ -93,6 +93,7 @@ urlpatterns = patterns('',
     
     #exportviews for lookup tables
     url(r'^export/primer', primer_queryset),
+    url(r'^export/antibiotic', antibiotic_queryset),
     url(r'^export/host', host_queryset),
     url(r'^export/screen', screen_queryset),
     url(r'^export/library', library_queryset),
@@ -102,16 +103,10 @@ urlpatterns = patterns('',
     url(r'^export/substrate', substrate_queryset),
     
     #exportviews for non-lookup tables
-    url(r'^export/subclone', subclone_queryset),
     url(r'^export/cosmid_assay', cosmid_assay_queryset),
-    url(r'^export/subclone_assay', subclone_assay_queryset),
     url(r'^export/orf', orf_queryset),
-    url(r'^export/contig', contig_queryset),
-    
-    #exportviews for multi-table views
-    url(r'^export/cosmid_end_tag', cos_end_tag_queryset),
-    url(r'^export/orf_contig', orf_contig_queryset),
 
-    url(r'^test', orf_data),
+    
+    url(r'^/contigtool/$', ContigTool),
 
 )

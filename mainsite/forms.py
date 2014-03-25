@@ -15,10 +15,6 @@ EndTagFormSet = inlineformset_factory(Cosmid,
     can_delete=False,
     extra=2,
     form=CosmidForm)
-
-    #I dont know where these came from or where the are supposed to go. Sorry, I messed up the merge. -Phil
-    #model = End_Tag
-    #exclude = ('cosmid',)
     
 # For ORF-Contig add
 
@@ -31,7 +27,7 @@ class ORFForm(ModelForm):
 class ContigORFJoinForm(ModelForm):
     class Meta:
         model = Contig_ORF_Join
-        exclude = ('db_generated', 'orf', 'start', 'stop')
+        exclude = ('orf', 'start', 'stop', 'predicted', 'prediction_score')
 
 
 class SubcloneForm(ModelForm):
@@ -60,16 +56,16 @@ class SubcloneCosmidForm(ModelForm):
 class UserForm(ModelForm):
     class Meta:
         model = User
-        exclude = ('last_login', 'is_superuser', 'username', 'is_staff', 'is_active', 'date_joined', 'group', 'permission',)
+        exclude = ('last_login', 'is_superuser', 'username', 'is_staff', 'is_active', 'date_joined', 'groups', 'user_permissions',)
         
  
 # For Contig-Pool add
-
 class ContigForm(ModelForm):
     class Meta:
         model = Contig
         exclude = ('contig_name', 'contig_sequence', 'cosmid', 'contig_accession')
-
+        pool = forms.Select()
+        #pool = forms.ChoiceField(widget=forms.Select(attrs={'onchange':'get_details();'}))
 
 class UploadContigsForm(forms.Form):
     fasta_file = forms.FileField(label='Select a FASTA file', help_text=' ')
@@ -86,4 +82,4 @@ class BlastForm(forms.Form):
 
 #All Search form
 class AllSearchForm(forms.Form):
-    query = forms.CharField(label='query', required=True)
+    query = forms.CharField(label='Keywords', required=True)

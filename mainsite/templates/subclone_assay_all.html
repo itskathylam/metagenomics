@@ -55,15 +55,12 @@
                         <td>{{ subclone_assay.subclone_comments }}</td>
                     </tr>
                 {% endfor %}
-<<<<<<< HEAD
             </table>
     {% else %}
         <p>0 Subclone assays found. <a href="{% url 'subclone-assay-search' %}">Try another search</a>.</p>
     {% endif %}
-=======
             </table>
         {% else %}
             <p>0 Subclone assays found. <a href="{% url 'subclone-assay-search' %}">Try another search</a>.</p>
         {% endif %}
->>>>>>> c9816c02570fa9d2cd3d1c951b971e2008b842d2
 {% endblock %}
