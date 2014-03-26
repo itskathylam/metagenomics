@@ -2,10 +2,12 @@
 
 {% block head %}
 <title>Metagenomics Clone Bank</title>
+
 <script type="text/javascript" src="/usr/local/lib/python2.7/dist-packages/jquery/static/jquery"></script>
     <script type="text/javascript">
-        //$(document).getElementById('pool').value = "<?php echo $_GET['pool'];?>";
+        
         $(document).ready(function() {
+            
             $("select#pool").submit(function(event){
                 $.ajax({
                     type:"POST",
@@ -46,10 +48,12 @@
         //    return this.animate({ opacity: 'toggle', height: 'toggle' }, "fast", easing, callback);
         //};
     </script>
+
 {% endblock %}
 
+
 {% block pagetitle %}
-    <title>Contig Tool</title>
+    <title>Contig Retrieval Tool</title>
 {% endblock %}
 
 {% block subtitle %}
@@ -59,16 +63,19 @@
 {% block content %}
 <section id="tool1">
     <table>
+
     <form action="{% url "contig" %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
    
     <tr><th>Select Pool</th>
         <td><select id="pool" name="pool">
             {% for entry in pool %}
-                <option value="{{entry.id}}"{% if entry.id == pool %}selected="selected"{% endif %}>{{entry.id}}</option>
+
+                <option value="{{entry.id}}"{% ifequal entry.id pool %}selected="selected"{% endifequal %}>{{entry.id}}</option>
             {% endfor %}
         </select></td>
-    </tr> 
+    </tr>
         {% for selected in detail %}
+            <tr><th>Selected Pool</th><td>{{selected.id}}</td></tr>
             <tr><th>Service Provider</th><td>{{selected.service_provider}}</td></tr>
             <tr><th>Max Clones for Pool</th><td>{{selected.max_number}}</td></tr>
             <tr><th>NCBI SRA Accession</th><td>{{selected.ncbi_sra_accession}}</td></tr>
@@ -77,23 +84,38 @@
             
             {{ ContigForm }}
             {{ contig_upload_form }}
-    </table>
+
+        </table>
+    
     <input type="submit" name="detail" value="Display Pool" />   
-    <input type="submit" name="submit" value="Submit" />   
-    </form>
+    <input type="submit" name="submit" value="Submit" />
 </section>    
 {% endblock %}
 
 {% block second %}
 <section id="tool2">
     <table>
-    <tr><th>Select Clones</th>
-        <td><select id="clones" name="clones">
-            {% for clone in clones %}
-                <option value="{{entry.id}}"{% if entry.id == pool %}selected="selected"{% endif %}>{{entry.id}}</option>
+        <form>
+    <tr><th>Select Cosmids</th>
+        <td><select id="cosmids" name="cosmids">
+            {% for cosmid in cosmids %}
+                <option value="{{cosmid.name}}">{{cosmid.name}}</option>
             {% endfor %}
         </select></td>
     </tr>
+    
+        </form>
+    </table>
+</section>
+{% endblock %}
+
+{% block third %}
+<section id="tool3">
+    <table>
+    <tr><th>Cosmids in Pool</th></tr>
+    {% for name in cosmids%}
+        <td>{{name}}</td>
+    {% endfor %}
     </table>
 </section>
 {% endblock %}

@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 
 {% block subtitle %}
-    <img src="{{ STATIC_URL }}icons/edit64.png"><h2 class="edit">Edit ORF {{ orf.pk }}</h2>
+    <h2 class="edit"><img src="{{ STATIC_URL }}icons/edit64.png">Edit ORF {{ orf.pk }}</h2>
 {% endblock %}
 
 {% block content %}
+    <p>ORF sequence cannot be edited.</p>
     <form action="" method="POST">
     {% csrf_token %}
         <table>    
