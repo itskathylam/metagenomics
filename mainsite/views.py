@@ -1074,13 +1074,13 @@ def ContigPoolCreate(request):
             
             #return error message if file was not parsed successfully by SeqIO.parse
             if len(records) == 0:
-                form_errors['file_error'] = 'Error: uploaded file is not FASTA format: ' + file_name 
+                form_errors['file_error'] = 'Error: uploaded file is not FASTA format: ' + file_name
             
             #if file was parsed successfully, add all records to Contig table in database
             else:
                 for item in records:
+                    contig_form = ContigForm(request.POST)
                     if contig_form.is_valid():
-                        contig_form = ContigForm(request.POST)
                         new_contig = contig_form.save(commit=False)
                         
                         #get the pood id for use in appending to scaffold name, and save record
@@ -1090,7 +1090,11 @@ def ContigPoolCreate(request):
                         new_contig.contig_name = 'pool' + pool + "_" + item.id
                         new_contig.contig_sequence = item.seq
                         new_contig.save()
-                return HttpResponseRedirect('/contig/')          
+        
+                return HttpResponseRedirect('/contig/')
+        else:
+            form_errors['error'] = 'Error: something is wrong'
+                                                  
     else:
         contig_form = ContigForm()
         contig_upload_form = UploadContigsForm()      
