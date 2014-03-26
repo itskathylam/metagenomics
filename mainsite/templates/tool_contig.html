@@ -72,7 +72,9 @@
 
                 <option value="{{entry.id}}"{% ifequal entry.id pool %}selected="selected"{% endifequal %}>{{entry.id}}</option>
             {% endfor %}
-        </select></td>
+        </select>
+        <input type="submit" name="detail" value="Display Pool" />
+        </td>
     </tr>
         {% for selected in detail %}
             <tr><th>Selected Pool</th><td>{{selected.id}}</td></tr>
@@ -87,7 +89,7 @@
 
         </table>
     
-    <input type="submit" name="detail" value="Display Pool" />   
+       
     <input type="submit" name="submit" value="Submit" />
 </section>    
 {% endblock %}
