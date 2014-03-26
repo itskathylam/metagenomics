@@ -83,7 +83,7 @@ class ContigForm(ModelForm):
     #only shows pool id options that have no contigs yet
     def __init__(self, *args, **kwargs):
         super(ContigForm, self).__init__(*args, **kwargs)
-        self.fields['pool'].queryset = Pooled_Sequencing.objects.exclude(contig__pool_id=True)
+        self.fields['pool'].queryset = Pooled_Sequencing.objects.filter(contig=True)
         
     class Meta:
         model = Contig
