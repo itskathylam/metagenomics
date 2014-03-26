@@ -1073,7 +1073,7 @@ def ContigPoolCreate(request):
             records = []
             for seq_record in SeqIO.parse(fasta_file, "fasta"):
                 records.append(seq_record)
-            
+
             #return error message if file was not parsed successfully by SeqIO.parse
             if len(records) == 0:
                 form_errors['file_error'] = 'Error: uploaded file is not FASTA format: ' + file_name
