@@ -78,14 +78,14 @@ def Pooling(request):
 
 
 def ContigTool(request):
-    #contigs = Contig.objects.filter('cosmid')
-    #cosmids = Cosmid.objects.exclude(contig =contigs)
+    #contigs = Contig.objects.filter(cosmid = True)
+    #cosmids = Cosmid.objects.exclude(cosmid_name = contigs)
     context = {'pool':Pooled_Sequencing.objects.all()}
     if request.method == "POST":
         if 'detail' in request.POST:
             pool_id =  request.POST['pool']                         
-            context = {'pool': Pooled_Sequencing.objects.all(), 'detail': Pooled_Sequencing.objects.filter(id = pool_id)}
-    
+            context = {'pool': Pooled_Sequencing.objects.all(), 'detail': Pooled_Sequencing.objects.filter(id = pool_id), 'cosmids': Cosmid.objects.filter(pool = pool_id)}
+            
         if 'submit' in request.POST:
             form = ContigForm(request.POST)
             if form.is_valid():
@@ -148,7 +148,7 @@ def write_fasta(contigs):
 
 def orf_data(request):
     contig_id = Contig.objects.filter(contig_name = 'scaffold58_1').values('id')
-    contigs = Contig.objects.filter(contig_name = 'scaffold58_1').values_list('contig_name', 'contig_sequence')
+    contigs = Contig.objects.filter(contig_name = 'scaffold58_1').values_list('contig_name', 'contig_sequence', 'blast_hit_accession')
     orfs = Contig_ORF_Join.objects.filter(contig = contig_id).values_list('start', 'stop', 'complement', 'prediction_score')
     anno = ORF.objects.filter(contig = contig_id).values_list('annotation', 'orf_sequence')
    
@@ -159,9 +159,11 @@ def write_lib(contigs, orfs, anno):
         data = File(f)
         data.write('#!/usr/bin/perl \n sub data{\n')
         contig = ''
+        accession = ''
         count = 1
-        for name, seq in contigs:
+        for name, seq, access in contigs:
             contig = name
+            accession = access
             data.write('$contig_orf{' + name + '}\n = [\'' + seq + '\',\n')
         data.write('{\'glimmer\' => {},\n')
         data.write('\'genbank\' => {},\n')
@@ -170,7 +172,7 @@ def write_lib(contigs, orfs, anno):
                     comp = -1 if comp == 1 else 1
                     data.write('\'manual\' =>{\'' + contig + '-' + str(++count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
                     data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
-                    data.write('annotation =>\'' + ann + '\',\n sequence =>\'' + seqs + '\'\n}}}];\n')
+                    data.write('annotation =>\'' + ann + '\',\n sequence =>\'' + seqs + '\'\n}}}' + accession + '];\n')
         data.write('return(\%contig_orf);} \n 1;') 
         data.closed
         f.closed
@@ -1070,7 +1072,7 @@ def ContigPoolCreate(request):
             file_name = request.FILES['fasta_file'].name
             records = []
             for seq_record in SeqIO.parse(fasta_file, "fasta"):
-                records.append(new_seq_record)
+                records.append(seq_record)
             
             #return error message if file was not parsed successfully by SeqIO.parse
             if len(records) == 0:
