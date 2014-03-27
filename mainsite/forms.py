@@ -110,3 +110,17 @@ class BlastForm(forms.Form):
 #All Search form
 class AllSearchForm(forms.Form):
     query = forms.CharField(label='Keywords', required=True)
+    
+#form for contig annotation tool
+class ContigAnnotation(forms.Form):
+    pass
+
+    #    #get all contig objects associated with cosmids, in order to build a form
+    #    contigs = Contig.objects.all().select_related('cosmid')
+    #    length = len(contigs)
+    #
+    #    contigs_cosmids = {}
+    #    #for contig in contigs: 
+
+    
+

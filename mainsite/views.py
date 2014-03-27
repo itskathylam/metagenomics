@@ -73,8 +73,11 @@ def ContigTool(request):
     return (render(request, 'contig.html'))
 
 @login_required
-def Pooling(request):
-    return (render(request, 'pooling.html'))
+def AnnotationTool(request):
+    return (render(request, 'tool_annotation.html'))
+
+def AnnotationToolResults(request):
+    return render_to_response('tool_annotation_results.html', {'contigs_cosmids': contigs_cosmids})
 
 
 def ContigTool(request):
@@ -1024,26 +1027,30 @@ def ORFContigCreate(request):
                 
                 #if complement was indicated on form, get rev-com of ORF (for validation)
                 complement = new_contig_orf.complement
-                new_seq = ""
+                orf_seq_rc = ""
                 if complement == True:
                     rc = {'A':'T', 'T':'A', 'G':'C', 'C':'G'}
                     orf_seq = orf_seq[::-1]
                     for base in orf_seq:
                         base = rc[base]
-                        new_seq = new_seq + base
-                    orf_seq = new_seq
+                        orf_seq_rc = orf_seq_rc + base
                 
-                #validate orf sequence actually in contig before comitting to contig_orf join
+                #check that orf sequence actually in contig before comitting to contig_orf join
                 contig_seq = new_contig_orf.contig.contig_sequence
-                if orf_seq in contig_seq:
+                if orf_seq in contig_seq or orf_seq_rc in contig_seq: 
                     
-                    #save orf sequence cleaned of whitespace
-                    new_orf.orf_sequence = orf_seq
-                    
-                    #check if orf_seq already present in orf table; if so, use existing orf_id
-                    
-                    #otherwise, make new orf instance in orf table
-                    new_orf.save()
+                    #check if orf_seq already present in orf table
+                    orfs = ORF.objects.all()
+                    for orf_object in orfs:
+                        
+                        #if so, use existing orf instance
+                        if orf_object.orf_sequence == orf_seq:
+                            new_orf = orf_object
+                        
+                        #otherwise, make new orf instance in orf table
+                        
+                            new_orf.orf_sequence = orf_seq
+                            new_orf.save()  
                     
                     #make new instance of contig_orf_join
                     new_contig_orf.orf = new_orf

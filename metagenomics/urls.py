@@ -24,7 +24,7 @@ urlpatterns = patterns('',
     
     #Tools Views
     url(r'^tools/contig', ContigTool, name='contig'),
-    url(r'^tools/pooling', Pooling, name='pool'),
+    url(r'^tools/annotation', AnnotationTool, name='annotation'),
 
     
     #Detail views
