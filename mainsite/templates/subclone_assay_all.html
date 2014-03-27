@@ -5,34 +5,39 @@
 {% endblock %}
 
 {% block content %}
+    {% if subclone_assay_list %}
         <a href="/export/subclone_assay" >Download CSV File</a>
-    {% if subclone_assay_list %} 
-    <table border = 1>
-            <tr>
-                <th>Subclone Name</th>
-                <th>Expression Host</th>
-                <th>Substrate</th>
-                <th>Researcher Name</th>
-                <th>Km (mM)</th>
-                <th>pH Optimum</th>
-                <th>Temperature Optimum</th>
-                <th>Comments & Observations</th>
-            </tr>
-        {% for subclone_assay in subclone_assay_list %}
-            <tr>
-                <td><a href="{% url 'subclone-assay-list' %}{{ subclone_assay.pk }}">{{ subclone_assay.subclone.subclone_name }}</a></td>
-                <td>{{ subclone_assay.host.host_name}}</td>
-                <td>{{ subclone_assay.substrate.substrate_name }}</td>
-                <td>{{ subclone_assay.researcher.researcher_name }}</td>
-                <td>{{ subclone_assay.subclone_km}}</td>
-                <td>{{ subclone_assay.subclone_ph }}</td>
-                <td>{{ subclone_assay.subclone_temp }}</td>
-                <td>{{ subclone_assay.subclone_comments }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-        {% if subclone_assay_list %}
-                <p>X number of results OR All records</p>
+                {% if search %}
+                        <p>X number of results</p>
+                        <div class="pagination">
+                           <span class="page-links"><p>
+                                   {% if subclone_assay_list.has_previous %}
+                                           <a href="?{{queries.urlencode}}&page={{subclone_assay_list.previous_page_number}}">Previous</a>
+                                   {% endif %}
+                                   <span class="page-current">
+                                           Page {{subclone_assay_list.number}} of {{ subclone_assay_list.paginator.num_pages}}
+                                   </span>
+                                   {% if subclone_assay_list.has_next %}
+                                           <a href="?{{queries.urlencode}}&page={{subclone_assay_list.next_page_number}}">Next</a>
+                                   {% endif %}
+                        </p></span>
+                        </div>
+                {% else %}
+                        <p>All Records</p>
+                <div class="pagination">
+                    <span class="page-links"><p>
+                        {% if page_obj.has_previous %}
+                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
+                        {% endif %}
+                        <span class="page-current">
+                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
+                        </span>
+                        {% if page_obj.has_next %}
+                                <a href="?page={{page_obj.next_page_number}}">Next</a>
+                        {% endif %}
+                    </p></span>
+                </div>
+                {% endif %}
                 <table class="list">
                     <tr>
                         <th>Subclone Name</th>
@@ -59,13 +64,9 @@
                     </tr>
                 {% endfor %}
             </table>
-    {% else %}
-        <p>0 Subclone assays found. <a href="{% url 'subclone-assay-search' %}">Try another search</a>.</p>
-    {% endif %}
-            </table>
                 {% if search %}
                 <div class="pagination">
-                    <span class="page-links">
+                    <span class="page-links"><p>
                             {% if subclone_assay_list.has_previous %}
                                     <a href="?{{queries.urlencode}}&page={{subclone_assay_list.previous_page_number}}">Previous</a>
                             {% endif %}
@@ -75,11 +76,11 @@
                             {% if subclone_assay_list.has_next %}
                                     <a href="?{{queries.urlencode}}&page={{subclone_assay_list.next_page_number}}">Next</a>
                             {% endif %}
-                    </span>
+                    </p></span>
                 </div>
                 {% else %}
                 <div class="pagination">
-                    <span class="page-links">
+                    <span class="page-links"><p>
                         {% if page_obj.has_previous %}
                                 <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
                         {% endif %}
@@ -89,7 +90,7 @@
                         {% if page_obj.has_next %}
                                 <a href="?page={{page_obj.next_page_number}}">Next</a>
                         {% endif %}
-                    </span>
+                    </p></span>
                 </div>
                 {% endif %}
         {% else %}
