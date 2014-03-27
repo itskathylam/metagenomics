@@ -115,8 +115,11 @@ class Contig(models.Model):
     cosmid = models.ManyToManyField(Cosmid)
     contig_accession = models.CharField("Contig NCBI Acccession", max_length=50, blank=True, null=True)
     blast_hit_accession = models.CharField("Top BLAST Hit NCBI Accession", max_length=50, blank=True, null=True)
-    image = models.BinaryField(blank=True, null=True)
-    
+    image_contig = models.BinaryField(blank=True, null=True)
+    image_genbank = models.BinaryField(blank=True, null=True)
+    image_predicted = models.BinaryField(blank=True, null=True)
+    image_manual = models.BinaryField(blank=True, null=True)
+        
     def __unicode__(self):
         return self.contig_name
 

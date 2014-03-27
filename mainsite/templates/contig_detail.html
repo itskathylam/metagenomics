@@ -3,16 +3,17 @@
 {% block titletext %}Contig {{ name }}{% endblock %}
 
 {% block record %}
-    Pool: {{ pool }} <br>
-    Accession: {{ accession }}<br>
-    Associated Cosmids:
-    <ul>
+    <table>
+    <tr><th>Pool:</th><td> {{ pool }} </td></tr>
+    <tr><th>Accession:</th><td>  {{ accession }}</td></tr>
+    <tr><th>Associated Cosmids:</th><td> 
     {% for c in cosmids %}
-        <li><a href="{% url 'cosmid-end-tag-list' %}{{ c.cosmid_name }}">{{ c.cosmid_name }}</a></li>
+        <a href="{% url 'cosmid-end-tag-list' %}{{ c.cosmid_name }}">{{ c.cosmid_name }}</a><br>
     {% endfor %}
-    </ul>
-    <label>Sequence:<br>
-    <textarea readonly rows="20" cols="70" onclick="this.focus();this.select()">{{ sequence }}</textarea></label><br>
+    </td></tr>
+    <tr><th>Sequence:
+    </th><td><textarea readonly rows="20" cols="70" onclick="this.focus();this.select()">{{ sequence }}</textarea></td></tr>
+    </table>
 {% endblock %}
 
 {% block orfimg %}
@@ -20,6 +21,7 @@
     <img src="{{ STATIC_URL }}scaffold177_1-F1.png" alt="ORF's for Contig"><br>
     </div>
     <p>Open reading frames in {{ name }}</p>
+    <p><a href="{% url 'orf-contig-add' %}">Add new ORF</a></p>
     <table>
         <tr>
         <th>ID</th>

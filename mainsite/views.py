@@ -1,4 +1,3 @@
-
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse
@@ -79,14 +78,14 @@ def Pooling(request):
 
 
 def ContigTool(request):
-    #contigs = Contig.objects.filter('cosmid')
-    #cosmids = Cosmid.objects.exclude(contig =contigs)
+    #contigs = Contig.objects.filter(cosmid = True)
+    #cosmids = Cosmid.objects.exclude(cosmid_name = contigs)
     context = {'pool':Pooled_Sequencing.objects.all()}
     if request.method == "POST":
         if 'detail' in request.POST:
             pool_id =  request.POST['pool']                         
-            context = {'pool': Pooled_Sequencing.objects.all(), 'detail': Pooled_Sequencing.objects.filter(id = pool_id)}
-    
+            context = {'pool': Pooled_Sequencing.objects.all(), 'detail': Pooled_Sequencing.objects.filter(id = pool_id), 'cosmids': Cosmid.objects.filter(pool = pool_id)}
+            
         if 'submit' in request.POST:
             form = ContigForm(request.POST)
             if form.is_valid():
@@ -149,7 +148,7 @@ def write_fasta(contigs):
 
 def orf_data(request):
     contig_id = Contig.objects.filter(contig_name = 'scaffold58_1').values('id')
-    contigs = Contig.objects.filter(contig_name = 'scaffold58_1').values_list('contig_name', 'contig_sequence')
+    contigs = Contig.objects.filter(contig_name = 'scaffold58_1').values_list('contig_name', 'contig_sequence', 'blast_hit_accession')
     orfs = Contig_ORF_Join.objects.filter(contig = contig_id).values_list('start', 'stop', 'complement', 'prediction_score')
     anno = ORF.objects.filter(contig = contig_id).values_list('annotation', 'orf_sequence')
    
@@ -160,9 +159,11 @@ def write_lib(contigs, orfs, anno):
         data = File(f)
         data.write('#!/usr/bin/perl \n sub data{\n')
         contig = ''
+        accession = ''
         count = 1
-        for name, seq in contigs:
+        for name, seq, access in contigs:
             contig = name
+            accession = access
             data.write('$contig_orf{' + name + '}\n = [\'' + seq + '\',\n')
         data.write('{\'glimmer\' => {},\n')
         data.write('\'genbank\' => {},\n')
@@ -171,7 +172,7 @@ def write_lib(contigs, orfs, anno):
                     comp = -1 if comp == 1 else 1
                     data.write('\'manual\' =>{\'' + contig + '-' + str(++count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
                     data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
-                    data.write('annotation =>\'' + ann + '\',\n sequence =>\'' + seqs + '\'\n}}}];\n')
+                    data.write('annotation =>\'' + ann + '\',\n sequence =>\'' + seqs + '\'\n}}}' + accession + '];\n')
         data.write('return(\%contig_orf);} \n 1;') 
         data.closed
         f.closed
@@ -180,19 +181,6 @@ def write_lib(contigs, orfs, anno):
 #sequence search
 @login_required
 def BlastSearch(request):
-    ##collect errors in a dictionary
-    #errors = {}
-    #
-    #if request.method == "POST":
-    #    blastform = BlastForm(request.POST)
-    #    seq = request.POST.get('sequence')
-    #    e = request.POST.get('expect_threshold')
-    #    if seq == "":
-    #        errors['sequence'] = "Error: sequence is required"
-    #    if e == "":
-    #        errors['evalue'] = "Error: E-value cut-off is required"
-    #        
-    #else:
     blastform = BlastForm()
     return render_to_response('blast_search.html', {'blastform': blastform}, context_instance=RequestContext(request))
 
@@ -791,6 +779,12 @@ def CosmidDetail(request, cosmid_name):
     #returns all the sequences for all the associated orfs
     seq = ORF.objects.filter(id__in=orfids)
     
+    def get_context_data(self, **kwargs):
+        context = super(CosmidEditView, self).get_context_data(**kwargs)
+        #Add in queryset of end tags
+        context['end_tag_list'] = End_Tag.objects.all()
+        return context
+    
     return render_to_response('cosmid_detail.html', {'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book, 'cosmid_comments': cosmid_comments}, context_instance=RequestContext(request))
 
 def ContigDetail(request, contig_name):
@@ -847,16 +841,23 @@ class VectorDetailView(DetailView) :
 #edit views (updateview class)
 #nb: slug fields required for using names in the urls instead of primary keys (Kathy)
 
-#custom class to handle editing cosmid and end-tag models at once (Kathy)
 class CosmidEditView(UpdateView):
     model = Cosmid
     template_name = 'cosmid_edit.html'
-    #form_class = EndTagFormSetUpdate ==> requires {{form}} and {{ form_class }}
     slug_field = 'cosmid_name' 
     slug_url_kwarg = 'cosmid_name'
     success_url = reverse_lazy('cosmid-end-tag-list')
-  
     
+#only for editing a cosmid's endtags -- ideally should be combined with cosmid edit
+class CosmidEndTagEditView(UpdateView):
+    model = Cosmid
+    form_class = EndTagFormSetUpdate #requires both {{ form }} and {{ form_class }} in template
+    template_name = 'cosmid_only_end_tag_edit.html'
+    slug_field = 'cosmid_name' 
+    slug_url_kwarg = 'cosmid_name'
+    success_url = reverse_lazy('cosmid-end-tag-list')
+    #Note: this works because change is goes to db, but results in Django page error
+    #Django error: 'list' object has no attribute '__dict__'
     
 class SubcloneEditView(UpdateView):
     model = Subclone
@@ -877,6 +878,8 @@ class SubcloneAssayEditView(UpdateView):
     
 class ORFEditView(UpdateView):
     model = ORF
+    fields = ['orf_sequence', 'annotation']
+    #exclude = ['contig']
     template_name = 'orf_edit.html'
     success_url = reverse_lazy('orf-list')
 
@@ -971,16 +974,20 @@ def CosmidEndTagCreate(request):
 
             #validation for the two primers chosen: primers cannot be the same (defined in the model)  
             if end_tag_formset.is_valid():
-                
+            
                 #save cosmid, and process end tags
                 new_cosmid.save()
                 new_end_tags = end_tag_formset.save(commit=False)
                 
-                #remove whitespace from end tag sequences and save 
-                new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
-                new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
-                new_end_tags[0].save()
-                new_end_tags[1].save()
+                #if no end-tags submitted, new_end_tags is an empty list
+                if (new_end_tags):
+                    #remove whitespace from end tag sequences and save 
+                    new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
+                    new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
+                    new_end_tags[0].save()
+                    new_end_tags[1].save()
+                else:
+                    pass
                 return HttpResponseRedirect('/cosmid/') 
         
     else:
@@ -1008,41 +1015,59 @@ def ORFContigCreate(request):
             #remove all whitespace chars in string
             orf_seq = ''.join(orf_seq.split())
             
-            #if complement was indicated on form, get rev-com of ORF (for validation)
-            complement = new_contig_orf.complement
-            new_seq = ""
-            if complement == True:
-                rc = {'A':'T', 'T':'A', 'G':'C', 'C':'G'}
-                orf_seq = orf_seq[::-1]
-                for base in orf_seq:
-                    base = rc[base]
-                    new_seq = new_seq + base
-            orf_seq = new_seq
+            #check that sequence input is not blank!
+            if orf_seq == "":
+                form_errors['error'] = 'Error: sequence cannot be blank'
             
-            #validate orf sequence actually in contig before comitting to contig_orf join
-            contig_seq = new_contig_orf.contig.contig_sequence
-            if orf_seq in contig_seq:
-                
-                #save orf sequence cleaned of whitespace
-                new_orf.orf_sequence = orf_seq
-                new_orf.save()
-                new_contig_orf.orf = new_orf
-                
-                #calculate start and stop
-                orf_start = contig_seq.index(orf_seq) + 1
-                orf_stop = orf_start + len(orf_seq) - 1
-                new_contig_orf.start = orf_start
-                new_contig_orf.stop = orf_stop
-                
-                #manual add of orf-contig (not generated by database tool)
-                new_contig_orf.predicted = False
-                
-                new_contig_orf.save()
-                return HttpResponseRedirect('/orfcontig/')
-            
-            #orf not in contig; return error message
+            #if not blank, continue to process
             else:
-                form_errors['ORF_not_in_contig'] = u'Error: The specified ORF is not found in chosen Contig.'
+                
+                #if complement was indicated on form, get rev-com of ORF (for validation)
+                complement = new_contig_orf.complement
+                new_seq = ""
+                if complement == True:
+                    rc = {'A':'T', 'T':'A', 'G':'C', 'C':'G'}
+                    orf_seq = orf_seq[::-1]
+                    for base in orf_seq:
+                        base = rc[base]
+                        new_seq = new_seq + base
+                    orf_seq = new_seq
+                
+                #validate orf sequence actually in contig before comitting to contig_orf join
+                contig_seq = new_contig_orf.contig.contig_sequence
+                if orf_seq in contig_seq:
+                    
+                    #save orf sequence cleaned of whitespace
+                    new_orf.orf_sequence = orf_seq
+                    
+                    #check if orf_seq already present in orf table; if so, use existing orf_id
+                    
+                    #otherwise, make new orf instance in orf table
+                    new_orf.save()
+                    
+                    #make new instance of contig_orf_join
+                    new_contig_orf.orf = new_orf
+                    
+                    #calculate start and stop
+                    orf_start = contig_seq.index(orf_seq) + 1
+                    orf_stop = orf_start + len(orf_seq) - 1
+                    new_contig_orf.start = orf_start
+                    new_contig_orf.stop = orf_stop
+                    
+                    #manual add of orf-contig (not generated by database tool)
+                    new_contig_orf.predicted = False
+                    
+                    #save and redirect to contig's detailview
+                    new_contig_orf.save()
+                    #get contig name to use in redirect
+                    contig_name = new_contig_orf.contig.contig_name
+                    return HttpResponseRedirect('/contig/' + contig_name)  
+            
+                #orf not in contig; return error message
+                else:
+                    form_errors['ORF_not_in_contig'] = u'Error: The specified ORF is not found in selected Contig.'
+        else:
+            form_errors['error'] = 'Error: required field(s) blank'
     else:
         contig_orf_form = ContigORFJoinForm(instance=Contig_ORF_Join())
         orf_form = ORFForm(instance=ORF())
@@ -1057,37 +1082,40 @@ def ContigPoolCreate(request):
     
     if request.method == "POST":
         contig_upload_form = UploadContigsForm(request.POST, request.FILES)
-        contig_form = ContigForm(request.POST) #must be here as well
-        if contig_upload_form.is_valid():
+        contig_form = ContigForm(request.POST) 
+        if contig_upload_form.is_valid() and contig_form.is_valid():
             
             #parse the fasta file using BioPython SeqIO.parse; store each contig-sequence record in a list
             fasta_file = request.FILES['fasta_file']
             file_name = request.FILES['fasta_file'].name
             records = []
             for seq_record in SeqIO.parse(fasta_file, "fasta"):
-                records.append(new_seq_record)
-            
+                records.append(seq_record)
+
             #return error message if file was not parsed successfully by SeqIO.parse
             if len(records) == 0:
-                form_errors['file_error'] = 'Error: uploaded file is not FASTA format: ' + file_name 
+                form_errors['file_error'] = 'Error: uploaded file is not FASTA format: ' + file_name
             
             #if file was parsed successfully, add all records to Contig table in database
             else:
+                
+                #get pool id
+                pool = request.POST.get('pool')
+                
+                #iterate through records list and save each sequence
                 for item in records:
-                    if contig_form.is_valid():
-                        contig_form = ContigForm(request.POST)
-                        new_contig = contig_form.save(commit=False)
-                        
-                        #get the pood id for use in appending to scaffold name, and save record
-                        pool =  str(new_contig.pool.id)
-                        
-                        #save record
-                        new_contig.contig_name = 'pool' + pool + "_" + item.id
-                        new_contig.contig_sequence = item.seq
-                        new_contig.save()
-                return HttpResponseRedirect('/contig/')          
+                    
+                    #append the pool id to the contig name for unique contig name in db
+                    pool = str(pool)
+                    name = 'pool' + pool + "_" + item.id
+                    contig = Contig.objects.create(contig_name=name, pool_id=pool, contig_sequence = item.seq)
+                    
+                return HttpResponseRedirect('/results/contig/?pool=' + pool + "&contig_name=&contig_accession=")
+                
+        else:
+            form_errors['error'] = 'Error: required field(s) blank'
     else:
-        contig_form = ContigForm()
+        contig_form = ContigForm(instance=Contig())
         contig_upload_form = UploadContigsForm()      
     return render_to_response('contig_pool_add.html', {'contig_upload_form': contig_upload_form, 'contig_form': contig_form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 

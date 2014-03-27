@@ -4,6 +4,7 @@ from mainsite.models import *
 from django.forms import widgets
 from django.contrib.auth.models import User
 from django.forms.models import BaseFormSet, inlineformset_factory
+import pdb
 
 #from django.contrib.auth.forms import SetPasswordForm
 
@@ -20,12 +21,13 @@ EndTagFormSet = inlineformset_factory(
     extra=2,
     form=CosmidForm)
 
-# For Cosmid-End Tag update    
+# For End Tag update    
 EndTagFormSetUpdate = inlineformset_factory(
     Cosmid, 
     End_Tag,
     extra=0,
     can_delete=False,)
+
     
 #For ORF-Contig add
 class ORFForm(ModelForm):
@@ -78,16 +80,18 @@ class UserForm(ModelForm):
 
 # For Contig-Pool add
 class ContigForm(ModelForm):
-    
-    #only shows pool id options that have no contigs yet
-    def __init__(self, *args, **kwargs):
-        super(ContigForm, self).__init__(*args, **kwargs)
-        self.fields['pool'].queryset = Pooled_Sequencing.objects.exclude(contig__pool_id=True)
-        
     class Meta:
         model = Contig
-        pool = forms.Select()
         exclude = ('contig_name', 'contig_sequence', 'cosmid', 'contig_accession', 'blast_hit_accession')
+        pool = forms.ChoiceField()
+        
+    #only shows pool id options that have no contigs yet (i.e. exclude ones present in Contig tables)
+    def __init__(self, *args, **kwargs):
+        super(ContigForm, self).__init__(*args, **kwargs)
+        
+        #get a list of pool ids that already have associated contigs -- to use for check "pool_id__in" 
+        pool_objects = Pooled_Sequencing.objects.all().select_related('contig')
+        self.fields['pool'].queryset = Pooled_Sequencing.objects.exclude(contig__pool_id__in=pool_objects)
 
 # For Contig-Pool add
 class UploadContigsForm(forms.Form):

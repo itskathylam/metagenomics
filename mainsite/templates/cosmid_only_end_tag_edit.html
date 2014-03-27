@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block subtitle %}
+<h2><img src="{{ STATIC_URL }}icons/edit64.png" alt="edit">Edit Cosmid {{ cosmid.cosmid_name }} End Tags</h2>
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+    {% csrf_token %}
+        <table>
+            {{ form }}
+            {{ form_class }}
+        </table>
+        <input type="submit" value="Update">
+    </form>
+{% endblock %}

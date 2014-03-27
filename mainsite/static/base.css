@@ -220,6 +220,36 @@ nav ul ul ul {
     margin: 0;
 }
 
+#tool1 {
+    border: solid;
+    border-width: thin;
+    border-radius: 4px;
+    box-shadow: 3px 3px 5px #888;
+}
+#tool2 {
+    float: left;
+    margin-top: 133px;
+    border: solid;
+    border-width: thin;
+    margin-left: 70px;
+    margin-bottom: 20px;
+    padding: 40px;
+    border-radius: 4px;
+
+}
+
+#tool3 {
+    float: left;
+    margin-top: 5px;
+    border: solid;
+    border-width: thin;
+    margin-left: 70px;
+    margin-bottom: 20px;
+    padding: 40px;
+    border-radius: 4px;
+
+}
+
 /* Login area in the top right of every page*/ 
 #user {
     font-family: verdana, arial, sans-serif;
@@ -328,57 +358,24 @@ input[type=submit] {
     margin: 20px;
 }
 
-/* for tabs on cosmid page - this entire section is no longer in use*/
+/* for tabs on cosmid page*/
 .tabs {
+  font-family: verdana, arial, sans-serif;
   position: relative; 
   clear: both;
  /* width: 100%;*/
-
   margin: 25px 0;
-  
-}
-.tab {
-  float: left;
 }
 
-.tab-panel {
-    overflow: hidden;
-    position: relative;
-    display: inline;
-    
+.tabs a {
+    color: #000;
+}
+.tabs .tabContent table td {
+    background-color: #888;
+    color: #fff;
+    text-align: center;
 }
 
-.tab label.tab  {
-  background: white; 
-  padding: 10px; 
-  border: 1px solid #ccc; 
-  margin-left: -1px; 
-  position: relative;
-  left: 1px; 
+.tabs .tabContent table a {
+    color: #fff;
 }
-.tab [type=radio] {
- display: none; 
-}
-.content {
- /* position: absolute;
-  top: 28px;
-  left: 0;
-  right: 0;
-  bottom: 0; */
-  float: left;  /*SWITCH WITH 5 ABOVE for this and width*/
-  width: 100%; 
-  background: white;
-  padding: 30px;
-  border: 1px solid #ccc;
-}
-[type=radio]:checked ~ label {
-  background: white;
-  border-bottom: 1px solid white;
-  z-index: 2;
-}
-[type=radio]:checked ~ label ~ .content {
-  z-index: 1;  */
-/* for tabs on cosmid page */
-
-
-
