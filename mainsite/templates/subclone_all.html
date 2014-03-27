@@ -5,9 +5,39 @@
 {% endblock %}
 
 {% block content %}
+        {% if subclone_list %}
         <a href="/export/subclone" >Download CSV File</a>
-    {% if subclone_list %}
-        <p>X number of results OR All records</p>
+        {% if search %}
+                <p>X number of results</p>
+                <div class="pagination">
+                    <span class="page-links"><p>
+                            {% if subclone_list.has_previous %}
+                                    <a href="?{{queries.urlencode}}&page={{subclone_list.previous_page_number}}">Previous</a>
+                            {% endif %}
+                            <span class="page-current">
+                                    Page {{subclone_list.number}} of {{ subclone_list.paginator.num_pages}}
+                            </span>
+                            {% if subclone_list.has_next %}
+                                    <a href="?{{queries.urlencode}}&page={{subclone_list.next_page_number}}">Next</a>
+                            {% endif %}
+                    </p></span>
+                </div>
+        {% else %}
+                <p>All Records</p>
+                <div class="pagination">
+                    <span class="page-links"><p>
+                        {% if page_obj.has_previous %}
+                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
+                        {% endif %}
+                        <span class="page-current">
+                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
+                        </span>
+                        {% if page_obj.has_next %}
+                                <a href="?page={{page_obj.next_page_number}}">Next</a>
+                        {% endif %}
+                    </p></span>
+                </div>
+        {% endif %}
         <table class="list">
                 <tr>
                     <th>Subclone Name</th>
@@ -40,7 +70,7 @@
         </table>
         {% if search %}
                 <div class="pagination">
-                    <span class="page-links">
+                    <span class="page-links"><p>
                             {% if subclone_list.has_previous %}
                                     <a href="?{{queries.urlencode}}&page={{subclone_list.previous_page_number}}">Previous</a>
                             {% endif %}
@@ -50,11 +80,11 @@
                             {% if subclone_list.has_next %}
                                     <a href="?{{queries.urlencode}}&page={{subclone_list.next_page_number}}">Next</a>
                             {% endif %}
-                    </span>
+                    </p></span>
                 </div>
         {% else %}
                 <div class="pagination">
-                    <span class="page-links">
+                    <span class="page-links"><p>
                         {% if page_obj.has_previous %}
                                 <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
                         {% endif %}
@@ -64,7 +94,7 @@
                         {% if page_obj.has_next %}
                                 <a href="?page={{page_obj.next_page_number}}">Next</a>
                         {% endif %}
-                    </span>
+                    </p></span>
                 </div>
         {% endif %}
 
