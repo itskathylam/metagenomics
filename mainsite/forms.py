@@ -83,22 +83,15 @@ class ContigForm(ModelForm):
     class Meta:
         model = Contig
         exclude = ('contig_name', 'contig_sequence', 'cosmid', 'contig_accession', 'blast_hit_accession')
-        pool = forms.ChoiceField(label='Nucleotide Match Score')
+        pool = forms.ChoiceField()
         
     #only shows pool id options that have no contigs yet (i.e. exclude ones present in Contig tables)
     def __init__(self, *args, **kwargs):
         super(ContigForm, self).__init__(*args, **kwargs)
         
         #get a list of pool ids that already have associated contigs -- to use for check "pool_id__in" 
-        contig_objects = Contig.objects.all().select_related('pool')
-        contig_pool_list = []
-        for contig_object in contig_objects:
-            contig_pool_list.append(contig_object.pool.id)
-        contig_pool_set = set(contig_pool_list)
-        unique_contig_pool_list = list(contig_pool_set) 
-        
-        #note: cannot just use 'Contig.objects.all().select_related('pool')'  as the list to iterate through!
-        self.fields['pool'].queryset = Pooled_Sequencing.objects.exclude(contig__pool_id__in=unique_contig_pool_list)
+        pool_objects = Pooled_Sequencing.objects.all().select_related('contig')
+        self.fields['pool'].queryset = Pooled_Sequencing.objects.exclude(contig__pool_id__in=pool_objects)
 
 # For Contig-Pool add
 class UploadContigsForm(forms.Form):

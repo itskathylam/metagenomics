@@ -1064,8 +1064,8 @@ def ContigPoolCreate(request):
     
     if request.method == "POST":
         contig_upload_form = UploadContigsForm(request.POST, request.FILES)
-        contig_form = ContigForm(request.POST) #must be here as well
-        if contig_upload_form.is_valid():
+        contig_form = ContigForm(request.POST) #must be here
+        if contig_upload_form.is_valid() and contig_form.is_valid():
             
             #parse the fasta file using BioPython SeqIO.parse; store each contig-sequence record in a list
             fasta_file = request.FILES['fasta_file']
@@ -1080,25 +1080,24 @@ def ContigPoolCreate(request):
             
             #if file was parsed successfully, add all records to Contig table in database
             else:
+                
+                #get pool id
+                pool = request.POST.get('pool')
+                
+                #iterate through records list and save each sequence
                 for item in records:
-                    contig_form = ContigForm(request.POST)
-                    if contig_form.is_valid():
-                        new_contig = contig_form.save(commit=False)
-                        
-                        #get the pood id for use in appending to scaffold name, and save record
-                        pool =  str(new_contig.pool.id)
-                        
-                        #save record
-                        new_contig.contig_name = 'pool' + pool + "_" + item.id
-                        new_contig.contig_sequence = item.seq
-                        new_contig.save()
-        
-                return HttpResponseRedirect('/contig/')
+                    
+                    #append the pool id to the contig name for unique contig name in db
+                    pool = str(pool)
+                    name = 'pool' + pool + "_" + item.id
+                    contig = Contig.objects.create(contig_name=name, pool_id=pool, contig_sequence = item.seq)
+                    
+                return HttpResponseRedirect('/results/contig/?pool=' + pool + "&contig_name=&contig_accession=")
+                
         else:
-            form_errors['error'] = 'Error: something is wrong'
-                                                  
+            form_errors['error'] = 'Error: invalid form'
     else:
-        contig_form = ContigForm()
+        contig_form = ContigForm(instance=Contig())
         contig_upload_form = UploadContigsForm()      
     return render_to_response('contig_pool_add.html', {'contig_upload_form': contig_upload_form, 'contig_form': contig_form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
