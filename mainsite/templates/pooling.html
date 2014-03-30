@@ -4,10 +4,25 @@
 <title>Metagenomics Clone Bank</title>
 {% endblock %}
 
-{% block subtitle %}
-<h2 class="tool">Subtitle</h2>
+{% block pagetitle %}
+    <title>Pooling Tool</title>
 {% endblock %}
-    
+
+{% block subtitle %}
+    <h1>Pooling Tool</h1>
+{% endblock %}
+
 {% block content %}
-    <p>Pooling tool.</p>
+
+<form action="{% url "pooling" %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+    <tr><th>Select Contig</th>
+        <td><select id="contig" name="contig">
+            {% for entry in contigs %}
+                <option value="{{entry.id}}"> {{entry.id}}</option>
+            {% endfor %}
+        </select></td>
+    </tr>
+
+</form>
+
 {% endblock %}
