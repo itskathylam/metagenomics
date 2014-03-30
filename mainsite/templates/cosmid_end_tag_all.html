@@ -5,10 +5,15 @@
 {% endblock %}
 
 {% block content %}
+    {% if cosmid_list %}
 
-    <a href="/export/cosmid_end_tag" >Download CSV File</a>
+    <a href="/export/cosmid_endtag" >Download CSV File</a>
     {% if search %}
-                <p>Search for: '{{ query }}' returned {{ cosmid_list.count }} results</p>
+                {% if search == 2%}
+                <p>Search for: '{{ query }}' returned {{ total }} results</p>
+                {% else %}
+                <p>Search returned {{ total }} results</p>
+                {% endif %}
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if cosmid_list.has_previous %}
@@ -39,8 +44,7 @@
                 </div>
     {% endif %}
 
-    {% if cosmid_list %}
-    <p>Search for: '{{ query }}' returned {{ cosmid_list.count }} results</p>
+    
         <table class="list">
                 <tr>
                 <th>Cosmid Name</th>
@@ -66,14 +70,12 @@
                 
                 {% if cosmid.end_tag_set.all|length == 2 %}
                         {% for end_tag in cosmid.end_tag_set.all %}
-                        <td>
-                        <a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}"><textarea rows="3" cols="20" readonly=true>{{ end_tag.end_tag_sequence }}</textarea></a>
+                        <td><textarea rows="3" cols="20" readonly=true>{{ end_tag.end_tag_sequence }}</textarea>
                         </td>
                         {% endfor %}
                 {% elif cosmid.end_tag_set.all|length == 1 %}
                         {% for end_tag in cosmid.end_tag_set.all %}
-                        <td>
-                        <a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}"><textarea rows="3" cols="20" readonly=true>{{ end_tag.end_tag_sequence }}</textarea></a>
+                        <td><textarea rows="3" cols="20" readonly=true>{{ end_tag.end_tag_sequence }}</textarea>
                         </td>
                         {% endfor %}
                         <td>&nbsp;</td>

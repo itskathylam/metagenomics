@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Metagenomics Clone Bank</title>
+{% endblock %}
+
+{% block pagetitle %}
+    <title>Contig Retrieval Tool Results</title>
+{% endblock %}
+
+{% block subtitle %}
+    <h1>Contig Retrieval Tool Results</h1>
+{% endblock %}
+
+{% block content %}
+<table style="border-collapse: collapse;">
+<tr><th>Cosmid Name</th><th>Select Contig</th><th>Strand</th><th>Contig Name</th><th>Percent Identity</th><th>End Tag Length</th><th>Contig Length</th><th>Match Type</th></tr>
+
+    {% for cos, strand, con, iden, endlen, conlen, match in results %}
+<tr>
+    
+        {% ifchanged cos %}<td>{{cos}}</td>{% else %}<td> </td>{% endifchanged %}
+        <td><input type="checkbox" name="select" {%if "1" in match%}checked{%endif%}/></td>
+        <td>{% if "F" in strand %}Forward{% endif %}
+            {% if "R" in strand %}Reverse{% endif %}</td>
+        <td>{{con}}</td>
+        <td>{{iden|floatformat}}</td>
+        <td>{{endlen}}</td>
+        <td>{{conlen}}</td>
+        <td>{% if "1" in match %}Match{% endif %}
+            {% if "2" in match %}Mismatch{% endif %}
+            {% if "3" in match %}Ambiguous{% endif %}</td>
+</tr> 
+    {% endfor %}
+
+    <input type="submit" name="submit" value="Submit"/>
+    
+</table>
+{% endblock %}

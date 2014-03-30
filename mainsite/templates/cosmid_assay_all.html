@@ -9,8 +9,11 @@
         <a href="/export/cosmid_assay" >Download CSV File</a>
         {% if search %}
         
-
-        <p>X number of results</p>
+        {% if search == 2 %}
+        <p>Search for '{{ query }}' returned {{total}} results</p>
+        {% else %}
+        <p>Search returned {{total}} results</p>
+        {% endif %}
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if cosmid_assay_list.has_previous %}

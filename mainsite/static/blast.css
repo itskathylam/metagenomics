@@ -1,14 +1,4 @@
-#main {
-    
-    
-}
-
 #main table.blast {
-
-
-}
-
-#main table.blast tr td{
-
+    table-layout: auto;
 
 }

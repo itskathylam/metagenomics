@@ -10,7 +10,8 @@
 
 {% block content %}
     <p><b>Query:</b></p>
-    <p><font face="courier" size=2pt>{{ query }}</font></p>
+    <p><font face="courier" size=2pt>Sequence: {{ query }}</font></p>
+    <p><font face="courier" size=2pt>Length: <br>{{ query|length }}</font></p>
     <p><b>Results:</b></p>
     <table class="blast" style="width: 100%">
     {% if results_list %}
