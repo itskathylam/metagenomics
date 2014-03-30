@@ -38,6 +38,12 @@ h2.search {
     position: relative;
     top: -24px;
 }
+h2.tools {
+    margin: 0 10px 20px 10px;
+    display: inline;
+    position: relative;
+    top: -24px;
+}
 /*
 h2.list {
     margin: 0 10px 20px 10px;
@@ -174,7 +180,7 @@ nav ul ul ul {
     display: block;
     padding: 10px;
     margin-top: 40px;
-    margin-left: 30px;
+    margin-left: 20px;
     font-family: verdana, arial, sans-serif;}
  
 /* Main content section*/ 

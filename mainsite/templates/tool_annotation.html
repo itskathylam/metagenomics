@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block pagetitle %}
+    <title>ORF Identification and Annotation Tool</title>
+{% endblock %}
+
+{% block subtitle %}
+    <img src="{{ STATIC_URL }}icons/search64.png"><h2 class="tools">ORF Finding and Annotation Tool</h2>
+{% endblock %}
+
+{% block content %}
+    
+<p>This custom tool assists with annotating contig sequences to facilitate the identification of genes responsible for functions of interest.
+Note that this tool only operates on Contigs that have been associated with Cosmid clones through use of the
+<a href='{% url 'contig' %}'>Contig Retrieval</a> tool. This tool performs two kinds of ORF annotations.
+<ul>
+<li><b><p>FragGeneScan</b>: Open Reading Frames are identified using FragGeneScan (version 1.1.6). Using the FGS translated sequences,
+ORFs are used to BLAST against the RefSeq Protein database to retrieve the top significant hit annotation.</p>
+<li><b><p>Genbank</b>: The entire Contig sequence is used to BLAST against the Genbank nt database. The top significant hit is parsed for its
+ORFs/annotations; these genes can be used as a point reference, and can be compared to the FGS prediction/RefSeq annotation results.</p>
+</ul>
+<p>All Contigs are shown below, with their associated Cosmids. Please select up to 20 contigs to annotation:</p>
+
+{% endblock %}
