@@ -34,7 +34,7 @@ ORFs/annotations; these genes can be used as a point reference, and can be compa
     <tr><th>Contig Name</th><th>Associated Cosmids</th></tr>
     {% for contig in all_contigs %}
         {% if contig.cosmid.all %}
-        <tr><th><input type="checkbox" name={{ contig.contig_name }}> <a href="{% url 'contig-list' %}{{ contig.contig_name }}">{{ contig.contig_name }}</a></th><td>
+        <tr><td><input type="checkbox" name={{ contig.contig_name }}> <a href="{% url 'contig-list' %}{{ contig.contig_name }}">{{ contig.contig_name }}</a></td><td>
         {% endif %}
         {% for cosmid in contig.cosmid.all %}
             <a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.cosmid_name }}</a>, 
