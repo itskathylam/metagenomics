@@ -89,7 +89,7 @@ class ContigForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ContigForm, self).__init__(*args, **kwargs)
         
-        #get a list of pool ids that already have associated contigs -- to use for check "pool_id__in" 
+        #get a list of pool ids that already have associated contigs -- to use for check "pool_id__in"
         pool_objects = Pooled_Sequencing.objects.all().select_related('contig')
         self.fields['pool'].queryset = Pooled_Sequencing.objects.exclude(contig__pool_id__in=pool_objects)
 
@@ -112,15 +112,7 @@ class AllSearchForm(forms.Form):
     query = forms.CharField(label='Keywords', required=True)
     
 #form for contig annotation tool
-class ContigAnnotation(forms.Form):
-    pass
-
-    #    #get all contig objects associated with cosmids, in order to build a form
-    #    contigs = Contig.objects.all().select_related('cosmid')
-    #    length = len(contigs)
-    #
-    #    contigs_cosmids = {}
-    #    #for contig in contigs: 
-
+class EmailForm(forms.Form):
+    email = forms.EmailField()
     
 
