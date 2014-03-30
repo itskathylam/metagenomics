@@ -5,10 +5,15 @@
 {% endblock %}
 
 {% block content %}
+    {% if cosmid_list %}
 
     <a href="/export/cosmid_end_tag" >Download CSV File</a>
     {% if search %}
-                <p>Search for: '{{ query }}' returned {{ cosmid_list.count }} results</p>
+                {% if search == 2%}
+                <p>Search for: '{{ query }}' returned {{ total }} results</p>
+                {% else %}
+                <p>Search returned {{ total }} results</p>
+                {% endif %}
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if cosmid_list.has_previous %}
@@ -39,8 +44,7 @@
                 </div>
     {% endif %}
 
-    {% if cosmid_list %}
-    <p>Search for: '{{ query }}' returned {{ cosmid_list.count }} results</p>
+    
         <table class="list">
                 <tr>
                 <th>Cosmid Name</th>

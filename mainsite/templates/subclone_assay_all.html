@@ -8,8 +8,13 @@
     {% if subclone_assay_list %}
         <a href="/export/subclone_assay" >Download CSV File</a>
                 {% if search %}
-                        <p>X number of results</p>
+                        {% if search == 2 %}
+                        <p>Search for '{{query}}' returned {{total}} results</p>
+                        {% else %}
+                        <p> Search returned {{total}} results</p>
+                        {% endif %}
                         <div class="pagination">
+                        
                            <span class="page-links"><p>
                                    {% if subclone_assay_list.has_previous %}
                                            <a href="?{{queries.urlencode}}&page={{subclone_assay_list.previous_page_number}}">Previous</a>
