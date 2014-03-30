@@ -76,17 +76,13 @@ def ContigTool(request):
 def AnnotationTool(request):
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
-    #all_contigs = Contig.objects.prefetch_related('cosmid')
-    contigs_with_cosmids = []
-    #for contig in all_contigs:
-    #    if contig.cosmid.cosmid_name:
-    #        contigs_with_cosmids.append(contig)
-    
-        
     return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
 
 def AnnotationToolResults(request):
-    return render_to_response('tool_annotation_results.html', {'contigs_cosmids': contigs_cosmids})
+    if request.method == "POST":
+        results = request.POST
+        pdb.set_trace()
+    return render_to_response('tool_annotation_results.html', {'results': results })
 
 
 def ContigTool(request):
@@ -263,7 +259,7 @@ def BlastResults(request):
         test = records.next()
     except Exception:
         results_list = 0
-        seq = "No sequence entered"
+        seq = ""
     else:
         results_list = []
         for alignment in test.alignments:
