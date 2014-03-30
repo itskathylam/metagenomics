@@ -5,8 +5,14 @@
 {% endblock %}
 
 {% block content %}
+    {% if orf_list %}    
     <a href="/export/orf" >Download CSV File</a>
     {% if search %}
+            {% if search == 2 %}
+                <p>Search for '{{query}}' returned {{total}} results</p>
+            {% else %}
+                <p> Search returned {{total}} results</p>
+            {% endif %}
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if orf_list.has_previous %}
@@ -35,7 +41,6 @@
                     </p></span>
                 </div>
         {% endif %}
-    {% if orf_list %}
     <table class="list">
             <tr>
                 <th>ORF ID</th>

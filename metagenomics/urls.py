@@ -23,8 +23,9 @@ urlpatterns = patterns('',
     #login_required( ) - add to all views below
     
     #Tools Views
-    url(r'^tools/contig', ContigTool, name='contig'),
-    url(r'^tools/pooling', Pooling, name='pool'),
+    url(r'^tools/contig/$', ContigTool, name='contig'),
+    url(r'^tools/annotation/$', AnnotationTool, name='annotation'),
+    url(r'^tools/annotation/results/$', AnnotationToolResults, name='annotation-results'),
 
     
     #Detail views

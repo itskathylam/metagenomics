@@ -11,6 +11,8 @@
     <img src="{{ STATIC_URL }}icons/add64.png"><h2 class="add">{% block titletext %}{% endblock %}</h2>
 {% endblock %}
 
+{% block errors %}{% endblock %}
+
 {% block content %}
     <form action="{% block urlform %}{% endblock %}" {% block otherform %}{% endblock %} method="post">
         {% csrf_token %}
@@ -20,8 +22,6 @@
         </table>
         <input type="submit" value="Add">
     </form>
-    {% block errors %}
-    {% endblock %}
 {% endblock %}
 
 {% block second %}
