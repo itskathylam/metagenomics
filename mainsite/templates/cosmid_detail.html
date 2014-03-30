@@ -6,6 +6,23 @@
     </title>
     <script  src="{{ STATIC_URL }}tabs.js"></script>
     <link rel="stylesheet" href="{{ STATIC_URL }}tabs.css" type="text/css" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">        
+        $(function(){
+            $('.link').scroll(function(){
+                $('.link').scrollLeft($(this).scrollLeft());    
+            });
+        });
+        //if (typeof jQuery != 'undefined') {
+        //
+        //alert("jQuery library is loaded!");
+        //
+        //}else{
+        //
+        //alert("jQuery library is not found!");
+        //
+        //}
+    </script>
 {% endblock %}
 
 {% block subtitle %}
@@ -58,8 +75,20 @@
                 Accession: {{ list.contig_accession }}<br>
                 <label>Sequence: <br>
                 <textarea rows="15" cols="70" readonly=true>{{ list.contig_sequence }}</textarea></label><br><br>
-                    <div style=width:100%;overflow:scroll;border-style:solid;border-width:thin;>
-                        <img src="{{ STATIC_URL }}scaffold177_1-F1.png" alt="ORF's for Contig"><br>
+                    <div class="link" style=width:100%;max-height:100px;overflow-y:scroll;overflow-x:hiddenl;border-style:solid;border-width:thin;>
+                        <img src="{{ STATIC_URL }}scaffold109_1-CONTIG.png" alt="ORF's for Contig"><br>
+                    </div>
+                    <div class="link" style=width:100%;max-height:100px;overflow-y:scroll;overflow-x:hidden;border-style:solid;border-width:thin;>
+                        <img src="{{ STATIC_URL }}scaffold109_1-ALIGN.png" alt="ORF's for Contig"><br>
+                    </div>
+                    <div class="link" style=width:100%;max-height:150px;overflow-y:scroll;overflow-x:hidden;border-style:solid;border-width:thin;>
+                        <img src="{{ STATIC_URL }}scaffold109_1-GENBANK.png" alt="ORF's for Contig"><br>
+                    </div>
+                    <div class="link" style=width:100%;max-height:150px;overflow-y:scroll;overflow-x:hidden;border-style:solid;border-width:thin;>
+                        <img src="{{ STATIC_URL }}scaffold109_1-GLIM.png" alt="ORF's for Contig"><br>
+                    </div>
+                    <div class="link" style=width:100%;max-height:150px;overflow-y:scroll;overflow-x:hidden;border-style:solid;border-width:thin;>
+                        <img src="{{ STATIC_URL }}scaffold109_1-MANUAL.png" alt="ORF's for Contig"><br>
                     </div>
                 <p>Open reading frames in {{ list.contig_name }}</p>
                 <p><a href="{% url 'orf-contig-add' %}">Add new ORF</a></p>

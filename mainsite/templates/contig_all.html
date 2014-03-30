@@ -5,20 +5,16 @@
 {% endblock %}
 
 {% block content %}
-
     <a href="/export/contig" >Download CSV File</a>
     <p>X number of results OR All records</p>
     {% if contig_list %} 
         <table class="list">
-
             <tr>
                 <th>Contig Name</th>
                 <th>Pool ID</th>
                 <th>Contig Sequence</th>
                 <th>Contig NCBI Accession</th>
-                <th>BLAST Hit NCBI Accession</th>
-                <th>Image</th>
-                
+                <th>BLAST Hit NCBI Accession</th>                
             </tr>
         {% for contig in contig_list %}
             <tr>
@@ -27,11 +23,9 @@
                 <td><textarea rows="5" cols="100" readonly=true>{{ contig.contig_sequence }}</textarea></td>
                 <td>{{ contig.contig_accession }}</td>
                 <td>{{ contig.blast_hit_accession }}</td>
-                <td>{{ contig.image }}</td>
             </tr>
         {% endfor %}
-
-         </table>
+        </table>
 
         {% if search %}
                 <div class="pagination">

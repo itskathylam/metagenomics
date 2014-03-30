@@ -5,14 +5,10 @@
 {% endblock %}
 
 {% block content %}
-
-    Contig Name: {{contig_orf_join.contig.contig_name}}<br>
-    ORF ID: {{contig_orf_join.orf_id}}<br>
-    <p> Are you sure you want to delete?</p>
+    <p> Are you sure you want to delete <b>ORF ID {{ contig_orf_join.orf_id}}</b> from the <b>{{contig_orf_join.contig.contig_name}} contig</b>?</p>
     <form action="" method="POST">
         {% csrf_token %}
-    
-        <input type ="submit">
+        <input type ="submit" value="Delete">
     </form>
     
 {% endblock %}

@@ -1,11 +1,14 @@
 #main {
-    word-wrap: break-word;
+    
+    
 }
 
 #main table.blast {
-    table-layout: fixed;
+
+
 }
 
 #main table.blast tr td{
-    word-wrap: break-word;
+
+
 }
