@@ -26,7 +26,7 @@ from os import system
 import pdb
 import Image
 from django.db.models import Q
-
+import re
 
 #Main, About etc
 
@@ -99,8 +99,8 @@ def ContigTool(request):
             pool = request.POST['pool']
             cos = request.POST.getlist('cos')
             cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values_list('id', 'cosmid_name')
-            contig_pipeline(pool, cos_selected)
-            results = read_csv('testtest.csv')
+            contig_pipeline(pool, cos_selected) #need to integrate this step with renes tool and generate the tool
+            results = read_csv('testtest.csv') #where does this come from????? should use database.....
             entries = []
             for row in results:
                 entry = row[0:3]
@@ -115,10 +115,32 @@ def ContigTool(request):
     variables = RequestContext(request, context)
     return render_to_response('tool_contig.html', variables)
 
+def ContigToolResults(request):
+    if request.method == 'POST':
+        if 'submit' in request.POST:
+            cosmidcontigs = request.POST.getlist('select')
+    
+        pattern = re.compile(r'^(.+)<\$\$>(.+)$')
+
+        joins = {}
+        for pair in cosmidcontigs:
+            match = pattern.match(pair)
+            joins[match.group(1)] = match.group(2)
+        
+        cosmids = []
+        for join in joins:
+            #pdb.set_trace()
+            cosmid = Cosmid.objects.get(cosmid_name=join)
+            contig = Contig.objects.get(contig_name=joins[join])
+            contig.cosmid.add(cosmid)
+            cosmids.append(join)
+        return HttpResponseRedirect('/results/basic/cosmid?query=' + ' '.join(cosmids))
+    
+    return render_to_response('tool_contig_result.html', {'results': joins}, context_instance=RequestContext(request))
 #read csv file into array
 def read_csv(filename):
     import csv
-    with open(filename, 'rb') as csvfile:
+    with open("contig_retrieval_tool/tmp/out/%s" %filename, 'rb') as csvfile:
         reader = csv.reader(csvfile, delimiter = ',')
         rows = []
         for row in reader:
@@ -135,7 +157,7 @@ def contig_pipeline(pool, cos_selected):
     primer_set2 = Primer.objects.select_related('primer').filter(primer_pair = '2').values_list('id','primer_name')
 
     HttpResponse(write_fasta(contigs), write_csv('primers_1', cosmids, primer_set1, seqs), write_csv('primers_2', cosmids, primer_set2, seqs))
-    HttpResponse(system("perl retrieval_pipeline.pl primers_1.csv primers_2.csv contigs.fa"))
+    HttpResponse(system("perl contig_retrieval_tool/retrieval_pipeline.pl contig_retrieval_tool/primers_1.csv contig_retrieval_tool/primers_2.csv contig_retrieval_tool/contigs.fa"))
     changed_rows = Contig.objects.filter(pool = pool_id)
     #for r in changed_rows:
     #    r.image_contig = Image.open("./img/contig.png")
@@ -145,7 +167,7 @@ def contig_pipeline(pool, cos_selected):
     #    r.save()
     
 def write_csv(file_name, cosmids, primer_set, seqs):
-    with open("./%s.csv" %file_name, 'w') as f:
+    with open("./contig_retrieval_tool/tmp/out/%s.csv" %file_name, 'w') as f:
         csv = File(f)
         seqs = list(seqs)
         cos = dict(cosmids)
@@ -160,7 +182,7 @@ def write_csv(file_name, cosmids, primer_set, seqs):
 
 #writes contigs to fasta file(text.fa)    
 def write_fasta(contigs):
-    with open('./contigs.fa', 'w') as f:
+    with open('./contig_retrieval_tool/contigs.fa', 'w') as f:
         fasta = File(f)
         contigs = list(contigs)
         for contig, seq in contigs:
