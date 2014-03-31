@@ -6,8 +6,8 @@
 
 {% block content %}
         {% if subclone_list %}
-        <a href="/export/subclone" >Download CSV File</a>
         {% if search %}
+            <p><a href="/export/subclone" >Download All Search Results</a></p>
             {% if search == 2 %}
                 <p>Search for '{{query}}' returned {{total}} results</p>
             {% else %}
@@ -27,6 +27,7 @@
                     </p></span>
                 </div>
         {% else %}
+                <p><a href="/export/subclone" >Download All Records</a></p>
                 <p>All Records</p>
                 <div class="pagination">
                     <span class="page-links"><p>
