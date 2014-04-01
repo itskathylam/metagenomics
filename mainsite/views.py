@@ -883,9 +883,11 @@ class CosmidEndTagEditView(UpdateView):
     template_name = 'cosmid_only_end_tag_edit.html'
     slug_field = 'cosmid_name' 
     slug_url_kwarg = 'cosmid_name'
-    success_url = reverse_lazy('cosmid-end-tag-list')
-    #Note: this works because change is goes to db, but results in Django page error
-    #Django error: 'list' object has no attribute '__dict__'
+    
+    #redirect to cosmid detailview
+    def get_success_url(self):
+        cosmid_id = self.kwargs['cosmid_id']
+        return reverse_lazy('cosmid-detail', kwargs={'cosmid_id': cosmid_id})
     
 class SubcloneEditView(UpdateView):
     model = Subclone
@@ -1040,10 +1042,11 @@ def ORFContigCreate(request):
             new_contig_orf = contig_orf_form.save(commit=False)
             orf_seq = new_orf.orf_sequence
             
-            #remove all whitespace chars in string
+            #remove all whitespace chars in string, and change to uppercase
             orf_seq = ''.join(orf_seq.split())
+            orf_seq = orf_seq.upper()
             
-            #check that sequence input is not blank!
+            #check that sequence input is not blank
             if orf_seq == "":
                 form_errors['error'] = 'Error: sequence cannot be blank'
             
@@ -1052,48 +1055,83 @@ def ORFContigCreate(request):
                 
                 #if complement was indicated on form, get rev-com of ORF (for validation)
                 complement = new_contig_orf.complement
-                orf_seq_rc = ""
                 if complement == True:
+                    orf_seq_rc = "" 
                     rc = {'A':'T', 'T':'A', 'G':'C', 'C':'G'}
-                    orf_seq = orf_seq[::-1]
-                    for base in orf_seq:
+                    check_seq = orf_seq[::-1]
+                    for base in check_seq:
                         base = rc[base]
                         orf_seq_rc = orf_seq_rc + base
-                
+                    orf_seq_rc = ''.join(orf_seq_rc.split())
+                    orf_seq = orf_seq_rc 
+             
                 #check that orf sequence actually in contig before comitting to contig_orf join
                 contig_seq = new_contig_orf.contig.contig_sequence
-                if orf_seq in contig_seq or orf_seq_rc in contig_seq: 
-                    
+                if orf_seq in contig_seq: 
+                 
                     #check if orf_seq already present in orf table
+                    orf_db_check = 0
+                    orf_to_use = None 
                     orfs = ORF.objects.all()
                     for orf_object in orfs:
-                        
-                        #if so, use existing orf instance
-                        if orf_object.orf_sequence == orf_seq:
-                            new_orf = orf_object
-                        
-                        #otherwise, make new orf instance in orf table
-                        
-                            new_orf.orf_sequence = orf_seq
-                            new_orf.save()  
-                    
-                    #make new instance of contig_orf_join
+                        if orf_object.orf_sequence == new_orf.orf_sequence:
+                            orf_db_check = 1
+                            orf_to_use = orf_object
+
+                    #if an orf with same sequence found in the database, use that orf instance
+                    if orf_db_check == 1:    
+                        new_orf = orf_to_use
+                   
+                    #otherwise, make a new orf instance to use
+                    else:
+                        #new_orf.orf_sequence = orf_seq
+                        new_orf.save()
+                            
+                    #using the orf, make new instance of contig_orf_join
                     new_contig_orf.orf = new_orf
                     
-                    #calculate start and stop
-                    orf_start = contig_seq.index(orf_seq) + 1
-                    orf_stop = orf_start + len(orf_seq) - 1
+                    #calculate start and stop and set
+                    #if on the complement, stop is before start on contig
+                    if complement == True:
+                        orf_stop = contig_seq.index(orf_seq) + 1    # +1 to account for string index starting at 0
+                        orf_start = orf_stop + len(orf_seq) - 1     # -1 to account again for indexing
+
+                    #if not on the complement, start is before stop on contig
+                    else:
+                        orf_start = contig_seq.index(orf_seq) + 1   # +1 to account for string index starting at 0
+                        orf_stop = orf_start + len(orf_seq) - 1     # -1 to account again for indexing
+                    
+                    #set start and stop
                     new_contig_orf.start = orf_start
                     new_contig_orf.stop = orf_stop
                     
                     #manual add of orf-contig (not generated by database tool)
                     new_contig_orf.predicted = False
                     
-                    #save and redirect to contig's detailview
-                    new_contig_orf.save()
-                    #get contig name to use in redirect
-                    contig_name = new_contig_orf.contig.contig_name
-                    return HttpResponseRedirect('/contig/' + contig_name)  
+                    #check if this contig_orf_instance already in db, and return error
+                    #nb: need to check: contig id, orf id, start, stop, complement
+                    all_contig_orf_joins = Contig_ORF_Join.objects.all()
+                    contig_orf_db_check = 0
+                    for contig_orf_join in all_contig_orf_joins:
+                        if (contig_orf_join.contig.id == new_contig_orf.contig.id and
+                            contig_orf_join.orf.id == new_contig_orf.orf.id and
+                            contig_orf_join.start == new_contig_orf.start and
+                            contig_orf_join.stop == new_contig_orf.stop and
+                            contig_orf_join.complement == new_contig_orf.complement):
+                            contig_orf_db_check = 1
+                    
+                    if contig_orf_db_check == 1:
+                        form_errors['error'] = 'Error: attempt to add duplicate entry'
+                    
+                    #if it doesn't exist, save it
+                    else:
+        
+                        #save and redirect to contig's detailview
+                        new_contig_orf.save()
+                        
+                        #get contig name to use in redirect
+                        contig_name = new_contig_orf.contig.contig_name
+                        return HttpResponseRedirect('/contig/' + contig_name)   
             
                 #orf not in contig; return error message
                 else:
