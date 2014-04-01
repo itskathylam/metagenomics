@@ -961,7 +961,7 @@ class ContigEditView(UpdateView):
 class ContigORFDeleteView(DeleteView):
     model=Contig_ORF_Join
     template_name = 'contig_orf_delete.html'
-    success_url = reverse_lazy('orf-contig-list')
+    success_url = reverse_lazy('contig-list')
 
 # List views for non-lookup tables (Kathy)
 class SubcloneListView(ListView):
@@ -1020,6 +1020,12 @@ class CosmidEndTagListView(ListView):
     model = Cosmid
     template_name = 'cosmid_end_tag_all.html'
     paginate_by = 20
+    #context_object_name = 'cosmid_list'
+    #def get_context_data(self, **kwargs):
+    #    context=super(CosmidEndTagListView, self).get_context_data(**kwargs)
+    #    context['contig_list']=Contig.objects.filter(id=Cosmid.contig_cosmid.contig_id)
+    #    return context
+    
   
 #retrieve CosmidEndTagListView queryset to export as csv
 def cosmid_endtag_queryset(response):

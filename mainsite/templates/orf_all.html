@@ -6,8 +6,9 @@
 
 {% block content %}
     {% if orf_list %}    
-    <a href="/export/orf" >Download CSV File</a>
+    
     {% if search %}
+            <p><a href="/export/orf" >Download All Search Results</a></p>
             {% if search == 2 %}
                 <p>Search for '{{query}}' returned {{total}} results</p>
             {% else %}
@@ -27,6 +28,7 @@
                     </p></span>
                 </div>
         {% else %}
+                <p><a href="/export/orf" >Download All Records</a></p>
                 <div class="pagination">
                     <span class="page-links"><p>
                         {% if page_obj.has_previous %}
