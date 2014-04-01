@@ -959,15 +959,15 @@ class CosmidEditView(UpdateView):
         return cosmid_object
     
     def get_success_url(self):
-        return ('/cosmid/')
+        return ('/cosmid/' + self.get_object().cosmid_name)
 
 #only for editing a cosmid's endtags -- ideally should be combined with cosmid edit (Kathy)
 class CosmidEndTagEditView(UpdateView):
     model = Cosmid
     form_class = EndTagFormSetUpdate #requires both {{ form }} and {{ form_class }} in template
     template_name = 'cosmid_only_end_tag_edit.html'
-    slug_field = 'cosmid_name' 
-    slug_url_kwarg = 'cosmid_name'
+    #slug_field = 'cosmid_name' 
+    #slug_url_kwarg = 'cosmid_name'
     
     ##after editing, redirect to be the detailview for the cosmid
     #def get(self, request, **kwargs):
@@ -982,7 +982,7 @@ class CosmidEndTagEditView(UpdateView):
     #    return cosmid_object
     
     def get_success_url(self):
-        return ('/cosmid/' )
+        return ('/cosmid/')
 
 class SubcloneEditView(UpdateView):
     model = Subclone
