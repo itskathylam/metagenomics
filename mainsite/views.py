@@ -26,7 +26,7 @@ from os import system
 import pdb
 import Image
 from django.db.models import Q
-
+import re
 
 #Main, About etc
 
@@ -86,6 +86,11 @@ def AnnotationTool(request):
             
     return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
 
+        #results = request.POST
+        #pdb.set_trace()
+        # (echo "put body content here"; uuencode filename filename) | mail -s "subject here" email_address_here
+    #return render_to_response('tool_annotation_results.html', {'results': results })
+
 @login_required
 def ContigTool(request):
     context = {'pool':Pooled_Sequencing.objects.all()}
@@ -106,8 +111,8 @@ def ContigTool(request):
             pool = request.POST['pool']
             cos = request.POST.getlist('cos')
             cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values_list('id', 'cosmid_name')
-            contig_pipeline(pool, cos_selected)
-            results = read_csv('testtest.csv')
+            contig_pipeline(pool, cos_selected) #need to integrate this step with renes tool and generate the tool
+            results = read_csv('testtest.csv') #where does this come from????? should use database.....
             entries = []
             for row in results:
                 entry = row[0:3]
@@ -122,10 +127,32 @@ def ContigTool(request):
     variables = RequestContext(request, context)
     return render_to_response('tool_contig.html', variables)
 
+def ContigToolResults(request):
+    if request.method == 'POST':
+        if 'submit' in request.POST:
+            cosmidcontigs = request.POST.getlist('select')
+    
+        pattern = re.compile(r'^(.+)<\$\$>(.+)$')
+
+        joins = {}
+        for pair in cosmidcontigs:
+            match = pattern.match(pair)
+            joins[match.group(1)] = match.group(2)
+        
+        cosmids = []
+        for join in joins:
+            #pdb.set_trace()
+            cosmid = Cosmid.objects.get(cosmid_name=join)
+            contig = Contig.objects.get(contig_name=joins[join])
+            contig.cosmid.add(cosmid)
+            cosmids.append(join)
+        return HttpResponseRedirect('/results/basic/cosmid?query=' + ' '.join(cosmids))
+    
+    return render_to_response('tool_contig_result.html', {'results': joins}, context_instance=RequestContext(request))
 #read csv file into array
 def read_csv(filename):
     import csv
-    with open(filename, 'rb') as csvfile:
+    with open("contig_retrieval_tool/tmp/out/%s" %filename, 'rb') as csvfile:
         reader = csv.reader(csvfile, delimiter = ',')
         rows = []
         for row in reader:
@@ -142,10 +169,11 @@ def contig_pipeline(pool, cos_selected):
     primer_set2 = Primer.objects.select_related('primer').filter(primer_pair = '2').values_list('id','primer_name')
 
     HttpResponse(write_fasta(contigs), write_csv('primers_1', cosmids, primer_set1, seqs), write_csv('primers_2', cosmids, primer_set2, seqs))
-    HttpResponse(system("perl retrieval_pipeline.pl primers_1.csv primers_2.csv contigs.fa"))
+    HttpResponse(system("perl contig_retrieval_tool/retrieval_pipeline.pl contig_retrieval_tool/primers_1.csv contig_retrieval_tool/primers_2.csv contig_retrieval_tool/contigs.fa"))
+
     
 def write_csv(file_name, cosmids, primer_set, seqs):
-    with open("./%s.csv" %file_name, 'w') as f:
+    with open("./contig_retrieval_tool/tmp/out/%s.csv" %file_name, 'w') as f:
         csv = File(f)
         seqs = list(seqs)
         cos = dict(cosmids)
@@ -160,7 +188,7 @@ def write_csv(file_name, cosmids, primer_set, seqs):
 
 #writes contigs to fasta file(text.fa)    
 def write_fasta(contigs):
-    with open('./contigs.fa', 'w') as f:
+    with open('./contig_retrieval_tool/contigs.fa', 'w') as f:
         fasta = File(f)
         contigs = list(contigs)
         for contig, seq in contigs:
@@ -847,6 +875,8 @@ def ContigDetail(request, contig_name):
     for o in orfresults:
         orfids.append(o.orf_id)
     orfseq = ORF.objects.filter(id__in=orfids)
+    
+    
     return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
 
 
@@ -900,9 +930,11 @@ class CosmidEndTagEditView(UpdateView):
     template_name = 'cosmid_only_end_tag_edit.html'
     slug_field = 'cosmid_name' 
     slug_url_kwarg = 'cosmid_name'
-    success_url = reverse_lazy('cosmid-end-tag-list')
-    #Note: this works because change is goes to db, but results in Django page error
-    #Django error: 'list' object has no attribute '__dict__'
+    
+    #redirect to cosmid detailview
+    def get_success_url(self):
+        cosmid_id = self.kwargs['cosmid_id']
+        return reverse_lazy('cosmid-detail', kwargs={'cosmid_id': cosmid_id})
     
 class SubcloneEditView(UpdateView):
     model = Subclone
@@ -938,7 +970,7 @@ class ContigEditView(UpdateView):
 class ContigORFDeleteView(DeleteView):
     model=Contig_ORF_Join
     template_name = 'contig_orf_delete.html'
-    success_url = reverse_lazy('orf-contig-list')
+    success_url = reverse_lazy('contig-list')
 
 # List views for non-lookup tables (Kathy)
 class SubcloneListView(ListView):
@@ -997,6 +1029,12 @@ class CosmidEndTagListView(ListView):
     model = Cosmid
     template_name = 'cosmid_end_tag_all.html'
     paginate_by = 20
+    #context_object_name = 'cosmid_list'
+    #def get_context_data(self, **kwargs):
+    #    context=super(CosmidEndTagListView, self).get_context_data(**kwargs)
+    #    context['contig_list']=Contig.objects.filter(id=Cosmid.contig_cosmid.contig_id)
+    #    return context
+    
   
 #retrieve CosmidEndTagListView queryset to export as csv
 from itertools import chain
@@ -1085,10 +1123,11 @@ def ORFContigCreate(request):
             new_contig_orf = contig_orf_form.save(commit=False)
             orf_seq = new_orf.orf_sequence
             
-            #remove all whitespace chars in string
+            #remove all whitespace chars in string, and change to uppercase
             orf_seq = ''.join(orf_seq.split())
+            orf_seq = orf_seq.upper()
             
-            #check that sequence input is not blank!
+            #check that sequence input is not blank
             if orf_seq == "":
                 form_errors['error'] = 'Error: sequence cannot be blank'
             
@@ -1097,48 +1136,83 @@ def ORFContigCreate(request):
                 
                 #if complement was indicated on form, get rev-com of ORF (for validation)
                 complement = new_contig_orf.complement
-                orf_seq_rc = ""
                 if complement == True:
+                    orf_seq_rc = "" 
                     rc = {'A':'T', 'T':'A', 'G':'C', 'C':'G'}
-                    orf_seq = orf_seq[::-1]
-                    for base in orf_seq:
+                    check_seq = orf_seq[::-1]
+                    for base in check_seq:
                         base = rc[base]
                         orf_seq_rc = orf_seq_rc + base
-                
+                    orf_seq_rc = ''.join(orf_seq_rc.split())
+                    orf_seq = orf_seq_rc 
+             
                 #check that orf sequence actually in contig before comitting to contig_orf join
                 contig_seq = new_contig_orf.contig.contig_sequence
-                if orf_seq in contig_seq or orf_seq_rc in contig_seq: 
-                    
+                if orf_seq in contig_seq: 
+                 
                     #check if orf_seq already present in orf table
+                    orf_db_check = 0
+                    orf_to_use = None 
                     orfs = ORF.objects.all()
                     for orf_object in orfs:
-                        
-                        #if so, use existing orf instance
-                        if orf_object.orf_sequence == orf_seq:
-                            new_orf = orf_object
-                        
-                        #otherwise, make new orf instance in orf table
-                        
-                            new_orf.orf_sequence = orf_seq
-                            new_orf.save()  
-                    
-                    #make new instance of contig_orf_join
+                        if orf_object.orf_sequence == new_orf.orf_sequence:
+                            orf_db_check = 1
+                            orf_to_use = orf_object
+
+                    #if an orf with same sequence found in the database, use that orf instance
+                    if orf_db_check == 1:    
+                        new_orf = orf_to_use
+                   
+                    #otherwise, make a new orf instance to use
+                    else:
+                        #new_orf.orf_sequence = orf_seq
+                        new_orf.save()
+                            
+                    #using the orf, make new instance of contig_orf_join
                     new_contig_orf.orf = new_orf
                     
-                    #calculate start and stop
-                    orf_start = contig_seq.index(orf_seq) + 1
-                    orf_stop = orf_start + len(orf_seq) - 1
+                    #calculate start and stop and set
+                    #if on the complement, stop is before start on contig
+                    if complement == True:
+                        orf_stop = contig_seq.index(orf_seq) + 1    # +1 to account for string index starting at 0
+                        orf_start = orf_stop + len(orf_seq) - 1     # -1 to account again for indexing
+
+                    #if not on the complement, start is before stop on contig
+                    else:
+                        orf_start = contig_seq.index(orf_seq) + 1   # +1 to account for string index starting at 0
+                        orf_stop = orf_start + len(orf_seq) - 1     # -1 to account again for indexing
+                    
+                    #set start and stop
                     new_contig_orf.start = orf_start
                     new_contig_orf.stop = orf_stop
                     
                     #manual add of orf-contig (not generated by database tool)
                     new_contig_orf.predicted = False
                     
-                    #save and redirect to contig's detailview
-                    new_contig_orf.save()
-                    #get contig name to use in redirect
-                    contig_name = new_contig_orf.contig.contig_name
-                    return HttpResponseRedirect('/contig/' + contig_name)  
+                    #check if this contig_orf_instance already in db, and return error
+                    #nb: need to check: contig id, orf id, start, stop, complement
+                    all_contig_orf_joins = Contig_ORF_Join.objects.all()
+                    contig_orf_db_check = 0
+                    for contig_orf_join in all_contig_orf_joins:
+                        if (contig_orf_join.contig.id == new_contig_orf.contig.id and
+                            contig_orf_join.orf.id == new_contig_orf.orf.id and
+                            contig_orf_join.start == new_contig_orf.start and
+                            contig_orf_join.stop == new_contig_orf.stop and
+                            contig_orf_join.complement == new_contig_orf.complement):
+                            contig_orf_db_check = 1
+                    
+                    if contig_orf_db_check == 1:
+                        form_errors['error'] = 'Error: attempt to add duplicate entry'
+                    
+                    #if it doesn't exist, save it
+                    else:
+        
+                        #save and redirect to contig's detailview
+                        new_contig_orf.save()
+                        
+                        #get contig name to use in redirect
+                        contig_name = new_contig_orf.contig.contig_name
+                        return HttpResponseRedirect('/contig/' + contig_name)   
             
                 #orf not in contig; return error message
                 else:

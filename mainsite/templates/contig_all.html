@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 
 {% block subtitle %}
-<h2 class="list">Contigs</h2>
+<img src="{{ STATIC_URL }}icons/allblack64.png"><h2 class="list">Contigs</h2>
 {% endblock %}
 
 {% block content %}
     {% if contig_list %}
-        <a href="/export/contig" >Download CSV File</a>
+        
         {% if search %}
+                <p><a href="/export/contig" >Download All Search Results</a></p>
                 {% if search == 2%}
                 <p>Search for '{{query}}' returned {{total}} results</p>
                 {% else %}
@@ -27,6 +28,7 @@
                     </p></span>
                 </div>
         {% else %}
+                <p><a href="/export/contig" >Download All Records</a></p>
                 <p>All Records</p>
                 <div class="pagination">
                     <span class="page-links"><p>
@@ -42,16 +44,14 @@
                     </p></span>
                 </div>
         {% endif %}
-        <table class="list">
 
+        <table class="list">
             <tr>
                 <th>Contig Name</th>
                 <th>Pool ID</th>
                 <th>Contig Sequence</th>
                 <th>Contig NCBI Accession</th>
-                <th>BLAST Hit NCBI Accession</th>
-                <th>Image</th>
-                
+                <th>BLAST Hit NCBI Accession</th>                
             </tr>
         {% for contig in contig_list %}
             <tr>
@@ -60,11 +60,9 @@
                 <td><textarea rows="5" cols="100" readonly=true>{{ contig.contig_sequence }}</textarea></td>
                 <td>{{ contig.contig_accession }}</td>
                 <td>{{ contig.blast_hit_accession }}</td>
-                <td>{{ contig.image }}</td>
             </tr>
         {% endfor %}
-
-         </table>
+        </table>
 
         {% if search %}
                 <div class="pagination">

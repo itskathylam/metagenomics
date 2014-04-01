@@ -13,6 +13,8 @@
 {% endblock %}
 
 {% block content %}
+<form action="{% url 'contig-tool-results' %}" method='POST'>
+{% csrf_token %}
 <table style="border-collapse: collapse;">
 <tr><th>Cosmid Name</th><th>Select Contig</th><th>Strand</th><th>Contig Name</th><th>Percent Identity</th><th>End Tag Length</th><th>Contig Length</th><th>Match Type</th></tr>
 
@@ -20,20 +22,24 @@
 <tr>
     
         {% ifchanged cos %}<td>{{cos}}</td>{% else %}<td> </td>{% endifchanged %}
-        <td><input type="checkbox" name="select" {%if "1" in match%}checked{%endif%}/></td>
+        {% ifchanged con %}
+                <td><input type="checkbox" name="select" value="{{ cos }}<$$>{{ con }}" {% if "1" in match %}checked{% endif %}/></td>
+        {% else %}
+                <td> </td>
+        {% endifchanged %}
         <td>{% if "F" in strand %}Forward{% endif %}
             {% if "R" in strand %}Reverse{% endif %}</td>
         <td>{{con}}</td>
         <td>{{iden|floatformat}}</td>
         <td>{{endlen}}</td>
         <td>{{conlen}}</td>
-        <td>{% if "1" in match %}Match{% endif %}
-            {% if "2" in match %}Mismatch{% endif %}
-            {% if "3" in match %}Ambiguous{% endif %}</td>
+        <td {% if "1" in match %}style="background-color:#339933">Match{% endif %}
+            {% if "2" in match %}style="background-color:#990033">Mismatch{% endif %}
+            {% if "3" in match %}style="background-color:#FF9933">Ambiguous{% endif %}</td>
 </tr> 
     {% endfor %}
 
     <input type="submit" name="submit" value="Submit"/>
-    
 </table>
+</form>
 {% endblock %}

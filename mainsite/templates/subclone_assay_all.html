@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 
 {% block subtitle %}
-<h2 class="list">Subclone Assays</h2>
+<img src="{{ STATIC_URL }}icons/allblack64.png"><h2 class="list">Subclone Assays</h2>
 {% endblock %}
 
 {% block content %}
     {% if subclone_assay_list %}
-        <a href="/export/subclone_assay" >Download CSV File</a>
+        
                 {% if search %}
+                        <p><a href="/export/subclone_assay" >Download All Search Results</a></p>
                         {% if search == 2 %}
                         <p>Search for '{{query}}' returned {{total}} results</p>
                         {% else %}
@@ -28,6 +29,7 @@
                         </p></span>
                         </div>
                 {% else %}
+                        <p><a href="/export/subclone_assay" >Download All Records</a></p>
                         <p>All Records</p>
                 <div class="pagination">
                     <span class="page-links"><p>
