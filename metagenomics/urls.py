@@ -76,7 +76,6 @@ urlpatterns = patterns('',
     
     url(r'^search/blast/$', BlastSearch, name='blast-search'),
     url(r'^results/blast/', BlastResults, name='blast-results'),
-
     
     #listviews for lookup tables 
     url(r'^primer/$', PrimerListView.as_view(), name='primer-list'),
@@ -110,7 +109,6 @@ urlpatterns = patterns('',
     url(r'^add/orfcontig/$', ORFContigCreate, name='orf-contig-add'),
     url(r'^add/contigpool/$', ContigPoolCreate, name='contig-pool-add'),
     
-
     #export URLS
     url(r'^export/primer', primer_queryset),
     url(r'^export/antibiotic', antibiotic_queryset),
