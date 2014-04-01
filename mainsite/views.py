@@ -27,6 +27,7 @@ import pdb
 import Image
 from django.db.models import Q
 import re
+import base64 #used to convert pngs to base64 for database storage
 from itertools import chain
 
 
@@ -78,7 +79,7 @@ def ContigTool(request):
 def AnnotationTool(request):
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
-    
+    testpicture = ''
     if request.method == "POST":
         if 'submit' in request.POST:
             email = request.POST['email']
@@ -86,7 +87,23 @@ def AnnotationTool(request):
             #orf_data(contigs)
             #read csv and store in db orf-contigs(also images)
             
-    return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
+            #sends the user an email
+            with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
+                bimg = base64.b64encode(img.read())
+                contig = Contig.objects.get(contig_name="scaffold58_1")
+                contig.image_contig = bimg
+            
+                contig.contig_accession = "IMAGE?"
+                contig.save()
+                
+            contigget = Contig.objects.get(contig_name="scaffold58_1")
+            
+            image = contigget.image_contig
+            
+            testpicture = base64.b64decode(image)
+            
+            #system("(echo 'this is a test email. see attachment'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
+    return render_to_response('tool_annotation.html', {'image': testpicture, 'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
 
 @login_required
 def AnnotationToolResults(request):
@@ -94,6 +111,7 @@ def AnnotationToolResults(request):
         results = request.POST
         #pdb.set_trace()
         # (echo "put body content here"; uuencode filename filename) | mail -s "subject here" email_address_here
+        
     return render_to_response('tool_annotation_results.html', {'results': results })
 
 @login_required
@@ -876,7 +894,7 @@ def CosmidDetail(request, cosmid_name):
         contigids.append(c.id)
     
     #returns all the orfs for the contigs that are associated with the cosmid
-    orfresults = Contig_ORF_Join.objects.filter(contig_id__in=contigids)
+    orfresults = Contig_ORF_Join.objects.filter(contig_id__in=contigids).order_by('start')
     orfids = []
     for o in orfresults:
         orfids.append(o.orf_id)
@@ -902,7 +920,7 @@ def ContigDetail(request, contig_name):
     accession = contig.contig_accession
     cosmids = Cosmid.objects.filter(contig=contig.id)
     
-    orfresults = Contig_ORF_Join.objects.filter(contig_id=contig.id)
+    orfresults = Contig_ORF_Join.objects.filter(contig_id=contig.id).order_by('start')
     orfids = []
     for o in orfresults:
         orfids.append(o.orf_id)
@@ -1212,14 +1230,17 @@ def ORFContigCreate(request):
                     
                     #calculate start and stop and set
                     #if on the complement, stop is before start on contig
-                    if complement == True:
-                        orf_stop = contig_seq.index(orf_seq) + 1    # +1 to account for string index starting at 0
-                        orf_start = orf_stop + len(orf_seq) - 1     # -1 to account again for indexing
+                    
+                    #SWAPS THE START AND STOP POSITION FOR REVERSE SEQUENCES - NOT DONE BY CONVENTION SO REMOVED
+                    #if complement == True:
+                    #    orf_stop = contig_seq.index(orf_seq) + 1    # +1 to account for string index starting at 0
+                    #    orf_start = orf_stop + len(orf_seq) - 1     # -1 to account again for indexing
 
                     #if not on the complement, start is before stop on contig
-                    else:
-                        orf_start = contig_seq.index(orf_seq) + 1   # +1 to account for string index starting at 0
-                        orf_stop = orf_start + len(orf_seq) - 1     # -1 to account again for indexing
+                    #else:
+                    
+                    orf_start = contig_seq.index(orf_seq) + 1   # +1 to account for string index starting at 0
+                    orf_stop = orf_start + len(orf_seq) - 1     # -1 to account again for indexing
                     
                     #set start and stop
                     new_contig_orf.start = orf_start
