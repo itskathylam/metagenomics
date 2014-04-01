@@ -26,6 +26,7 @@ urlpatterns = patterns('',
     url(r'^tools/annotation/$', AnnotationTool, name='annotation'),
     url(r'^tools/annotation/results/$', AnnotationToolResults, name='annotation-results'),
     url(r'^tools/contig/results/$', ContigToolResults, name='contig-tool-results'),
+
     
     #Detail views
     url(r'^cosmid/(?P<cosmid_name>.*)/$', CosmidDetail, name='cosmid-detail'),

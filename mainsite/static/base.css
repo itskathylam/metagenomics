@@ -380,10 +380,11 @@ table.tool td a {
 
 table.list td {
     text-align: center;
-    padding: 0px; /* if this is set the padding is not a link. if its not there the cell looks to crowded. need to fix */
+    padding: 5px; /* if this is set the padding is not a link. if its not there the cell looks to crowded. need to fix */
     background-color: #EEEEEE;
     border: 0px;
     vertical-align: middle;
+    height: 3em
 }
 
 table.list td a {

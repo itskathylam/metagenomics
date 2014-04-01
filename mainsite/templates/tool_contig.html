@@ -60,7 +60,7 @@ Users must validate the contig retrieval results before they are committed to th
             <tr><th>NCBI SRA Accession</th><td>{{selected.ncbi_sra_accession}}</td></tr>
             <tr><th>Comments</th><td>{{selected.pool_comments}}</td></tr>
         {% endfor %}
-
+        
         </table>
 
 </section>    
@@ -71,21 +71,18 @@ Users must validate the contig retrieval results before they are committed to th
         
     <table>
         
-        <tr><input type="submit" name="submit" value="Submit"/></tr>
-        <tr><th>Select Cosmids</th><th>Cosmids in Pool</th></tr>
-        {% for cos in cosmids%}
-            {% for contig in contigs %}
-                {% for cosmid in contig.cosmid.all %}
-                    {% ifequal cos cosmid %}
-                    <tr><td></td><td>{{cosmid}}</td></tr>
-                    {% else%}
-                    <tr><td><input type="checkbox" name="cos" value="{{cos}}" checked>{{cos}}</input></td><td></td></tr>
-                    {% endifequal %}
-                {% endfor %}     
+        <tr><th>Select Cosmids</th></tr>
+        
+            {% for cos in cosmids %}
+                {% if cos in filtered %}
+                    <tr><td>{{cos}} within pool</td></tr>
+                {% else %}
+                    <tr><td><input type="checkbox" name="cos" checked/>{{cos}}</td></tr>
+                {% endif %}
             {% endfor %}
-        {% endfor %}
+           
     </table>  
-    
+        <input type="submit" name="submit" value="Submit" />
         </form>
     </table>
 </section>
