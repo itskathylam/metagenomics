@@ -1,10 +1,7 @@
 #!/usr/bin/perl
 use warnings;
 use strict;
-BEGIN {
-    $ENV{BLASTPLUSDIR} = '/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin';
-    $ENV{PATH} .= ':/usr/bin/emboss/emboss';
-}
+
 use lib '/usr/share/perl5';
 #use lib '/usr/bin/emboss/emboss';
 use lib '/usr/lib/cpan/build/';
@@ -22,83 +19,33 @@ use Bio::SeqIO;
 use Data::Dumper;
 use File::Path qw/make_path remove_tree/;
 use Storable;
+use Cwd 'chdir';
 #$" = "\n";
 
-if (scalar(@ARGV) == 1) {
+my %contig_orf;
+if (scalar(@ARGV) == 2) {
     #-----------------------------------------------------------------------#
     #                                                                       #
     #                       Set Parameters                                  #
     #                                                                       #
     #-----------------------------------------------------------------------#
-    #-----------------------------------------------------------------------#
-    #                   Worksheet Colours                                   #
-    #-----------------------------------------------------------------------#
-=pod
-    my $label_cell_color = 'aqua';          # Label cell colour
-    my $f_cell_color = 'aqua';              # Standard F_ cell colour
-    my $r_cell_color = 'yellow';            # Standard R_ cell colour
-    my $match_cell_color = 'aqua';          # Matched Contig cell colour
-    my $ambig_cell_color = 'yellow';        # Ambiguous Results cell colour 
-    #-----------------------------------------------------------------------#
-    #                   Spreadsheet Parameters                              #
-    #-----------------------------------------------------------------------#
-    my $out_spreadsheet = 'matched.xls';    # Report .xls name
-    my $write_workbook = Spreadsheet::WriteExcel->new($out_spreadsheet);
-    my $worksheet = $write_workbook->add_worksheet();
-                      # Significant Hit/Query Length
-    $write_workbook->set_custom_color(39, '#a7a7a7');   # Labels
-    #FORWARD
-    $write_workbook->set_custom_color(40, '#CCFFFF');   # Forward
-    $write_workbook->set_custom_color(45, '#99FF66');   # Matched Hit
-    $write_workbook->set_custom_color(46, '#FFFF99');   # Nonmatched Hit
-    
-    #REVERSE
-    $write_workbook->set_custom_color(41, '#33FFFF');   # Reverse
-    $write_workbook->set_custom_color(42, '#00FF00');   # Matched Hit
-    $write_workbook->set_custom_color(43, '#FFFF33');   # Nonmatched Hit
-    $write_workbook->set_custom_color(44, '#ed495d');   # Ambiguous
-=cut
+
      my $sig_level = 0.65; 
     #-----------------------------------------------------------------------#
     #                   Private Variables                                   #
     #-----------------------------------------------------------------------#
+    
     my $parentid = $ARGV[0];
-    my $_contig_retrieval = retrieve("storage/write.$parentid") or die "Could not retrieve $!\n";
+    my $cwd = $ARGV[1];
+    chdir("$cwd");
+    my $_contig_retrieval = retrieve("temp/storage/write.$parentid") or die "Could not retrieve $!\n";
     my %_contig_retrieval = %{$_contig_retrieval};
     my $row_count = 0;
     my %_graphic_output;
-    #open(my $_outcsv, "+>>", "data/_temp_data.csv") or die "Could not export to CSV file, $!\n";
-    #-----------------------------------------------------------------------#
-    #-----------------------------------------------------------------------#    
+    open(my $_outcsv, ">>", "tmp/out/testtest.csv") or die "Could not export to CSV file, $!\n";
 
-
-#---------------------------------------------------------------------------
-    #                           Spreadsheet
-    #---------------------------------------------------------------------------
-    #   Flag:   0 - Default
-    #           -1 - Spurious
-    #           1 - Significant - Matched Hit Seq
-    #           2 - Significant - Nonmatched Hit Seq
-    #           3 - Ambiguous
-    #           4 - No Contig Hit
-=pod
-    my $format_title = $write_workbook->add_format(bg_color => 39);
-    my $format_f = $write_workbook->add_format(bg_color => 40);
-    my $format_r = $write_workbook->add_format(bg_color => 41);
-    my $format_fmatched_hit = $write_workbook->add_format(bg_color => 45);
-    my $format_fnonmatched_hit = $write_workbook->add_format(bg_color => 46);
-    my $format_rmatched_hit = $write_workbook->add_format(bg_color => 42);
-    my $format_rnonmatched_hit = $write_workbook->add_format(bg_color => 43);
-    my $format_ambg = $write_workbook->add_format(bg_color => 44);
-    my $col_count = 0;
-    my @titles = qw/End_Tag Contig_Seq Algorithm E_Value %_Identity Num_Identity Endtag_Length HSP_Length Query_Start Query_End Contig_Start Contig_End Contig_Hit_Seq Contig_Seq ORF_Seq ORF_Annotation/;
-        foreach my $label(@titles){
-            $worksheet->write($row_count, $col_count, $label, $format_title);
-            $col_count++;
-        }
-    $row_count++;
-    $col_count = 0;
-=cut
+    
+    
     #--------------------------------------------------------------------------
     #-----------------DETERMINING MATCHES AND SIGNIFICANCE---------------------
     #--------------------------------------------------------------------------
@@ -129,9 +76,9 @@ if (scalar(@ARGV) == 1) {
             }
             push(@temp_cnt, $temp_rf);                                          #0   e.g. F_1
             push(@temp_hit, $_contig_retrieval{$temp_query}{$temp_rf}->[1]);    #1   Hit name      i.e. lsl|scaffold751_3
-            push(@temp_eval, $_contig_retrieval{$temp_query}{$temp_rf}->[3]);   #3   Blast e-value
-            push(@temp_len, $_contig_retrieval{$temp_query}{$temp_rf}->[7]);    #7   HSP length
-            push(@temp_qlen, $_contig_retrieval{$temp_query}{$temp_rf}->[6]);   #6   Length of the end-tag query sequence
+            push(@temp_eval, $_contig_retrieval{$temp_query}{$temp_rf}->[3]);   #2   Blast e-value
+            push(@temp_len, $_contig_retrieval{$temp_query}{$temp_rf}->[7]);    #3   HSP length
+            push(@temp_qlen, $_contig_retrieval{$temp_query}{$temp_rf}->[6]);   #4   Length of the end-tag query sequence
             
         }
         if($_tf =~ /R/){
@@ -157,7 +104,6 @@ if (scalar(@ARGV) == 1) {
         
         #---------------------------F_1 Sequence-------------------------------------------------
         #----------------------------------------------------------------------------------------
-        
         #Sets the default flags for the retrieved sequences
         my $_f1_rank_flag = -1;
         my $_r1_rank_flag = -1;
@@ -229,7 +175,6 @@ if (scalar(@ARGV) == 1) {
                     last;
                 }
                 my $_qlength_per = ($_contig_retrieval{$temp_query}{R_1}->[7] / $_contig_retrieval{$temp_query}{R_1}->[6]);
-                
                 #--- R_1 Hit match :COMPARE TO: Array of F_ List
                 #--- Hit Match is the same and above a significant length percentage
                 if ((($_contig_retrieval{$temp_query}{R_1}->[1]) eq ($comp_storage{F}->[1]->[$i])) && ($_qlength_per > $sig_level) && ((($comp_storage{F}->[3]->[$i]) / ($comp_storage{F}->[4]->[$i])) > $sig_level)) {
@@ -269,11 +214,14 @@ if (scalar(@ARGV) == 1) {
     #--------------------------------------------------------------------------
         
         
-
         foreach my $temp_rf(sort keys($_contig_retrieval{$temp_query})){
+            my $s = substr($temp_rf, 0,1);
+            
             if ((substr($temp_rf, 0,1)) =~ /F/) {
                 if (grep{$_ eq $temp_rf} @flag_storage) {
-                   $_contig_retrieval{$temp_query}{$temp_rf}->[15] = $_f1_rank_flag;
+                    writeContigFasta($_contig_retrieval{$temp_query}{$temp_rf}->[1], $_contig_retrieval{$temp_query}{$temp_rf}->[13]);
+                    $_contig_retrieval{$temp_query}{$temp_rf}->[15] = $_f1_rank_flag;
+                    print $_outcsv "$temp_query, $temp_rf, $_contig_retrieval{$temp_query}{$temp_rf}->[1], $_contig_retrieval{$temp_query}{$temp_rf}->[2], $_contig_retrieval{$temp_query}{$temp_rf}->[3], $_contig_retrieval{$temp_query}{$temp_rf}->[4], $_contig_retrieval{$temp_query}{$temp_rf}->[5], $_contig_retrieval{$temp_query}{$temp_rf}->[6], $_contig_retrieval{$temp_query}{$temp_rf}->[7], $_contig_retrieval{$temp_query}{$temp_rf}->[8], $_contig_retrieval{$temp_query}{$temp_rf}->[10], $_contig_retrieval{$temp_query}{$temp_rf}->[11], $_contig_retrieval{$temp_query}{$temp_rf}->[15]\n";
                 } else {
                     foreach my $retrieved_element(@{$_contig_retrieval{$temp_query}{$temp_rf}}){
                         $_f1_rank_flag = -1;
@@ -282,7 +230,9 @@ if (scalar(@ARGV) == 1) {
                 }
             } elsif ((substr($temp_rf, 0,1)) =~ /R/){
                 if (grep{$_ eq $temp_rf} @flag_storage) {
+                    writeContigFasta($_contig_retrieval{$temp_query}{$temp_rf}->[1], $_contig_retrieval{$temp_query}{$temp_rf}->[13]);
                     $_contig_retrieval{$temp_query}{$temp_rf}->[15] = $_r1_rank_flag;
+                    print $_outcsv "$temp_query, $temp_rf, $_contig_retrieval{$temp_query}{$temp_rf}->[1], $_contig_retrieval{$temp_query}{$temp_rf}->[2], $_contig_retrieval{$temp_query}{$temp_rf}->[3], $_contig_retrieval{$temp_query}{$temp_rf}->[4], $_contig_retrieval{$temp_query}{$temp_rf}->[5], $_contig_retrieval{$temp_query}{$temp_rf}->[6], $_contig_retrieval{$temp_query}{$temp_rf}->[7], $_contig_retrieval{$temp_query}{$temp_rf}->[8], $_contig_retrieval{$temp_query}{$temp_rf}->[10], $_contig_retrieval{$temp_query}{$temp_rf}->[11], $_contig_retrieval{$temp_query}{$temp_rf}->[15]\n";
                 } else {
                     foreach my $retrieved_element(@{$_contig_retrieval{$temp_query}{$temp_rf}}){
                         $_r1_rank_flag = -1;
@@ -292,12 +242,35 @@ if (scalar(@ARGV) == 1) {
             }
         }
         @flag_storage = ();
+        delete $comp_storage{'R'};
+        delete $comp_storage{'F'};
     }
-    system("rm -rf ./storage/write*");
-    store (\%_contig_retrieval, "storage/write.$$") or die "could not store";
+    system("rm -rf .temp/storage/write*");
+    store (\%contig_orf, "temp/storage/contig.$$") or die "Could not store \%contig_orf\n";
+    store (\%_contig_retrieval, "temp/storage/write.$$") or die "could not store";
     print $$;
 }
 
+sub writeContigFasta{
+    my ($scaf_name, $scaf_seq) = @_;
+    if ($scaf_name =~ /^(?:lcl\|)?(.+)$/) {
+        $scaf_name = $1;
+    }
+    unless(exists $contig_orf{$scaf_name}){
+        $scaf_seq =~ s/(.{1,80})/$1\n/gs;
+        $contig_orf{$scaf_name} = [$scaf_seq,       #0 Contig Sequence
+                                   {                #1  Gene Annotations
+                                            'glimmer'   => {},
+                                            'genbank'   => {},
+                                            'manual'    => {}
+                                   }];
+        my $filename = 'temp/data/' . $scaf_name . '.fa';
+        open(my $out_file, ">", $filename) or die "Could not create $filename : $!\n";
+        print $out_file '>' . $scaf_name . "\n";
+        print $out_file $scaf_seq . "\n";
+        close $out_file
+    }
+}
 __END__
     #--------------------------------------------------------------------------
     #---------------------------WRITING RESULTS--------------------------------
