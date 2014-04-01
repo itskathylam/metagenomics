@@ -76,14 +76,17 @@ def ContigTool(request):
 def AnnotationTool(request):
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
+    
+    if request.method == "POST":
+        if 'submit' in request.POST:
+            email = request.POST['email']
+            contigs = request.POST.getlist('contig')
+            #orf_data(contigs)
+            #read csv and store in db orf-contigs(also images)
+            
     return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
 
-def AnnotationToolResults(request):
-    if request.method == "POST":
-        results = request.POST
-        pdb.set_trace()
-    return render_to_response('tool_annotation_results.html', {'results': results })
-
+@login_required
 def ContigTool(request):
     context = {'pool':Pooled_Sequencing.objects.all()}
     if request.method == "POST":
@@ -92,8 +95,12 @@ def ContigTool(request):
             pool = Pooled_Sequencing.objects.all()
             details = Pooled_Sequencing.objects.filter(id = pool_id)
             cosmids = Cosmid.objects.filter(pool = pool_id)
-            contigs = Contig.objects.all()
-            context = {'pool': pool, 'detail': details, 'cosmids': cosmids, 'contigs': contigs}
+            filter_cos = []
+            for contig in Contig.objects.all():
+                for cosmid in contig.cosmid.all():
+                    filter_cos.append(cosmid)
+        
+            context = {'pool': pool, 'detail': details, 'cosmids': cosmids, 'filtered': filter_cos}
             
         if 'submit' in request.POST:
             pool = request.POST['pool']
@@ -136,13 +143,6 @@ def contig_pipeline(pool, cos_selected):
 
     HttpResponse(write_fasta(contigs), write_csv('primers_1', cosmids, primer_set1, seqs), write_csv('primers_2', cosmids, primer_set2, seqs))
     HttpResponse(system("perl retrieval_pipeline.pl primers_1.csv primers_2.csv contigs.fa"))
-    changed_rows = Contig.objects.filter(pool = pool_id)
-    #for r in changed_rows:
-    #    r.image_contig = Image.open("./img/contig.png")
-    #    r.image_genbank = Image.open("./img/genbank.png")
-    #    r.image_predicted = Image.open("./img/predicted.png")
-    #    r.image_manual = Image.open("./img/manual.png")
-    #    r.save()
     
 def write_csv(file_name, cosmids, primer_set, seqs):
     with open("./%s.csv" %file_name, 'w') as f:
@@ -169,33 +169,35 @@ def write_fasta(contigs):
         f.closed
 
 
-def orf_data(request):
-    contig_id = Contig.objects.filter(contig_name = 'scaffold58_1').values('id')
-    contigs = Contig.objects.filter(contig_name = 'scaffold58_1').values_list('contig_name', 'contig_sequence', 'blast_hit_accession')
-    orfs = Contig_ORF_Join.objects.filter(contig = contig_id).values_list('start', 'stop', 'complement', 'prediction_score')
-    anno = ORF.objects.filter(contig = contig_id).values_list('annotation', 'orf_sequence')
-   
-    return HttpResponse(write_lib(contigs, orfs, anno))
+def orf_data(request, contig_list):
+    for contig in contig_list:
+        contig_id = Contig.objects.filter(contig_name = contig).values('id')
+        contigs = Contig.objects.filter(contig_name = contig).values_list('contig_name', 'contig_sequence', 'blast_hit_accession')
+        orfs = Contig_ORF_Join.objects.filter(contig = contig_id).values_list('start', 'stop', 'complement', 'prediction_score')
+        anno = ORF.objects.filter(contig = contig_id).values_list('annotation', 'orf_sequence')
+    write_lib(contigs, orfs, anno)
+    #execute annotations pipeline 
+    
+    return HttpResponse()
 
 def write_lib(contigs, orfs, anno):
-    with open('./data.lib', 'w') as f:
+    with open("contigs.name_data.lib", 'w') as f:
         data = File(f)
-        data.write('#!/usr/bin/perl \n sub data{\n')
-        contig = ''
-        accession = ''
-        count = 1
+        data.write('#!/usr/bin/perl \n sub data{\n$contig_orf{')
+       
         for name, seq, access in contigs:
             contig = name
             accession = access
-            data.write('$contig_orf{' + name + '}\n = [\'' + seq + '\',\n')
-        data.write('{\'glimmer\' => {},\n')
-        data.write('\'genbank\' => {},\n')
-        for start, stop, comp, score in orfs:
-            for ann, seqs in anno:
-                    comp = -1 if comp == 1 else 1
-                    data.write('\'manual\' =>{\'' + contig + '-' + str(++count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
-                    data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
-                    data.write('=>\'' + ann + '\',\n sequence =>\'' + seqs + '\'\n}}}' + accession + '];\n')
+            data.write(name + '}\n = [\'' + seq + '\',\n')
+            data.write('{\'glimmer\' => {},\n')
+            data.write('\'genbank\' => {},\n')
+            for start, stop, comp, score in orfs:
+                for ann, seqs in anno:
+                        comp = -1 if comp == 1 else 1
+                        data.write('\'manual\' =>{\'' + contig + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
+                        data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
+                        data.write('=>\'' + ann + '\',\n sequence =>\'' + seqs + '\'\n},')
+        #}}' + accession + '];\n'
         data.write('return(\%contig_orf);} \n 1;') 
         data.closed
         f.closed
@@ -944,7 +946,7 @@ class SubcloneListView(ListView):
     template_name = 'subclone_all.html'
     paginate_by = 20
 
-#retrieve SubcloneView queryset to export as csv
+#retrieve SubcloneListView queryset to export as csv
 def subclone_queryset(response):
     qs = Subclone.objects.all()
     return queryset_export_csv(qs)
@@ -964,7 +966,7 @@ class SubcloneAssayListView(ListView):
     template_name = 'subclone_assay_all.html'
     paginate_by = 20
 
-#retrieve SubcloneListView queryset to export as csv
+#retrieve SubcloneAssayListView queryset to export as csv
 def subclone_assay_queryset(response):
     qs = Subclone_Assay.objects.all()
     return queryset_export_csv(qs)
@@ -997,8 +999,11 @@ class CosmidEndTagListView(ListView):
     paginate_by = 20
   
 #retrieve CosmidEndTagListView queryset to export as csv
+from itertools import chain
 def cosmid_endtag_queryset(response):
-    qs = Cosmid.objects.all()
+    qs1 = list(Cosmid.objects.all())
+    qs2 = list(End_Tag.objects.all())
+    qs = chain(qs1, qs2)
     return queryset_export_csv(qs)  
     
 class ORFContigListView(ListView):
@@ -1207,26 +1212,27 @@ def queryset_export_csv(qs):
 
     for obj in qs:
         row = []
-        line = ""
+        val = ""
         for field in headers:
-            val = getattr(obj, field)
+            try:
+                val = getattr(obj, field)
+            except:
+                val = " "
             if callable(val):
                 val = val()
             if type(val) == unicode:
                 val = val.encode("utf-8")
-            if val is None:
-                val =""
-            else:
-                try:
-                    val = silent(val)
-                except:
-                    pass
-                try:
-                    val = val.id
-                except:
-                    pass
-                else:
-                    val = val
+            #else:
+            #    try:
+            #        val = silent(val)
+            #    except:
+            #        pass
+            #    try:
+            #        val = val.id
+            #    except:
+            #        pass
+            #    else:
+            #        val = val
             row.append(val)
         writer.writerow(row)
     return response
