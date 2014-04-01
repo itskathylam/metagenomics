@@ -28,6 +28,13 @@ h2 {
     position: relative;
     top: -24px;
 }
+
+h2.home {
+    margin: 0px;
+    position: relative;
+    top: 0;
+}
+/* shouldnt need any of these. all of them are the same so replaced with generic h2 values. and added home to handle the exception.
 h2.add {
     margin: 0px 10px 20px 10px;
     display: inline;
@@ -61,7 +68,7 @@ h2.detail {
     display: inline;
     position: relative;
     top: -24px;
-}
+} */
 
 h2 img {
     margin: 30px;

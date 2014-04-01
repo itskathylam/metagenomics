@@ -20,7 +20,6 @@ urlpatterns = patterns('',
     url(r'^help/faq/$', Faq, name='faq'),
     url(r'^help/userdoc/$', UserDoc, name='userdoc'),
     
-    #login_required( ) - add to all views below
     
     #Tools Views
     url(r'^tools/contig/$', ContigTool, name='contig'),
@@ -30,13 +29,12 @@ urlpatterns = patterns('',
     
     #Detail views
     url(r'^cosmid/(?P<cosmid_name>.*)/$', CosmidDetail, name='cosmid-detail'),
-    url(r'^assay/subclone/(?P<pk>\d+)/$', SubcloneAssayDetailView.as_view(), name='sublcone-assay-detail'),
-    url(r'^assay/cosmid/(?P<pk>\d+)/$', CosmidAssayDetailView.as_view(), name='cosmid-assay-detail'),
-    url(r'^subclone/(?P<subclone_name>.*)/$', SubcloneDetailView.as_view(), name='subclone-detail'),
     url(r'^contig/(?P<contig_name>[\w-]+)/$', ContigDetail, name='contig-detail'),
-    #url(r'^orf/(?P<pk>\d+)/$', OrfDetailView.as_view(), name='orf-detail'), #can delete this line
     url(r'^orf/(?P<pk>\d+)/$', OrfDetail, name='orf-detail'),
-    url(r'^vector/(?P<pk>\d+)/$', VectorDetailView.as_view(), name='vector-detail'),
+    url(r'^assay/subclone/(?P<pk>\d+)/$', login_required(SubcloneAssayDetailView.as_view()), name='sublcone-assay-detail'),
+    url(r'^assay/cosmid/(?P<pk>\d+)/$', login_required(CosmidAssayDetailView.as_view()), name='cosmid-assay-detail'),
+    url(r'^subclone/(?P<subclone_name>.*)/$', login_required(SubcloneDetailView.as_view()), name='subclone-detail'),
+    url(r'^vector/(?P<pk>\d+)/$', login_required(VectorDetailView.as_view()), name='vector-detail'),
     
     #Edit views (Updateviews)
     url(r'^edit/cosmid/(?P<cosmid_name>.*)/$', permission_required('mainsite.cosmid.can_change_cosmid')(CosmidEditView.as_view()), name='cosmid-edit'),
@@ -45,10 +43,10 @@ urlpatterns = patterns('',
     url(r'^edit/assay/subclone/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_subclone_assay')(SubcloneAssayEditView.as_view()), name='subclone-assay-edit'),
     url(r'^edit/orf/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_orf')(ORFEditView.as_view()), name='orf-edit'),
     url(r'^edit/contig/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_contig')(ContigEditView.as_view()), name='contig-edit'),
-    url(r'^edit/cosmid/endtags/(?P<pk>\d+)$', (CosmidEndTagEditView.as_view()), name='cosmid-end-tag-edit'), 
+    url(r'^edit/cosmid/endtags/(?P<pk>\d+)$', permission_required(CosmidEndTagEditView.as_view()), name='cosmid-end-tag-edit'), 
     
     #Delete views (DeleteViews)
-    url(r'^delete/contig-orf/(?P<pk>\d+)$', ContigORFDeleteView.as_view(), name='contig-orf-delete'),
+    url(r'^delete/contig-orf/(?P<pk>\d+)$', login_required(ContigORFDeleteView.as_view()), name='contig-orf-delete'),
     
     #Search views
     url(r'^search/cosmid/$', CosmidSearchView, name='cosmid-search'),
@@ -79,26 +77,26 @@ urlpatterns = patterns('',
 
     
     #listviews for lookup tables 
-    url(r'^primer/$', PrimerListView.as_view(), name='primer-list'),
-    url(r'^host/$', HostListView.as_view(), name='host-list'),
-    url(r'^screen/$', ScreenListView.as_view(), name='screen-list'),
-    url(r'^library/$', LibraryListView.as_view(), name='library-list'),
-    url(r'^researcher/$', ResearcherListView.as_view(), name='researcher-list'),
-    url(r'^vector/$', VectorListView.as_view(), name='vector-list'),
-    url(r'^pool?page=n/$', PoolListView.as_view(), name='pool-list'),
-    url(r'^substrate/$', SubstrateListView.as_view(), name='substrate-list'),
-    url(r'^antibiotic/$', AntibioticListView.as_view(), name='antibiotic-list'),
+    url(r'^primer/$', login_required(PrimerListView.as_view()), name='primer-list'),
+    url(r'^host/$', login_required(HostListView.as_view()), name='host-list'),
+    url(r'^screen/$', login_required(ScreenListView.as_view()), name='screen-list'),
+    url(r'^library/$', login_required(LibraryListView.as_view()), name='library-list'),
+    url(r'^researcher/$', login_required(ResearcherListView.as_view()), name='researcher-list'),
+    url(r'^vector/$', login_required(VectorListView.as_view()), name='vector-list'),
+    url(r'^pool?page=n/$', login_required(PoolListView.as_view()), name='pool-list'),
+    url(r'^substrate/$', login_required(SubstrateListView.as_view()), name='substrate-list'),
+    url(r'^antibiotic/$', login_required(AntibioticListView.as_view()), name='antibiotic-list'),
     
     #listviews for nonlookup tables
-    url(r'^subclone/$', SubcloneListView.as_view(), name='subclone-list'),
-    url(r'^assay/cosmid/$', CosmidAssayListView.as_view(), name='cosmid-assay-list'),
-    url(r'^assay/subclone/$', SubcloneAssayListView.as_view(), name='subclone-assay-list'),
-    url(r'^orf/$', ORFListView.as_view(), name='orf-list'),
-    url(r'^contig/$', ContigListView.as_view(), name='contig-list'),
+    url(r'^subclone/$', login_required(SubcloneListView.as_view()), name='subclone-list'),
+    url(r'^assay/cosmid/$', login_required(CosmidAssayListView.as_view()), name='cosmid-assay-list'),
+    url(r'^assay/subclone/$', login_required(SubcloneAssayListView.as_view()), name='subclone-assay-list'),
+    url(r'^orf/$', login_required(ORFListView.as_view()), name='orf-list'),
+    url(r'^contig/$', login_required(ContigListView.as_view()), name='contig-list'),
     
     #listviews for multiple-table-based views
-    url(r'^cosmid/$', CosmidEndTagListView.as_view(), name='cosmid-end-tag-list'), # for cosmid and endtags (Kathy)
-    url(r'^orfcontig/$', ORFContigListView.as_view(), name='orf-contig-list'), # not a useful view? may remove (Kathy)
+    url(r'^cosmid/$', login_required(CosmidEndTagListView.as_view()), name='cosmid-end-tag-list'), # for cosmid and endtags (Kathy)
+    url(r'^orfcontig/$', login_required(ORFContigListView.as_view()), name='orf-contig-list'), # not a useful view? may remove (Kathy)
     
     #createviews - form to add data to database table  
     url(r'^add/subclone/$', permission_required('mainsite.cosmid.can_add_subclone')(SubcloneCreateView.as_view()), name='subclone-add'),
