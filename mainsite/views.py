@@ -27,10 +27,12 @@ import pdb
 import base64
 from django.db.models import Q
 import re
+from itertools import chain
+
 
 #Main, About etc
 
-#@login_required
+@login_required  #UNCOMMENT THIS BEFORE DEPLOYMENT
 def MainPage(request):
     template_name = 'index.html'
     return (render(request, 'index.html'))
@@ -90,6 +92,7 @@ def AnnotationTool(request):
 def AnnotationToolResults(request):
     if request.method == "POST":
         results = request.POST
+
         #pdb.set_trace()
         # (echo "put body content here"; uuencode filename filename) | mail -s "subject here" email_address_here
     return render_to_response('tool_annotation_results.html', {'results': results })
@@ -107,8 +110,15 @@ def ContigTool(request):
             for contig in Contig.objects.all():
                 for cosmid in contig.cosmid.all():
                     filter_cos.append(cosmid)
-        
-            context = {'pool': pool, 'detail': details, 'cosmids': cosmids, 'filtered': filter_cos}
+            
+            joined = []
+            notjoined = []
+            for cosmid in cosmids:
+                if cosmid in filter_cos:
+                    joined.append(cosmid)
+                else:
+                    notjoined.append(cosmid)
+            context = {'poolselect': int(pool_id), 'pool': pool, 'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
             
         if 'submit' in request.POST:
             pool = request.POST['pool']
@@ -129,6 +139,7 @@ def ContigTool(request):
     variables = RequestContext(request, context)
     return render_to_response('tool_contig.html', variables)
 
+@login_required
 def ContigToolResults(request):
     if request.method == 'POST':
         if 'submit' in request.POST:
@@ -151,6 +162,7 @@ def ContigToolResults(request):
     
     return render_to_response('tool_contig_result.html', {'results': joins}, context_instance=RequestContext(request))
 
+#this function is only called by other views, not directly associated with a URL
 #read csv file into array
 def read_csv(filename):
     import csv
@@ -162,6 +174,7 @@ def read_csv(filename):
     csvfile.closed
     return rows
 
+#this function is only called by other views, not directly associated with a URL
 def contig_pipeline(pool, cos_selected):
     pool_id = pool
     contigs = Contig.objects.filter(pool = pool_id).values_list('contig_name', 'contig_sequence')
@@ -173,7 +186,9 @@ def contig_pipeline(pool, cos_selected):
     write_fasta(contigs), write_csv('primers_1', cosmids, primer_set1, seqs), write_csv('primers_2', cosmids, primer_set2, seqs)
     system("perl contig_retrieval_tool/retrieval_pipeline.pl contig_retrieval_tool/primers_1.csv contig_retrieval_tool/primers_2.csv contig_retrieval_tool/contigs.fa")
     return read_csv('testtest.csv')
-    
+
+
+#this function is only called by other views, not directly associated with a URL
 def write_csv(file_name, cosmids, primer_set, seqs):
     with open("./contig_retrieval_tool/%s.csv" %file_name, 'w') as f:
         csv = File(f)
@@ -188,6 +203,7 @@ def write_csv(file_name, cosmids, primer_set, seqs):
         csv.closed
         f.closed
 
+#this function is only called by other views, not directly associated with a URL
 #writes contigs to fasta file(text.fa)    
 def write_fasta(contigs):
     with open('./contig_retrieval_tool/contigs.fa', 'w') as f:
@@ -198,7 +214,7 @@ def write_fasta(contigs):
         fasta.closed
         f.closed
 
-
+@login_required
 def orf_data(contig):
     contig_id = Contig.objects.filter(contig_name__in = contig).values('id')
     contigs = Contig.objects.filter(contig_name__in = contig).values_list('contig_name', 'contig_sequence', 'blast_hit_accession')
@@ -207,6 +223,7 @@ def orf_data(contig):
  
     write_lib(contigs, orfs, anno)
 
+#this function is only called by other views, not directly associated with a URL
 def write_lib(contigs, orfs, anno):
     with open("data.lib", 'w') as f:
         data = File(f)
@@ -375,11 +392,12 @@ def ContigSearchView(request):
     return render_to_response('contig_search.html', {'advancedform': form, 'basicform': basicform, 'blast_form':blast_form}, context_instance=RequestContext(request))
 
 #can delete this view
-def SearchAll(request):
-    form = AllSearchForm
-    return render_to_response('all_search.html', {'form': form}, context_instance=RequestContext(request))
+#def SearchAll(request):
+#    form = AllSearchForm
+#    return render_to_response('all_search.html', {'form': form}, context_instance=RequestContext(request))
 
 #search result views
+@login_required
 def CosmidResults(request):
     cosmid_name = request.GET.get('cosmid_name')
     host = request.GET.get('host')
@@ -417,7 +435,7 @@ def CosmidResults(request):
     
     return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': cosmid_list, 'queries':queries, 'search':search, 'total':total}, context_instance=RequestContext(request))
 
-
+@login_required
 def SubcloneResults(request):
     name = request.GET.get('subclone_name')
     cosmid = request.GET.get('cosmid')
@@ -453,6 +471,7 @@ def SubcloneResults(request):
     
     return render_to_response('subclone_all.html', {'subclone_list': subclone_list, 'queries':queries, 'search':search, 'total':total}, context_instance=RequestContext(request))
 
+@login_required
 def SubcloneAssayResults(request):
     subclone = request.GET.get('subclone')
     host = request.GET.get('host')
@@ -489,6 +508,7 @@ def SubcloneAssayResults(request):
     
     return render_to_response('subclone_assay_all.html', {'subclone_assay_list': subclone_assay_list, 'search':search, 'queries':queries, 'total':total}, context_instance=RequestContext(request))
 
+@login_required
 def CosmidAssayResults(request):
     #gets all of the user inputted information from the form
     cosmid = request.GET.get('cosmid')
@@ -528,6 +548,7 @@ def CosmidAssayResults(request):
         
     return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': cosmid_assay_list, 'search':search, 'queries':queries, 'total':total}, context_instance=RequestContext(request))
 
+@login_required
 def OrfResults(request):
     orf_list = request.GET.get('annotation')
     queries = request.GET.copy();
@@ -551,6 +572,7 @@ def OrfResults(request):
     
     return render_to_response('orf_all.html', {'orf_list': orf_list, 'search':search, 'queries':queries, 'total':total}, context_instance=RequestContext(request))
 
+@login_required
 def ContigResults(request):
     pool = request.GET.get('pool')
     contig_name = request.GET.get('contig_name')
@@ -581,7 +603,7 @@ def ContigResults(request):
 
     return render_to_response('contig_all.html', {'contig_list': contig_list, 'queries':queries, 'search':search, 'total':total}, context_instance=RequestContext(request))
 
-
+@login_required
 def CosmidBasicResults(request):
    #gets the list of words they entered
     query = request.GET.get('query')
@@ -623,6 +645,7 @@ def CosmidBasicResults(request):
             cosmid_list = p.page(1)
     return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': cosmid_list, 'query': query, 'search':search, 'queries':queries, 'total':total}, context_instance=RequestContext(request))
 
+@login_required
 def SubcloneBasicResults(request):
     #gets the list of words they entered
     query = request.GET.get('query')
@@ -665,6 +688,7 @@ def SubcloneBasicResults(request):
             subclone_list = p.page(1)
     return render_to_response('subclone_all.html', {'subclone_list': subclone_list, 'query': query, 'queries':queries, 'search':search, 'total':total}, context_instance=RequestContext(request))
 
+@login_required
 def CosmidAssayBasicResults(request):
     #gets the list of words they entered
     query = request.GET.get('query')
@@ -704,6 +728,7 @@ def CosmidAssayBasicResults(request):
             cosmid_assay_list = p.page(1)
     return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': cosmid_assay_list, 'query': query, 'queries':queries, 'search':search, 'total':total}, context_instance=RequestContext(request))
 
+@login_required
 def SubcloneAssayBasicResults(request):
     #gets the list of words they entered
     query = request.GET.get('query')
@@ -743,6 +768,7 @@ def SubcloneAssayBasicResults(request):
             subclone_assay_list = p.page(1)
     return render_to_response('subclone_assay_all.html', {'subclone_assay_list': subclone_assay_list, 'query': query, 'search':search, 'queries':queries, 'total':total}, context_instance=RequestContext(request))
 
+@login_required
 def OrfBasicResults(request):
     #gets the list of words they entered
     query = request.GET.get('query')
@@ -751,7 +777,6 @@ def OrfBasicResults(request):
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
-    
     
     #if no words entered, returns no results
     if query == '':
@@ -779,6 +804,7 @@ def OrfBasicResults(request):
             orf_list = p.page(1)
     return render_to_response('orf_all.html', {'orf_list': orf_list, 'query': query, 'search':search, 'queries':queries, 'total':total}, context_instance=RequestContext(request))
 
+@login_required
 def ContigBasicResults(request):
     #gets the list of words they entered
     query = request.GET.get('query')
@@ -815,6 +841,7 @@ def ContigBasicResults(request):
     return render_to_response('contig_all.html', {'contig_list': contig_list, 'query': query, 'search':search, 'queries':queries, 'total':total}, context_instance=RequestContext(request))
 
 #detail views
+@login_required
 def CosmidDetail(request, cosmid_name):
     #returns the Cosmid object requested
     cosmid = Cosmid.objects.get(cosmid_name=cosmid_name)
@@ -863,6 +890,7 @@ def CosmidDetail(request, cosmid_name):
     
     return render_to_response('cosmid_detail.html', {'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book, 'cosmid_comments': cosmid_comments}, context_instance=RequestContext(request))
 
+@login_required
 def ContigDetail(request, contig_name):
     contig = Contig.objects.get(contig_name=contig_name)
     
@@ -882,7 +910,7 @@ def ContigDetail(request, contig_name):
     
     return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
 
-
+@login_required
 def OrfDetail(request, pk):
     orf = ORF.objects.get(id = pk)
     contigorfs = Contig_ORF_Join.objects.filter(orf_id = orf.id)
@@ -982,6 +1010,7 @@ class SubcloneListView(ListView):
     paginate_by = 20
 
 #retrieve SubcloneListView queryset to export as csv
+@login_required
 def subclone_queryset(response):
     qs = Subclone.objects.all()
     return queryset_export_csv(qs)
@@ -992,6 +1021,7 @@ class CosmidAssayListView(ListView):
     paginate_by = 20
 
 #retrieve CosmidAssayListView queryset to export as csv
+@login_required
 def cosmid_assay_queryset(response):
     qs = Cosmid_Assay.objects.all()
     return queryset_export_csv(qs)
@@ -1001,7 +1031,9 @@ class SubcloneAssayListView(ListView):
     template_name = 'subclone_assay_all.html'
     paginate_by = 20
 
+
 #retrieve SubcloneAssayListView queryset to export as csv
+@login_required
 def subclone_assay_queryset(response):
     qs = Subclone_Assay.objects.all()
     return queryset_export_csv(qs)
@@ -1012,6 +1044,7 @@ class ORFListView (ListView):
     paginate_by = 20
 
 #retrieve ORFListView queryset to export as csv
+@login_required
 def orf_queryset(response):
     qs = ORF.objects.all()
     return queryset_export_csv(qs)
@@ -1022,6 +1055,7 @@ class ContigListView (ListView):
     paginate_by = 20
 
 #retrieve ContigListView queryset to export as csv
+@login_required
 def contig_queryset(response):
     qs = Contig.objects.all()
     return queryset_export_csv(qs)
@@ -1040,7 +1074,7 @@ class CosmidEndTagListView(ListView):
     
   
 #retrieve CosmidEndTagListView queryset to export as csv
-from itertools import chain
+@login_required
 def cosmid_endtag_queryset(response):
     qs1 = list(Cosmid.objects.all())
     qs2 = list(End_Tag.objects.all())
@@ -1053,6 +1087,7 @@ class ORFContigListView(ListView):
     paginate_by = 20
     
 #retrieve ORFContigListView queryset to export as csv
+@login_required
 def orf_contig_queryset(response):
     qs = Contig_ORF_Join.objects.all()
     return queryset_export_csv(qs)  
@@ -1321,6 +1356,7 @@ class PrimerListView(ListView):
     paginate_by = 20
 
 #retrieve PrimerListView queryset to export as csv
+@login_required
 def primer_queryset(response):
     qs = Primer.objects.all()
     return queryset_export_csv(qs)
@@ -1331,6 +1367,7 @@ class AntibioticListView(ListView):
     paginate_by = 20
 
 #retrieve AntibioticListView queryset to export as csv
+@login_required
 def antibiotic_queryset(response):
     qs = Antibiotic.objects.all()
     return queryset_export_csv(qs)
@@ -1341,6 +1378,7 @@ class HostListView(ListView):
     paginate_by = 20
     
 #retrieve HostListView queryset to export as csv
+@login_required
 def host_queryset(response):
     qs = Host.objects.all()
     return queryset_export_csv(qs)
@@ -1351,6 +1389,7 @@ class ScreenListView(ListView):
     paginate_by = 20
     
 #retrieve ScreenListView queryset to export as csv
+@login_required
 def screen_queryset(response):
     qs = Screen.objects.all()
     return queryset_export_csv(qs)
@@ -1361,6 +1400,7 @@ class LibraryListView(ListView):
     paginate_by = 20
     
 #retrieve LibraryListView queryset to export as csv
+@login_required
 def library_queryset(response):
     qs = Library.objects.all()
     return queryset_export_csv(qs)
@@ -1371,6 +1411,7 @@ class ResearcherListView(ListView):
     paginate_by = 20
     
 #retrieve ResearcherListView queryset to export as csv
+@login_required
 def researcher_queryset(response):
     qs = Researcher.objects.all()
     return queryset_export_csv(qs)
@@ -1381,6 +1422,7 @@ class VectorListView(ListView):
     paginate_by = 20
     
 #retrieve VectorListView queryset to export as csv
+@login_required
 def vector_queryset(response):
     qs = Vector.objects.all()
     return queryset_export_csv(qs)
@@ -1391,6 +1433,7 @@ class PoolListView(ListView):
     paginate_by = 20
     
 #retrieve PoolListView queryset to export as csv
+@login_required
 def pool_queryset(response):
     qs = Pooled_Sequencing.objects.all()
     return queryset_export_csv(qs)
@@ -1401,6 +1444,7 @@ class SubstrateListView(ListView):
     paginate_by = 20
     
 #retrieve SubstrateListView queryset to export as csv
+@login_required
 def substrate_queryset(response):
     qs = Substrate.objects.all()
     return queryset_export_csv(qs)

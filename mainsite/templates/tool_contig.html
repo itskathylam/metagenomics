@@ -41,49 +41,55 @@ Users must validate the contig retrieval results before they are committed to th
 <p>Please select a pool:</p>
 
 <section id="tool1">
-    <table>
-
     <form action="{% url "contig" %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+    <table>
     <tr><th>Select Pool</th>
         <td><select id="pool" name="pool">
             {% for entry in pool %}
-                <option value="{{entry.id}}"> {{entry.id}}</option>
+                <option value="{{entry.id}}"{% ifequal poolselect entry.id %}selected{% endifequal %}> {{entry.id}}</option>
             {% endfor %}
         </select>
-        <input type="submit" name="detail" value="Display Pool" />
         </td>
     </tr>
+    </table>
+    <input type="submit" name="detail" value="Display Pool" />
+    </form>
+    <table>
         {% for selected in detail %}
             <tr><th>Selected Pool</th><td>{{selected.id}}</td></tr>
             <tr><th>Service Provider</th><td>{{selected.service_provider}}</td></tr>
             <tr><th>Max Clones for Pool</th><td>{{selected.max_number}}</td></tr>
             <tr><th>NCBI SRA Accession</th><td>{{selected.ncbi_sra_accession}}</td></tr>
             <tr><th>Comments</th><td>{{selected.pool_comments}}</td></tr>
-        {% endfor %}
-        
+        {% endfor %}    
+    </table>
+
+</section>
+{% if detail %}
+    <section id="tool2">
+        {% if notjoined %}
+        <form>
+        <table>
+            <tr><th>Retrieve Contigs for the selected Cosmids</th></tr>
+                {% for c in notjoined %}
+                <tr><td><input type="checkbox" name="cos" checked/>{{ c }}</td></tr>
+                {% endfor %}
         </table>
-
-</section>    
-{% endblock %}
-
-{% block second %}
-<section id="tool2">
-        
-    <table>
-        
-        <tr><th>Select Cosmids</th></tr>
-        
-            {% for cos in cosmids %}
-                {% if cos in filtered %}
-                    <tr><td>{{cos}} within pool</td></tr>
-                {% else %}
-                    <tr><td><input type="checkbox" name="cos" checked/>{{cos}}</td></tr>
-                {% endif %}
-            {% endfor %}
-           
-    </table>  
         <input type="submit" name="submit" value="Submit" />
         </form>
+        {% else %}
+        <p>There are no Cosmids in this pool. You must add comsids to this pool by either editing an existing cosmid or adding a new one.</p>
+        {% endif %}
+    </section>
+{% endif %}
+{% if joined %}
+<div class="joinedtable">
+    <table>
+        <tr><th>Cosmids in Pool that are already associated with contigs</th></tr>
+        {% for j in joined %}
+            <tr><td>{{ j }}</td></tr>
+        {% endfor %}
     </table>
-</section>
+</div>
+{% endif %}
 {% endblock %}
