@@ -87,7 +87,6 @@ def AnnotationTool(request):
             #read csv and store in db orf-contigs(also images)
             
     return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
-<<<<<<< HEAD
 
 @login_required
 def AnnotationToolResults(request):
@@ -110,8 +109,15 @@ def ContigTool(request):
             for contig in Contig.objects.all():
                 for cosmid in contig.cosmid.all():
                     filter_cos.append(cosmid)
-        
-            context = {'pool': pool, 'detail': details, 'cosmids': cosmids, 'filtered': filter_cos}
+            
+            joined = []
+            notjoined = []
+            for cosmid in cosmids:
+                if cosmid in filter_cos:
+                    joined.append(cosmid)
+                else:
+                    notjoined.append(cosmid)
+            context = {'poolselect': int(pool_id), 'pool': pool, 'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
             
         if 'submit' in request.POST:
             pool = request.POST['pool']

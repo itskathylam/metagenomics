@@ -238,22 +238,31 @@ nav ul ul ul {
 
 #tool1 {
     border: solid;
+    display: inline-block;
+    float: left;
+    margin: 0 20px 20px 0;
+    padding: 20px;
     border-width: thin;
     border-radius: 4px;
     box-shadow: 3px 3px 5px #888;
 }
 #tool2 {
-    float: left;
-    margin-top: 133px;
+    
+    /*margin-left: 70px;
+    margin-bottom: 20px;*/
+    float:left;
+    display: inline-block;
+    margin: 0 20px 20px 20px;
+    padding: 20px;
     border: solid;
     border-width: thin;
-    margin-left: 70px;
-    margin-bottom: 20px;
-    padding: 40px;
     border-radius: 4px;
-
+    box-shadow: 3px 3px 5px #888;
 }
 
+.joinedtable {
+    display: inline-block;
+}
 #tool3 {
     float: left;
     margin-top: 5px;
@@ -312,6 +321,9 @@ p {
     font-size: 14px; 
 }
 
+p.intable {
+    font-size: 12px;
+}
 /*For all table styles*/
 table {
     font-family: verdana, arial, sans-serif;
