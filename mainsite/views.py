@@ -81,7 +81,8 @@ def AnnotationTool(request):
 def AnnotationToolResults(request):
     if request.method == "POST":
         results = request.POST
-        pdb.set_trace()
+        #pdb.set_trace()
+        # (echo "put body content here"; uuencode filename filename) | mail -s "subject here" email_address_here
     return render_to_response('tool_annotation_results.html', {'results': results })
 
 def ContigTool(request):
