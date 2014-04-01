@@ -24,7 +24,7 @@ import types
 import StringIO
 from os import system
 import pdb
-import Image
+import base64
 from django.db.models import Q
 import re
 
@@ -81,15 +81,18 @@ def AnnotationTool(request):
         if 'submit' in request.POST:
             email = request.POST['email']
             contigs = request.POST.getlist('contig')
-            #orf_data(contigs)
-            #read csv and store in db orf-contigs(also images)
+            orf_data(contigs)
+            #return render_to_response('tool_contig_submit.html', var)
             
     return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
 
-        #results = request.POST
+@login_required
+def AnnotationToolResults(request):
+    if request.method == "POST":
+        results = request.POST
         #pdb.set_trace()
         # (echo "put body content here"; uuencode filename filename) | mail -s "subject here" email_address_here
-    #return render_to_response('tool_annotation_results.html', {'results': results })
+    return render_to_response('tool_annotation_results.html', {'results': results })
 
 @login_required
 def ContigTool(request):
@@ -111,8 +114,7 @@ def ContigTool(request):
             pool = request.POST['pool']
             cos = request.POST.getlist('cos')
             cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values_list('id', 'cosmid_name')
-            contig_pipeline(pool, cos_selected) #need to integrate this step with renes tool and generate the tool
-            results = read_csv('testtest.csv') #where does this come from????? should use database.....
+            results = contig_pipeline(pool, cos_selected) 
             entries = []
             for row in results:
                 entry = row[0:3]
@@ -141,7 +143,6 @@ def ContigToolResults(request):
         
         cosmids = []
         for join in joins:
-            #pdb.set_trace()
             cosmid = Cosmid.objects.get(cosmid_name=join)
             contig = Contig.objects.get(contig_name=joins[join])
             contig.cosmid.add(cosmid)
@@ -149,6 +150,7 @@ def ContigToolResults(request):
         return HttpResponseRedirect('/results/basic/cosmid?query=' + ' '.join(cosmids))
     
     return render_to_response('tool_contig_result.html', {'results': joins}, context_instance=RequestContext(request))
+
 #read csv file into array
 def read_csv(filename):
     import csv
@@ -168,12 +170,12 @@ def contig_pipeline(pool, cos_selected):
     primer_set1 = Primer.objects.select_related('primer').filter(primer_pair = '1').values_list('id','primer_name')
     primer_set2 = Primer.objects.select_related('primer').filter(primer_pair = '2').values_list('id','primer_name')
 
-    HttpResponse(write_fasta(contigs), write_csv('primers_1', cosmids, primer_set1, seqs), write_csv('primers_2', cosmids, primer_set2, seqs))
-    HttpResponse(system("perl contig_retrieval_tool/retrieval_pipeline.pl contig_retrieval_tool/primers_1.csv contig_retrieval_tool/primers_2.csv contig_retrieval_tool/contigs.fa"))
-
+    write_fasta(contigs), write_csv('primers_1', cosmids, primer_set1, seqs), write_csv('primers_2', cosmids, primer_set2, seqs)
+    system("perl contig_retrieval_tool/retrieval_pipeline.pl contig_retrieval_tool/primers_1.csv contig_retrieval_tool/primers_2.csv contig_retrieval_tool/contigs.fa")
+    return read_csv('testtest.csv')
     
 def write_csv(file_name, cosmids, primer_set, seqs):
-    with open("./contig_retrieval_tool/tmp/out/%s.csv" %file_name, 'w') as f:
+    with open("./contig_retrieval_tool/%s.csv" %file_name, 'w') as f:
         csv = File(f)
         seqs = list(seqs)
         cos = dict(cosmids)
@@ -197,38 +199,39 @@ def write_fasta(contigs):
         f.closed
 
 
-def orf_data(request, contig_list):
-    for contig in contig_list:
-        contig_id = Contig.objects.filter(contig_name = contig).values('id')
-        contigs = Contig.objects.filter(contig_name = contig).values_list('contig_name', 'contig_sequence', 'blast_hit_accession')
-        orfs = Contig_ORF_Join.objects.filter(contig = contig_id).values_list('start', 'stop', 'complement', 'prediction_score')
-        anno = ORF.objects.filter(contig = contig_id).values_list('annotation', 'orf_sequence')
+def orf_data(contig):
+    contig_id = Contig.objects.filter(contig_name__in = contig).values('id')
+    contigs = Contig.objects.filter(contig_name__in = contig).values_list('contig_name', 'contig_sequence', 'blast_hit_accession')
+    orfs = Contig_ORF_Join.objects.filter(contig = contig_id).values_list('start', 'stop', 'complement', 'prediction_score')
+    anno = ORF.objects.filter(contig = contig_id).values_list('annotation', 'orf_sequence')
+ 
     write_lib(contigs, orfs, anno)
-    #execute annotations pipeline 
-    
-    return HttpResponse()
 
 def write_lib(contigs, orfs, anno):
-    with open("contigs.name_data.lib", 'w') as f:
+    with open("data.lib", 'w') as f:
         data = File(f)
-        data.write('#!/usr/bin/perl \n sub data{\n$contig_orf{')
-       
+        data.write('#!/usr/bin/perl \n sub data{\n')
         for name, seq, access in contigs:
             contig = name
-            accession = access
-            data.write(name + '}\n = [\'' + seq + '\',\n')
+            sequence = seq
+            accession = access if access != None else ''
+            data.write('$contig_orf{' + contig + '}\n = [\'' + sequence + '\',\n')
             data.write('{\'glimmer\' => {},\n')
             data.write('\'genbank\' => {},\n')
+            data.write('\'manual\' =>{')
+            count = 0
             for start, stop, comp, score in orfs:
                 for ann, seqs in anno:
-                        comp = -1 if comp == 1 else 1
-                        data.write('\'manual\' =>{\'' + contig + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
-                        data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
-                        data.write('=>\'' + ann + '\',\n sequence =>\'' + seqs + '\'\n},')
-        #}}' + accession + '];\n'
-        data.write('return(\%contig_orf);} \n 1;') 
-        data.closed
-        f.closed
+                    count += 1
+                    comp = -1 if comp == 1 else 1
+                    data.write('\'' + contig + '-' + str(count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
+                    data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
+                    annotation = ann if ann != None else ''
+                    data.write('annotation=>\'' + annotation + '\',\n sequence =>\'' + seqs + '\'\n},')
+            data.write('}},\'' + accession + '\'];\n')
+        data.write('return(\%contig_orf);} \n1;')
+    data.closed
+    f.closed
 
 
 #sequence search
