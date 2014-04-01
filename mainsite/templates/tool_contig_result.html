@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Metagenomics Clone Bank</title>
+{% endblock %}
+
+{% block pagetitle %}
+    <title>Contig Retrieval Tool Results</title>
+{% endblock %}
+
+{% block subtitle %}
+    <h1>Contig Retrieval Tool Results</h1>
+{% endblock %}
+
+{% block content %}
+    {% for r in results %}
+        <p>{{ r }}</p>
+    {% endfor %}
+{% endblock %}

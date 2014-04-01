@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 
 {% block subtitle %}
-<h2 class="list">Cosmids</h2>
+<img src="{{ STATIC_URL }}icons/allblack64.png"><h2 class="list">Cosmids</h2>
 {% endblock %}
 
 {% block content %}
     {% if cosmid_list %}
 
-    <a href="/export/cosmid_end_tag" >Download CSV File</a>
+    
     {% if search %}
+                <p><a href="/export/cosmid_endtag" >Download All Search Results</a></p>
                 {% if search == 2%}
                 <p>Search for: '{{ query }}' returned {{ total }} results</p>
                 {% else %}
@@ -28,6 +29,7 @@
                     </p></span>
                 </div>
     {% else %}
+                <p><a href="/export/cosmid_endtag" >Download All Records</a></p>
                 <p>All Records</p>
                 <div class="pagination">
                     <span class="page-links"><p>
@@ -56,7 +58,8 @@
                 <th>Sequencing Pool</th>
                 <th>End Tag 1</th>
                 <th>End Tag 2</th>
-                <th>Cosmid Comments</th>
+                <th>Associated Contigs</th>
+                <th>Comments</th>
             </tr>
         {% for cosmid in cosmid_list %}
             <tr>
@@ -81,6 +84,15 @@
                         <td>&nbsp;</td>
                 {% else %}
                         <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                {% endif %}
+                {% if cosmid.contig_set.all|length > 0 %}
+                        <td>
+                        {% for contig in cosmid.contig_set.all %}
+                                    <a href="{% url 'contig-list' %}{{contig.contig_name}}">{{contig.contig_name}}</a><br>
+                        {% endfor %}
+                        </td>
+                {% else %}
                         <td>&nbsp;</td>
                 {% endif %}
                 <td>{{ cosmid.cosmid_comments }}</td>

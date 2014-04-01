@@ -7,14 +7,12 @@
         <tr><th>ID</th><td>{{ orf.id }}</td></tr>
         <tr><th>Annotation</th><td>{{ orf.annotation }}</td></tr>
         <tr><th>Sequence</th><td><textarea rows="10" cols="50" readonly=true>{{ orf.orf_sequence }}</textarea></td></tr>
+        <tr><th>Associated Contigs</th><td><ul>
+        {% for contig in contigs %}
+            <li><a href="/contig/{{ contig.contig_name }}">{{ contig.contig_name }}</a></li>
+        {% endfor %}
+        </ul></td></tr>
     </table>
-
-    <p>Associated Contigs:</p>
-    <ul>
-    {% for contig in contigs %}
-        <li><a href="/contig/{{ contig.contig_name }}">{{ contig.contig_name }}</a></li>
-    {% endfor %}
-    </ul>
 {% endblock %}
 
 {% block link %}

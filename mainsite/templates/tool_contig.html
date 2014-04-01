@@ -5,52 +5,18 @@
 
 <script type="text/javascript" src="/usr/local/lib/python2.7/dist-packages/jquery/static/jquery"></script>
     <script type="text/javascript">
-        
         $(document).ready(function() {
-            
             $("select#pool").submit(function(event){
                 $.ajax({
                     type:"POST",
                     url:"/contigtool/",
                     data: {'pool': $('#pool').find(":selected").text()},
                 });
-                return false;
             });
-        });
-        
-        //function deselect() {
-        //    $(".pop").slideFadeToggle(function() { 
-        //        $("#contact").removeClass("selected");
-        //    });    
-        //}
-        //
-        //$(function() {
-        //    $("#contact").live('click', function() {
-        //        if($(this).hasClass("selected")) {
-        //            deselect();               
-        //        }
-        //        else {
-        //            $(this).addClass("selected");
-        //            $(".pop").slideFadeToggle(function() { 
-        //                $("#email").focus();
-        //            });
-        //        }
-        //        return false;
-        //    });
-        //
-        //    $(".close").live('click', function() {
-        //        deselect();
-        //        return false;
-        //    });
-        //});
-        //
-        //$.fn.slideFadeToggle = function(easing, callback) {
-        //    return this.animate({ opacity: 'toggle', height: 'toggle' }, "fast", easing, callback);
-        //};
+        }); 
     </script>
 
 {% endblock %}
-
 
 {% block pagetitle %}
     <title>Contig Retrieval Tool</title>
@@ -78,12 +44,10 @@ Users must validate the contig retrieval results before they are committed to th
     <table>
 
     <form action="{% url "contig" %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
-   
     <tr><th>Select Pool</th>
         <td><select id="pool" name="pool">
             {% for entry in pool %}
-
-                <option value="{{entry.id}}"{% ifequal entry.id pool %}selected="selected"{% endifequal %}>{{entry.id}}</option>
+                <option value="{{entry.id}}"> {{entry.id}}</option>
             {% endfor %}
         </select>
         <input type="submit" name="detail" value="Display Pool" />
@@ -96,41 +60,33 @@ Users must validate the contig retrieval results before they are committed to th
             <tr><th>NCBI SRA Accession</th><td>{{selected.ncbi_sra_accession}}</td></tr>
             <tr><th>Comments</th><td>{{selected.pool_comments}}</td></tr>
         {% endfor %}
-            
-            {{ ContigForm }}
-            {{ contig_upload_form }}
 
         </table>
-    
-       
-    <input type="submit" name="submit" value="Submit" />
+
 </section>    
 {% endblock %}
 
 {% block second %}
 <section id="tool2">
+        
     <table>
-        <form>
-    <tr><th>Select Cosmids</th>
-        <td><select id="cosmids" name="cosmids">
-            {% for cosmid in cosmids %}
-                <option value="{{cosmid.name}}">{{cosmid.name}}</option>
+        
+        <tr><input type="submit" name="submit" value="Submit"/></tr>
+        <tr><th>Select Cosmids</th><th>Cosmids in Pool</th></tr>
+        {% for cos in cosmids%}
+            {% for contig in contigs %}
+                {% for cosmid in contig.cosmid.all %}
+                    {% ifequal cos cosmid %}
+                    <tr><td></td><td>{{cosmid}}</td></tr>
+                    {% else%}
+                    <tr><td><input type="checkbox" name="cos" value="{{cos}}" checked>{{cos}}</input></td><td></td></tr>
+                    {% endifequal %}
+                {% endfor %}     
             {% endfor %}
-        </select></td>
-    </tr>
+        {% endfor %}
+    </table>  
     
         </form>
-    </table>
-</section>
-{% endblock %}
-
-{% block third %}
-<section id="tool3">
-    <table>
-    <tr><th>Cosmids in Pool</th></tr>
-    {% for name in cosmids%}
-        <td>{{name}}</td>
-    {% endfor %}
     </table>
 </section>
 {% endblock %}

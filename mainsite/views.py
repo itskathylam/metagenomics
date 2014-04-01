@@ -24,9 +24,9 @@ import types
 import StringIO
 from os import system
 import pdb
-#pdb.set_trace()
+import Image
 from django.db.models import Q
-
+import re
 
 #Main, About etc
 
@@ -81,56 +81,94 @@ def AnnotationTool(request):
 def AnnotationToolResults(request):
     if request.method == "POST":
         results = request.POST
-        pdb.set_trace()
+        #pdb.set_trace()
+        # (echo "put body content here"; uuencode filename filename) | mail -s "subject here" email_address_here
     return render_to_response('tool_annotation_results.html', {'results': results })
 
-
 def ContigTool(request):
-    #contigs = Contig.objects.filter(cosmid = True)
-    #cosmids = Cosmid.objects.exclude(cosmid_name = contigs)
     context = {'pool':Pooled_Sequencing.objects.all()}
     if request.method == "POST":
         if 'detail' in request.POST:
-            pool_id =  request.POST['pool']                         
-            context = {'pool': Pooled_Sequencing.objects.all(), 'detail': Pooled_Sequencing.objects.filter(id = pool_id), 'cosmids': Cosmid.objects.filter(pool = pool_id)}
+            pool_id =  request.POST['pool']            
+            pool = Pooled_Sequencing.objects.all()
+            details = Pooled_Sequencing.objects.filter(id = pool_id)
+            cosmids = Cosmid.objects.filter(pool = pool_id)
+            contigs = Contig.objects.all()
+            context = {'pool': pool, 'detail': details, 'cosmids': cosmids, 'contigs': contigs}
             
         if 'submit' in request.POST:
-            form = ContigForm(request.POST)
-            if form.is_valid():
-                pool = form.cleaned_data['pool']
-                Contig_tool_test(pool)
-    
+            pool = request.POST['pool']
+            cos = request.POST.getlist('cos')
+            cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values_list('id', 'cosmid_name')
+            contig_pipeline(pool, cos_selected) #need to integrate this step with renes tool and generate the tool
+            results = read_csv('testtest.csv') #where does this come from????? should use database.....
+            entries = []
+            for row in results:
+                entry = row[0:3]
+                entry.append(row[5])
+                entry.append(row[7])
+                entry.append(row[8])
+                entry.append(row[12])
+                entries.append(entry)
+            var = RequestContext(request, {'results': entries})
+            return render_to_response('tool_contig_submit.html', var)
+                
     variables = RequestContext(request, context)
     return render_to_response('tool_contig.html', variables)
 
-   
+def ContigToolResults(request):
+    if request.method == 'POST':
+        if 'submit' in request.POST:
+            cosmidcontigs = request.POST.getlist('select')
+    
+        pattern = re.compile(r'^(.+)<\$\$>(.+)$')
 
+        joins = {}
+        for pair in cosmidcontigs:
+            match = pattern.match(pair)
+            joins[match.group(1)] = match.group(2)
+        
+        cosmids = []
+        for join in joins:
+            #pdb.set_trace()
+            cosmid = Cosmid.objects.get(cosmid_name=join)
+            contig = Contig.objects.get(contig_name=joins[join])
+            contig.cosmid.add(cosmid)
+            cosmids.append(join)
+        return HttpResponseRedirect('/results/basic/cosmid?query=' + ' '.join(cosmids))
+    
+    return render_to_response('tool_contig_result.html', {'results': joins}, context_instance=RequestContext(request))
 #read csv file into array
 def read_csv(filename):
     import csv
-    with open(filename, 'rb') as csvfile:
+    with open("contig_retrieval_tool/tmp/out/%s" %filename, 'rb') as csvfile:
         reader = csv.reader(csvfile, delimiter = ',')
         rows = []
         for row in reader:
             rows.append(row)
     csvfile.closed
+    return rows
 
-
-
-def Contig_tool_test(pool):
+def contig_pipeline(pool, cos_selected):
     pool_id = pool
     contigs = Contig.objects.filter(pool = pool_id).values_list('contig_name', 'contig_sequence')
-    cosmids = Cosmid.objects.filter(pool = pool_id).values_list('id', 'cosmid_name')
+    cosmids = cos_selected
     seqs = End_Tag.objects.select_related('cosmids').values_list('id', 'primer', 'end_tag_sequence')
     primer_set1 = Primer.objects.select_related('primer').filter(primer_pair = '1').values_list('id','primer_name')
     primer_set2 = Primer.objects.select_related('primer').filter(primer_pair = '2').values_list('id','primer_name')
 
     HttpResponse(write_fasta(contigs), write_csv('primers_1', cosmids, primer_set1, seqs), write_csv('primers_2', cosmids, primer_set2, seqs))
-    return HttpResponse(system("perl retrieval_pipeline.pl primers_1.csv primers_2.csv contigs.fa"))
-
+    HttpResponse(system("perl contig_retrieval_tool/retrieval_pipeline.pl contig_retrieval_tool/primers_1.csv contig_retrieval_tool/primers_2.csv contig_retrieval_tool/contigs.fa"))
+    changed_rows = Contig.objects.filter(pool = pool_id)
+    #for r in changed_rows:
+    #    r.image_contig = Image.open("./img/contig.png")
+    #    r.image_genbank = Image.open("./img/genbank.png")
+    #    r.image_predicted = Image.open("./img/predicted.png")
+    #    r.image_manual = Image.open("./img/manual.png")
+    #    r.save()
     
 def write_csv(file_name, cosmids, primer_set, seqs):
-    with open("./%s.csv" %file_name, 'w') as f:
+    with open("./contig_retrieval_tool/tmp/out/%s.csv" %file_name, 'w') as f:
         csv = File(f)
         seqs = list(seqs)
         cos = dict(cosmids)
@@ -145,7 +183,7 @@ def write_csv(file_name, cosmids, primer_set, seqs):
 
 #writes contigs to fasta file(text.fa)    
 def write_fasta(contigs):
-    with open('./contigs.fa', 'w') as f:
+    with open('./contig_retrieval_tool/contigs.fa', 'w') as f:
         fasta = File(f)
         contigs = list(contigs)
         for contig, seq in contigs:
@@ -180,7 +218,7 @@ def write_lib(contigs, orfs, anno):
                     comp = -1 if comp == 1 else 1
                     data.write('\'manual\' =>{\'' + contig + '-' + str(++count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
                     data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
-                    data.write('annotation =>\'' + ann + '\',\n sequence =>\'' + seqs + '\'\n}}}' + accession + '];\n')
+                    data.write('=>\'' + ann + '\',\n sequence =>\'' + seqs + '\'\n}}}' + accession + '];\n')
         data.write('return(\%contig_orf);} \n 1;') 
         data.closed
         f.closed
@@ -481,7 +519,7 @@ def CosmidAssayResults(request):
     return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': cosmid_assay_list, 'search':search, 'queries':queries, 'total':total}, context_instance=RequestContext(request))
 
 def OrfResults(request):
-    annotation = request.GET.get('annotation')
+    orf_list = request.GET.get('annotation')
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
@@ -830,6 +868,8 @@ def ContigDetail(request, contig_name):
     for o in orfresults:
         orfids.append(o.orf_id)
     orfseq = ORF.objects.filter(id__in=orfids)
+    
+    
     return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
 
 
@@ -923,13 +963,18 @@ class ContigEditView(UpdateView):
 class ContigORFDeleteView(DeleteView):
     model=Contig_ORF_Join
     template_name = 'contig_orf_delete.html'
-    success_url = reverse_lazy('orf-contig-list')
+    success_url = reverse_lazy('contig-list')
 
 # List views for non-lookup tables (Kathy)
 class SubcloneListView(ListView):
     model = Subclone
     template_name = 'subclone_all.html'
     paginate_by = 20
+
+#retrieve SubcloneView queryset to export as csv
+def subclone_queryset(response):
+    qs = Subclone.objects.all()
+    return queryset_export_csv(qs)
     
 class CosmidAssayListView(ListView):
     model = Cosmid_Assay
@@ -946,6 +991,11 @@ class SubcloneAssayListView(ListView):
     template_name = 'subclone_assay_all.html'
     paginate_by = 20
 
+#retrieve SubcloneListView queryset to export as csv
+def subclone_assay_queryset(response):
+    qs = Subclone_Assay.objects.all()
+    return queryset_export_csv(qs)
+
 class ORFListView (ListView):
     model = ORF
     template_name = 'orf_all.html'
@@ -960,18 +1010,39 @@ class ContigListView (ListView):
     model = Contig
     template_name = 'contig_all.html'
     paginate_by = 20
-  
+
+#retrieve ContigListView queryset to export as csv
+def contig_queryset(response):
+    qs = Contig.objects.all()
+    return queryset_export_csv(qs)
+
 # List views for multi-table views (Kathy)
 
 class CosmidEndTagListView(ListView):
     model = Cosmid
     template_name = 'cosmid_end_tag_all.html'
     paginate_by = 20
+    #context_object_name = 'cosmid_list'
+    #def get_context_data(self, **kwargs):
+    #    context=super(CosmidEndTagListView, self).get_context_data(**kwargs)
+    #    context['contig_list']=Contig.objects.filter(id=Cosmid.contig_cosmid.contig_id)
+    #    return context
+    
+  
+#retrieve CosmidEndTagListView queryset to export as csv
+def cosmid_endtag_queryset(response):
+    qs = Cosmid.objects.all()
+    return queryset_export_csv(qs)  
     
 class ORFContigListView(ListView):
     model = Contig_ORF_Join
     template_name = 'orf_contig_all.html'
     paginate_by = 20
+    
+#retrieve ORFContigListView queryset to export as csv
+def orf_contig_queryset(response):
+    qs = Contig_ORF_Join.objects.all()
+    return queryset_export_csv(qs)  
     
 # Create views for adding data to one model (Kathy)
 class SubcloneCreateView(CreateView):
@@ -1189,7 +1260,7 @@ def ContigPoolCreate(request):
         contig_upload_form = UploadContigsForm()      
     return render_to_response('contig_pool_add.html', {'contig_upload_form': contig_upload_form, 'contig_form': contig_form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
-#force download of input queryset to csv file (Nina)
+#force download csv file of input queryset(Nina)
 def queryset_export_csv(qs):
     import csv
     response = HttpResponse(mimetype='text/csv')
@@ -1205,12 +1276,26 @@ def queryset_export_csv(qs):
 
     for obj in qs:
         row = []
+        line = ""
         for field in headers:
             val = getattr(obj, field)
             if callable(val):
                 val = val()
             if type(val) == unicode:
                 val = val.encode("utf-8")
+            if val is None:
+                val =""
+            else:
+                try:
+                    val = silent(val)
+                except:
+                    pass
+                try:
+                    val = val.id
+                except:
+                    pass
+                else:
+                    val = val
             row.append(val)
         writer.writerow(row)
     return response

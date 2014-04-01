@@ -26,7 +26,7 @@ urlpatterns = patterns('',
     url(r'^tools/contig/$', ContigTool, name='contig'),
     url(r'^tools/annotation/$', AnnotationTool, name='annotation'),
     url(r'^tools/annotation/results/$', AnnotationToolResults, name='annotation-results'),
-
+    url(r'^tools/contig/results/$', ContigToolResults, name='contig-tool-results'),
     
     #Detail views
     url(r'^cosmid/(?P<cosmid_name>.*)/$', CosmidDetail, name='cosmid-detail'),
@@ -121,12 +121,13 @@ urlpatterns = patterns('',
     url(r'^export/vector', vector_queryset),
     url(r'^export/pool', pool_queryset),
     url(r'^export/substrate', substrate_queryset),
-    
-
-    #exportviews for non-lookup tables
+    url(r'^export/subclone', subclone_queryset),
     url(r'^export/cosmid_assay', cosmid_assay_queryset),
+    url(r'^export/subclone_assay', subclone_assay_queryset),
     url(r'^export/orf', orf_queryset),
-
-    url(r'^/contigtool/$', ContigTool),
-
+    url(r'^export/contig', contig_queryset),
+    url(r'^export/cosmid_endtag', cosmid_endtag_queryset),
+    url(r'^export/orf_contig', orf_contig_queryset),
+   
+    
 )
