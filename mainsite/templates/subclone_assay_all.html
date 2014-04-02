@@ -14,47 +14,34 @@
                         {% else %}
                         <p> Search returned {{total}} results</p>
                         {% endif %}
+                {% else %}
+                        <p><a href="/export/subclone_assay" >Download All Records</a></p>
+                        <p>{{total}} subclone assay records found</p>
+                {% endif %}
                         <div class="pagination">
                         
                            <span class="page-links"><p>
                                    {% if subclone_assay_list.has_previous %}
-                                           <a href="?{{queries.urlencode}}&page={{subclone_assay_list.previous_page_number}}">Previous</a>
+                                           <a href="?{{queries.urlencode}}&page={{subclone_assay_list.previous_page_number}}&order_by={{order_by}}">Previous</a>
                                    {% endif %}
                                    <span class="page-current">
                                            Page {{subclone_assay_list.number}} of {{ subclone_assay_list.paginator.num_pages}}
                                    </span>
                                    {% if subclone_assay_list.has_next %}
-                                           <a href="?{{queries.urlencode}}&page={{subclone_assay_list.next_page_number}}">Next</a>
+                                           <a href="?{{queries.urlencode}}&page={{subclone_assay_list.next_page_number}}&order_by={{order_by}}">Next</a>
                                    {% endif %}
                         </p></span>
                         </div>
-                {% else %}
-                        <p><a href="/export/subclone_assay" >Download All Records</a></p>
-                        <p>All Records</p>
-                <div class="pagination">
-                    <span class="page-links"><p>
-                        {% if page_obj.has_previous %}
-                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
-                        {% endif %}
-                        <span class="page-current">
-                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
-                        </span>
-                        {% if page_obj.has_next %}
-                                <a href="?page={{page_obj.next_page_number}}">Next</a>
-                        {% endif %}
-                    </p></span>
-                </div>
-                {% endif %}
                 <table class="list">
                     <tr>
-                        <th>Subclone Name</th>
-                        <th>Expression Host</th>
-                        <th>Substrate</th>
-                        <th>Antibiotic</th>
-                        <th>Researcher Name</th>
-                        <th>Km (mM)</th>
-                        <th>pH Optimum</th>
-                        <th>Temperature Optimum</th>
+                        <th><a href="?{{queries.urlencode}}&order_by=subclone">Subclone Name</a></th>
+                        <th><a href="?{{queries.urlencode}}&order_by=host">Expression Host</a></th>
+                        <th><a href="?{{queries.urlencode}}&order_by=substrate">Substrate</a></th>
+                        <th><a href="?{{queries.urlencode}}&order_by=antibiotic">Antibiotic</a></th>
+                        <th><a href="?{{queries.urlencode}}&order_by=researcher">Researcher Name</a></th>
+                        <th><a href="?{{queries.urlencode}}&order_by=subclone_km">Km (mM)</a></th>
+                        <th><a href="?{{queries.urlencode}}&order_by=subclone_ph">pH Optimum</a></th>
+                        <th><a href="?{{queries.urlencode}}&order_by=subclone_temp">Temperature Optimum</a></th>
                         <th>Comments & Observations</th>
                     </tr>
                 {% for subclone_assay in subclone_assay_list %}
@@ -71,35 +58,19 @@
                     </tr>
                 {% endfor %}
             </table>
-                {% if search %}
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if subclone_assay_list.has_previous %}
-                                    <a href="?{{queries.urlencode}}&page={{subclone_assay_list.previous_page_number}}">Previous</a>
+                                    <a href="?{{queries.urlencode}}&page={{subclone_assay_list.previous_page_number}}&order_by={{order_by}}">Previous</a>
                             {% endif %}
                             <span class="page-current">
                                     Page {{subclone_assay_list.number}} of {{ subclone_assay_list.paginator.num_pages}}
                             </span>
                             {% if subclone_assay_list.has_next %}
-                                    <a href="?{{queries.urlencode}}&page={{subclone_assay_list.next_page_number}}">Next</a>
+                                    <a href="?{{queries.urlencode}}&page={{subclone_assay_list.next_page_number}}&order_by={{order_by}}">Next</a>
                             {% endif %}
                     </p></span>
                 </div>
-                {% else %}
-                <div class="pagination">
-                    <span class="page-links"><p>
-                        {% if page_obj.has_previous %}
-                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
-                        {% endif %}
-                        <span class="page-current">
-                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
-                        </span>
-                        {% if page_obj.has_next %}
-                                <a href="?page={{page_obj.next_page_number}}">Next</a>
-                        {% endif %}
-                    </p></span>
-                </div>
-                {% endif %}
         {% else %}
             <p>0 Subclone assays found. <a href="{% url 'subclone-assay-search' %}">Try another search</a>.</p>
         {% endif %}

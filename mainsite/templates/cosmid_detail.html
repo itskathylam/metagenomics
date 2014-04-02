@@ -152,8 +152,8 @@
     <section id="second">
         <h3>Links</h3>
         {% if perms.mainsite.change_cosmid %}
-        <a href="/edit/cosmid/{{ name }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit">Edit {{ name }}</a><br>
-    {% endif %}
-        <a href="/edit/cosmid/endtags/{{ name }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit">Edit {{ name }} End Tags</a><br>
+            <a href="/edit/cosmid/{{ name }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit">Edit {{ name }}</a><br>
+            <a href="/edit/cosmid/endtags/{{ name }}"><img src="{{ STATIC_URL }}icons/edit.png" alt="edit">Edit {{ name }} End Tags</a><br>
+        {% endif %}
     </section>
 {% endblock %}

@@ -407,6 +407,11 @@ table.list td a {
     color: #000;
 }
 
+table.list th a{
+    vertical-align: center;
+    color: #FFFFFF;
+}
+
 table.list tr:hover td {
     background-color: #ddd;
 }

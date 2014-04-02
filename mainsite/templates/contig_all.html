@@ -14,41 +14,27 @@
                 {% else %}
                 <p> Search returned {{total}} results</p>
                 {% endif %}
+        {% else %}
+                <p><a href="/export/contig" >Download All Records</a></p>
+                <p>{{total}} contig records found</p>
+        {% endif %}
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if contig_list.has_previous %}
-                                    <a href="?{{queries.urlencode}}&page={{contig_list.previous_page_number}}">Previous</a>
+                                    <a href="?{{queries.urlencode}}&page={{contig_list.previous_page_number}}&order_by={{order_by}}">Previous</a>
                             {% endif %}
                             <span class="page-current">
                                     Page {{contig_list.number}} of {{ contig_list.paginator.num_pages}}
                             </span>
                             {% if contig_list.has_next %}
-                                    <a href="?{{queries.urlencode}}&page={{contig_list.next_page_number}}">Next</a>
+                                    <a href="?{{queries.urlencode}}&page={{contig_list.next_page_number}}&order_by={{order_by}}">Next</a>
                             {% endif %}
                     </p></span>
                 </div>
-        {% else %}
-                <p><a href="/export/contig" >Download All Records</a></p>
-                <p>All Records</p>
-                <div class="pagination">
-                    <span class="page-links"><p>
-                        {% if page_obj.has_previous %}
-                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
-                        {% endif %}
-                        <span class="page-current">
-                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
-                        </span>
-                        {% if page_obj.has_next %}
-                                <a href="?page={{page_obj.next_page_number}}">Next</a>
-                        {% endif %}
-                    </p></span>
-                </div>
-        {% endif %}
-
         <table class="list">
             <tr>
-                <th>Contig Name</th>
-                <th>Pool ID</th>
+                <th><a href="?{{queries.urlencode}}&order_by=contig_name">Contig Name</a></th>
+                <th><a href="?{{queries.urlencode}}&order_by=pool">Pool ID</a></th>
                 <th>Contig Sequence</th>
                 <th>Contig NCBI Accession</th>
                 <th>BLAST Hit NCBI Accession</th>                
@@ -63,36 +49,19 @@
             </tr>
         {% endfor %}
         </table>
-
-        {% if search %}
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if contig_list.has_previous %}
-                                    <a href="?{{queries.urlencode}}&page={{contig_list.previous_page_number}}">Previous</a>
+                                    <a href="?{{queries.urlencode}}&page={{contig_list.previous_page_number}}&order_by={{order_by}}">Previous</a>
                             {% endif %}
                             <span class="page-current">
                                     Page {{contig_list.number}} of {{ contig_list.paginator.num_pages}}
                             </span>
                             {% if contig_list.has_next %}
-                                    <a href="?{{queries.urlencode}}&page={{contig_list.next_page_number}}">Next</a>
+                                    <a href="?{{queries.urlencode}}&page={{contig_list.next_page_number}}&order_by={{order_by}}">Next</a>
                             {% endif %}
                     </p></span>
                 </div>
-        {% else %}
-                <div class="pagination">
-                    <span class="page-links"><p>
-                        {% if page_obj.has_previous %}
-                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
-                        {% endif %}
-                        <span class="page-current">
-                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
-                        </span>
-                        {% if page_obj.has_next %}
-                                <a href="?page={{page_obj.next_page_number}}">Next</a>
-                        {% endif %}
-                    </p></span>
-                </div>
-        {% endif %}
         </table>
         {% else %}
             <p>0 Contigs found for search '{{ query }}' <a href="{% url 'contig-search' %}">Try another search</a>.</p>

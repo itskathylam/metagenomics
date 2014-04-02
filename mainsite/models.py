@@ -133,7 +133,7 @@ class ORF(models.Model):
         return self.id
     
     class Meta:
-        verbose_name_plural = 'ORFs'
+        verbose_name_plural = 'ORFs'   
 
 class Contig_ORF_Join(models.Model):
     contig = models.ForeignKey(Contig, verbose_name="Contig Name")
