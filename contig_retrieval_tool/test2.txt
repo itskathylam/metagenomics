@@ -1,0 +1,3 @@
+2 and - 11034 /home/rene/metagenomics/contig_retrieval_tool
+2 and - 11131 /home/rene/metagenomics/contig_retrieval_tool
+2 and - 11302 /home/rene/metagenomics/contig_retrieval_tool

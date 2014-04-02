@@ -71,7 +71,8 @@ def Faq(request):
 def UserDoc(request):
     return (render(request, 'userdoc.html'))
 
-@login_required
+
+#@login_required
 def AnnotationTool(request):
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
@@ -83,6 +84,27 @@ def AnnotationTool(request):
 
             #orf_data(contigs)
             #read csv and store in db orf-contigs(also images)
+            
+            #sends the user an email
+            with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
+                bimg = base64.b64encode(img.read())
+                contig = Contig.objects.get(contig_name="scaffold58_1")
+                contig.image_contig = bimg
+            
+                contig.contig_accession = "IMAGE?"
+                contig.save()
+                
+            contigget = Contig.objects.get(contig_name="scaffold58_1")
+            
+            image = contigget.image_contig
+            
+            testpicture = base64.b64decode(image)
+            writeimg = open("mainsite/static/imagedboutput.png", "wb")
+            writeimg.write(testpicture)
+            writeimg.close()
+
+            orf_data(contigs)
+            read csv and store in db orf-contigs(also images)
             
             #sends the user an email
             with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
@@ -203,8 +225,10 @@ def contig_pipeline(pool, cos_selected):
     primer_set1 = Primer.objects.select_related('primer').filter(primer_pair = '1').values_list('id','primer_name')
     primer_set2 = Primer.objects.select_related('primer').filter(primer_pair = '2').values_list('id','primer_name')
 
-    write_fasta(contigs), write_csv('primers_1', cosmids, primer_set1, seqs), write_csv('primers_2', cosmids, primer_set2, seqs)
-    system("perl contig_retrieval_tool/retrieval_pipeline.pl contig_retrieval_tool/primers_1.csv contig_retrieval_tool/primers_2.csv contig_retrieval_tool/contigs.fa")
+    write_fasta(contigs)
+    write_csv('primers_1', cosmids, primer_set1, seqs)
+    write_csv('primers_2', cosmids, primer_set2, seqs)
+    system("perl contig_retrieval_tool/retrieval_pipeline.pl primers_1.csv primers_2.csv contigs.fa")
     return read_csv('testtest.csv')
 
 
@@ -214,12 +238,12 @@ def write_csv(file_name, cosmids, primer_set, seqs):
         csv = File(f)
         seqs = seqs
         cos = cosmids
-        primers = dict(primer_set)
-        for x, y, z in seqs:
-            for c_id, csmd in cos:
-                for p_id, prmr in primers.iteritems():
+        primers = primer_set
+        for x , y, z in seqs:
+            for c_id, c in cos:
+                for p_id, p in primers:
                     if y == c_id and x == p_id:
-                        csv.write(csmd + ',' + prmr + ',' + z + '\n')
+                        csv.write(c + ',' + p + ',' + z + '\n')
         csv.closed
         f.closed
 
@@ -234,13 +258,12 @@ def write_fasta(contigs):
         fasta.closed
         f.closed
 
-@login_required
-def orf_data(contig):
-    contig_id = Contig.objects.filter(contig_name__in = contig).values('id')
-    contigs = Contig.objects.filter(contig_name__in = contig).values_list('contig_name', 'contig_sequence', 'blast_hit_accession')
-    orfs = Contig_ORF_Join.objects.filter(contig = contig_id).values_list('start', 'stop', 'complement', 'prediction_score')
-    anno = ORF.objects.filter(contig = contig_id).values_list('annotation', 'orf_sequence')
- 
+#@login_required
+def orf_data(contig_list):
+    contigs = Contig.objects.filter(contig_name__in = contig_list).values('id','contig_name', 'contig_sequence', 'blast_hit_accession')
+    orfs = Contig_ORF_Join.objects.filter(contig = contigs).values('contig','orf','start', 'stop', 'complement', 'prediction_score')
+    anno = ORF.objects.filter(contig = contigs).values('id','annotation', 'orf_sequence')
+    pdb.set_trace()
     write_lib(contigs, orfs, anno)
 
 #this function is only called by other views, not directly associated with a URL
@@ -248,7 +271,7 @@ def write_lib(contigs, orfs, anno):
     with open("data.lib", 'w') as f:
         data = File(f)
         data.write('#!/usr/bin/perl \n sub data{\n')
-        for name, seq, access in contigs:
+        for c_id, name, seq, access in contigs:
             contig = name
             sequence = seq
             accession = access if access != None else ''
@@ -257,17 +280,18 @@ def write_lib(contigs, orfs, anno):
             data.write('\'genbank\' => {},\n')
             data.write('\'manual\' =>{')
             count = 0
-            for start, stop, comp, score in orfs:
-                for ann, seqs in anno:
-                    count += 1
-                    comp = -1 if comp == 1 else 1
-                    data.write('\'' + contig + '-' + str(count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
-                    data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
-                    annotation = ann if ann != None else ''
-                    data.write('annotation=>\'' + annotation + '\',\n sequence =>\'' + seqs + '\'\n},')
+            for con_id, orf_id, start, stop, comp, score in orfs:
+                for o_id, ann, seqs in anno:
+                    if c_id == con_id and o_id == orf_id:
+                        count += 1
+                        comp = -1 if comp == 1 else 1
+                        data.write('\'' + contig + '-' + str(count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
+                        data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
+                        annotation = ann if ann != None else ''
+                        data.write('annotation=>\'' + annotation + '\',\n sequence =>\'' + seqs + '\'\n},')
             data.write('}},\'' + accession + '\'];\n')
         data.write('return(\%contig_orf);} \n1;')
-    data.closed
+        data.closed
     f.closed
 
 
@@ -1145,13 +1169,13 @@ def CosmidEndTagCreate(request):
                 if (new_end_tags):
                     #check length -- if not empty, then either 1 or 2
                     if len(new_end_tags) == 2:
-                        #remove whitespace from end tag sequences and save 
-                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
-                        new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
+                        #remove whitespace from end tag sequences, make uppercase and save 
+                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split()).upper()
+                        new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split()).upper()
                         new_end_tags[0].save()
                         new_end_tags[1].save()
                     else:
-                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
+                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split()).upper()
                         new_end_tags[0].save()
                 else:
                     pass

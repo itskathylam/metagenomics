@@ -24,6 +24,7 @@ use Cwd 'chdir';
 
 my %contig_orf;
 if (scalar(@ARGV) == 2) {
+     
     #-----------------------------------------------------------------------#
     #                                                                       #
     #                       Set Parameters                                  #
@@ -42,7 +43,7 @@ if (scalar(@ARGV) == 2) {
     my %_contig_retrieval = %{$_contig_retrieval};
     my $row_count = 0;
     my %_graphic_output;
-    open(my $_outcsv, ">>", "tmp/out/testtest.csv") or die "Could not export to CSV file, $!\n";
+    open(my $_outcsv, ">>", "tmp/out/retrieval.csv") or die "Could not export to CSV file, $!\n";
 
     
     
