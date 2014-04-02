@@ -1,10 +1,7 @@
 #!/usr/bin/perl
 use warnings;
 use strict;
-BEGIN {
-    $ENV{BLASTPLUSDIR} = '/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin';
-    $ENV{PATH} .= ':/usr/bin/emboss/emboss';
-}
+
 use lib '/usr/share/perl5';
 #use lib '/usr/bin/emboss/emboss';
 use lib '/usr/lib/cpan/custom/';
@@ -22,6 +19,7 @@ use Bio::SeqIO;
 use Data::Dumper;
 use File::Path qw/make_path remove_tree/;
 use Storable;
+use Cwd 'chdir';
 #$" = "\n";
 
 
@@ -57,7 +55,7 @@ my %_contig_retrieval;
 
 my %end_tag_seq;
 #print @ARGV;
-if(scalar(@ARGV) != 3){
+if(scalar(@ARGV) != 4){
     print @ARGV, "\n";
     print "Endtag_F, Endtag_R and Databse required\n";
 }   else {
@@ -65,9 +63,13 @@ if(scalar(@ARGV) != 3){
 # ARGV[0] = End tag F CSV file
 # ARGV[1] = End tag R CSV file
 # ARGV[2] = Sequence file
-my $end_tag_f_file = shift;
-my $end_tag_r_file = shift;
-my $seq_file = shift;
+    my ($end_tag_f_file, $end_tag_r_file, $seq_file, $cwd) = @ARGV;
+    open(my $outt, ">>" , "/home/rene/Make.txt");
+    system('touch /home/nina/metagenomics/hello.txt');
+    print $outt "$end_tag_f_file, $end_tag_r_file, $seq_file, $cwd\n";
+    print $outt "$cwd\n";
+    chdir("$cwd");
+    
 
 #Current segment is TEMPORARY:
 # Parses an Excel file containing all the End Tag unique ID's and stores them in a hash
@@ -121,7 +123,7 @@ my $seq_file = shift;
     # BLASTs the sequences against the fasta database and stores the related BLAST information
     # in the appropriate folder.
     foreach(keys(%end_tag_seq)){
-        make_path("temp/$_");
+        make_path("temp/tmp/$_");
         #-------------------LOCAL BLAST CONTIG RETRIEVAL------------------------
         foreach my $for_rev(0..1){
             my $seq_obj = Bio::Seq->new(
@@ -135,7 +137,7 @@ my $seq_file = shift;
             # Executes a blastn search using the sequence on the database
             my $result = $blast_obj->blastn(
                                 -query => $seq_obj,
-                                -outfile => "temp/$_/$for_rev_name");
+                                -outfile => "temp/tmp/$_/$for_rev_name");
 
             #print "*" x 50, "\n";
             #print "End Tag Sequence: ", $_, "\n";
@@ -145,7 +147,7 @@ my $seq_file = shift;
             #Parse the newly created BLAST file 
             my $in_f = Bio::SearchIO->new(
                                         -format => 'blast',
-                                        -file => "temp/$_/$for_rev_name");
+                                        -file => "temp/tmp/$_/$for_rev_name");
             
             #For each Result, each hit, each hsp, retrieve the following information and store
             # it into a hash of the End Tag Unique ID which points to a count of the HSPs being
@@ -210,112 +212,10 @@ my $seq_file = shift;
             }
         } 
     }
-    store (\%_contig_retrieval, "storage/write.$$") or die "could not store";
+    store (\%_contig_retrieval, "temp/storage/write.$$") or die "could not store";
     print $$;
     $blast_obj->cleanup();
 }
 
 __END__ 
-    #---------------------------------------------------------------------------
-    #                           EMBOSS ORF Finder
-    #---------------------------------------------------------------------------
-    # ORF Annotation:
-    #  EXTREMELY likely to be deleted and exported to using Glimmer-MG
-    #  No comments will be made until final decision has been made.
-    
-    my $orf_factory = Bio::Factory::EMBOSS->new();
-    foreach my $temp_query(keys(%_contig_retrieval)){
-        foreach my $temp_rf(keys($_contig_retrieval{$temp_query})){
-            if($_contig_retrieval{$temp_query}{$temp_rf}->[7] > $_spurious_length){
-                print $_contig_retrieval{$temp_query}{$temp_rf}->[7], " -$_spurious_length --- ", $_contig_retrieval{$temp_query}{$temp_rf}->[1], " --- ", "$temp_query. $temp_rf --- \n";
-                my $_list_end = scalar(@{$_contig_retrieval{$temp_query}{$temp_rf}});
-                my $contig_seq = $_contig_retrieval{$temp_query}{$temp_rf}->[13];
-                my $contig_obj = Bio::Seq->new(
-                                                -seq => "$contig_seq",
-                                                -display_id => "$temp_query:$temp_rf",
-                                                );
-                my $temp_contig  = Bio::SeqIO->new(
-                                                -file => ">$_temp_contig",
-                                                -format => "fasta",
-                                                );
-                $temp_contig->write_seq($contig_obj);
-                my %input = (
-                            -sequence => "$_temp_contig",
-                            -minsize => $_min_size,
-                            -maxsize => $_max_size,
-                            -outseq => "$output_orfs",
-                            -table => $_organism_code,
-                            -find => $_output_format,
-                            -circular => "$_is_circular",
-                            -methionine => "N");
-                my $orf_app = $orf_factory->program("getorf");
-                my $result = $orf_app->run(\%input);
-               
-                my $inorf = Bio::SeqIO->new(
-                                           -format => 'fasta',
-                                           -file => "$output_orfs",
-                                           );
-                $_graphic_output{$temp_query}{$temp_rf}{'start'} = [];
-                $_graphic_output{$temp_query}{$temp_rf}{'end'} = [];
-                $_graphic_output{$temp_query}{$temp_rf}{'start'} = [];
-                
-                while (my $_orf_seq = $inorf->next_seq()) {
-                    my $temp_orf_seq = $_orf_seq->seq();
-                    my $temp_orf_loc = $_orf_seq->desc();
-                    my ($start, $end);
-                    if($temp_orf_loc =~ /^\[(\d+?)\s+?-\s+?(\d+?)\]\s*?$/){
-                        $start = $1;
-                        $end = $2;
-                    } else {                                         # IGnores the Reverse Sense strand
-                        last;
-                    }
-                    #print "Line 278: \$temp_orf_loc is $temp_orf_loc -- $start - $end\n";
-                    push($_contig_retrieval{$temp_query}{$temp_rf}, $temp_orf_seq);
-                    push($_contig_retrieval{$temp_query}{$temp_rf}, $start);
-                    push($_contig_retrieval{$temp_query}{$temp_rf}, $end);
-                    push($_graphic_output{$temp_query}{$temp_rf}{'start'}, $start);
-                    push($_graphic_output{$temp_query}{$temp_rf}{'end'}, $end);
-                    #print "Line 271: \$temp_orf_seq - $temp_orf_seq\n";
-                    
-                    
-                    if ($_annotation_switch eq "ON") {
-                        my $blast_orf_obj = Bio::Tools::Run::StandAloneBlastPlus->new(
-                                                                                    -db_name => "$_database_type",
-                                                                                    -remote => 'remote',
-                                                                                    #-DB_DIR => '/home/rene/endtags/end/install/ncbi-blast-2.2.29+-src/db',
-                                                                                    );
-                        
-                        
-                        my $seq_orf_obj = Bio::Seq->new(
-                                                        -id => "orf",
-                                                        -seq => "$temp_orf_seq",
-                                                        );
-                        print "Sequence: $temp_orf_seq\n";
-                        print "Starting BlastX Query....\n";
-                        my $orf_result = $blast_orf_obj->blastx(
-                                                                -query => $seq_orf_obj,
-                                                                -outfile => "$_temp_orf_file",
-                                                                );
-                        print "Blasting the query is complete.\n";
-                        my $orf_in = Bio::SearchIO->new(
-                                                        -format => 'blast',
-                                                        -file => "$_temp_orf_file",
-                                                        );
-                        my $result = $orf_in->next_result();
-                        print "Line 297: $result\n";
-                        if(my $hit = $result->next_hit()){
-                            print "Line 273: Here\n";
-                            my $_annotation = $hit->description();
-                            my $_annotation2 = $hit->name() . " " . $hit->description() . " " . $hit->locus();
-                            push($_contig_retrieval{$temp_query}{$temp_rf}, $_annotation);
-                            print Dumper(\%_contig_retrieval);
-                            print "Hit Name: ", $hit->name(), "---- Description: ", $hit->description(), "\n";
-                            print "Name [14]: ", $_contig_retrieval{$temp_query}{$temp_rf}->[14], " ---- Sequence: ", $_contig_retrieval{$temp_query}{$temp_rf}->[13], "\n";
-                            print "Name [16]: ", $_contig_retrieval{$temp_query}{$temp_rf}->[16], " ---- Sequence: ", $_contig_retrieval{$temp_query}{$temp_rf}->[15], "\n";
-                        }    
-                    } 
-                }       
-            }  
-        }
-    }
-}
+ 

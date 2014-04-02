@@ -24,7 +24,7 @@ import types
 import StringIO
 from os import system
 import pdb
-import Image
+import base64
 from django.db.models import Q
 import re
 import base64 #used to convert pngs to base64 for database storage
@@ -84,6 +84,7 @@ def AnnotationTool(request):
         if 'submit' in request.POST:
             email = request.POST['email']
             contigs = request.POST.getlist('contig')
+
             #orf_data(contigs)
             #read csv and store in db orf-contigs(also images)
             
@@ -105,6 +106,9 @@ def AnnotationTool(request):
             writeimg.write(testpicture)
             write.close()
             
+            orf_data(contigs)
+            #return render_to_response('tool_contig_submit.html', var)
+            
             #system("(echo 'this is a test email. see attachment'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
     return render_to_response('tool_annotation.html', {'image': testpicture, 'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
 
@@ -112,6 +116,7 @@ def AnnotationTool(request):
 def AnnotationToolResults(request):
     if request.method == "POST":
         results = request.POST
+
         #pdb.set_trace()
         # (echo "put body content here"; uuencode filename filename) | mail -s "subject here" email_address_here
         
@@ -144,8 +149,7 @@ def ContigTool(request):
             pool = request.POST['pool']
             cos = request.POST.getlist('cos')
             cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values_list('id', 'cosmid_name')
-            contig_pipeline(pool, cos_selected) #need to integrate this step with renes tool and generate the tool
-            results = read_csv('testtest.csv') #where does this come from????? should use database.....
+            results = contig_pipeline(pool, cos_selected) 
             entries = []
             for row in results:
                 entry = row[0:3]
@@ -175,7 +179,6 @@ def ContigToolResults(request):
         
         cosmids = []
         for join in joins:
-            #pdb.set_trace()
             cosmid = Cosmid.objects.get(cosmid_name=join)
             contig = Contig.objects.get(contig_name=joins[join])
             contig.cosmid.add(cosmid)
@@ -207,11 +210,12 @@ def contig_pipeline(pool, cos_selected):
 
     write_fasta(contigs), write_csv('primers_1', cosmids, primer_set1, seqs), write_csv('primers_2', cosmids, primer_set2, seqs)
     system("perl contig_retrieval_tool/retrieval_pipeline.pl contig_retrieval_tool/primers_1.csv contig_retrieval_tool/primers_2.csv contig_retrieval_tool/contigs.fa")
+    return read_csv('testtest.csv')
 
 
 #this function is only called by other views, not directly associated with a URL
 def write_csv(file_name, cosmids, primer_set, seqs):
-    with open("./contig_retrieval_tool/tmp/out/%s.csv" %file_name, 'w') as f:
+    with open("./contig_retrieval_tool/%s.csv" %file_name, 'w') as f:
         csv = File(f)
         seqs = list(seqs)
         cos = dict(cosmids)
@@ -235,42 +239,41 @@ def write_fasta(contigs):
         fasta.closed
         f.closed
 
-
 @login_required
-def orf_data(request, contig_list):
-    for contig in contig_list:
-        contig_id = Contig.objects.filter(contig_name = contig).values('id')
-        contigs = Contig.objects.filter(contig_name = contig).values_list('contig_name', 'contig_sequence', 'blast_hit_accession')
-        orfs = Contig_ORF_Join.objects.filter(contig = contig_id).values_list('start', 'stop', 'complement', 'prediction_score')
-        anno = ORF.objects.filter(contig = contig_id).values_list('annotation', 'orf_sequence')
+def orf_data(contig):
+    contig_id = Contig.objects.filter(contig_name__in = contig).values('id')
+    contigs = Contig.objects.filter(contig_name__in = contig).values_list('contig_name', 'contig_sequence', 'blast_hit_accession')
+    orfs = Contig_ORF_Join.objects.filter(contig = contig_id).values_list('start', 'stop', 'complement', 'prediction_score')
+    anno = ORF.objects.filter(contig = contig_id).values_list('annotation', 'orf_sequence')
+ 
     write_lib(contigs, orfs, anno)
-    #execute annotations pipeline 
-    
-    return HttpResponse()
-
 
 #this function is only called by other views, not directly associated with a URL
 def write_lib(contigs, orfs, anno):
-    with open("contigs.name_data.lib", 'w') as f:
+    with open("data.lib", 'w') as f:
         data = File(f)
-        data.write('#!/usr/bin/perl \n sub data{\n$contig_orf{')
-       
+        data.write('#!/usr/bin/perl \n sub data{\n')
         for name, seq, access in contigs:
             contig = name
-            accession = access
-            data.write(name + '}\n = [\'' + seq + '\',\n')
+            sequence = seq
+            accession = access if access != None else ''
+            data.write('$contig_orf{' + contig + '}\n = [\'' + sequence + '\',\n')
             data.write('{\'glimmer\' => {},\n')
             data.write('\'genbank\' => {},\n')
+            data.write('\'manual\' =>{')
+            count = 0
             for start, stop, comp, score in orfs:
                 for ann, seqs in anno:
-                        comp = -1 if comp == 1 else 1
-                        data.write('\'manual\' =>{\'' + contig + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
-                        data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
-                        data.write('=>\'' + ann + '\',\n sequence =>\'' + seqs + '\'\n},')
-        #}}' + accession + '];\n'
-        data.write('return(\%contig_orf);} \n 1;') 
-        data.closed
-        f.closed
+                    count += 1
+                    comp = -1 if comp == 1 else 1
+                    data.write('\'' + contig + '-' + str(count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
+                    data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
+                    annotation = ann if ann != None else ''
+                    data.write('annotation=>\'' + annotation + '\',\n sequence =>\'' + seqs + '\'\n},')
+            data.write('}},\'' + accession + '\'];\n')
+        data.write('return(\%contig_orf);} \n1;')
+    data.closed
+    f.closed
 
 
 #sequence search
@@ -976,19 +979,28 @@ class CosmidEditView(UpdateView):
     slug_url_kwarg = 'cosmid_name'
     success_url = reverse_lazy('cosmid-end-tag-list')
     
-#only for editing a cosmid's endtags -- ideally should be combined with cosmid edit
+    def get_object(self, queryset=None):
+        cosmid_object = Cosmid.objects.get(cosmid_name=self.kwargs['cosmid_name'])
+        return cosmid_object
+    
+    def get_success_url(self):
+        return ('/cosmid/' + self.get_object().cosmid_name)
+
+#only for editing a cosmid's endtags -- ideally should be combined with cosmid edit (Kathy)
 class CosmidEndTagEditView(UpdateView):
     model = Cosmid
-    form_class = EndTagFormSetUpdate #requires both {{ form }} and {{ form_class }} in template
+    form_class = EndTagFormSet #requires both {{ form }} and {{ form_class }} in template
     template_name = 'cosmid_only_end_tag_edit.html'
     slug_field = 'cosmid_name' 
     slug_url_kwarg = 'cosmid_name'
     
-    #redirect to cosmid detailview
-    def get_success_url(self):
-        cosmid_id = self.kwargs['cosmid_id']
-        return reverse_lazy('cosmid-detail', kwargs={'cosmid_id': cosmid_id})
+    def get_object(self, queryset=None):
+        cosmid_object = Cosmid.objects.get(cosmid_name=self.kwargs['cosmid_name'])
+        return cosmid_object
     
+    def get_success_url(self):
+        return ('/cosmid/' + self.get_object().cosmid_name)
+
 class SubcloneEditView(UpdateView):
     model = Subclone
     template_name = 'subclone_edit.html'
@@ -1152,14 +1164,19 @@ def CosmidEndTagCreate(request):
                 
                 #if no end-tags submitted, new_end_tags is an empty list
                 if (new_end_tags):
-                    #remove whitespace from end tag sequences and save 
-                    new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
-                    new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
-                    new_end_tags[0].save()
-                    new_end_tags[1].save()
+                    #check length -- if not empty, then either 1 or 2
+                    if len(new_end_tags) == 2:
+                        #remove whitespace from end tag sequences and save 
+                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
+                        new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
+                        new_end_tags[0].save()
+                        new_end_tags[1].save()
+                    else:
+                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
+                        new_end_tags[0].save()
                 else:
                     pass
-                return HttpResponseRedirect('/cosmid/') 
+                return HttpResponseRedirect('/cosmid/' + new_cosmid.cosmid_name) 
         
     else:
         cosmid_form = CosmidForm(instance=Cosmid())
