@@ -94,19 +94,13 @@
         </header>
         
         <section id="title">
-          {% block subtitle %}
-          {% endblock %}
+          {% block subtitle %}{% endblock %}
         </section>
         <section id="main">
             {% block content %}{% endblock %}
         </section>
-        
-        {% block second %}
-        {% endblock %}
-        
-        {% block third %}
-        {% endblock %}
-
+        {% block second %}{% endblock %}
+        {% block third %}{% endblock %}
         <footer id="footer">
             <p><a href="/about">About</a>
              {% if user.is_staff %}

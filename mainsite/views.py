@@ -24,13 +24,16 @@ import types
 import StringIO
 from os import system
 import pdb
-import Image
+import base64
 from django.db.models import Q
 import re
+import base64 #used to convert pngs to base64 for database storage
+from itertools import chain
+
 
 #Main, About etc
 
-#@login_required
+@login_required  #UNCOMMENT THIS BEFORE DEPLOYMENT
 def MainPage(request):
     template_name = 'index.html'
     return (render(request, 'index.html'))
@@ -76,15 +79,50 @@ def ContigTool(request):
 def AnnotationTool(request):
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
-    return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
+    testpicture = ''
+    if request.method == "POST":
+        if 'submit' in request.POST:
+            email = request.POST['email']
+            contigs = request.POST.getlist('contig')
 
+            #orf_data(contigs)
+            #read csv and store in db orf-contigs(also images)
+            
+            #sends the user an email
+            with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
+                bimg = base64.b64encode(img.read())
+                contig = Contig.objects.get(contig_name="scaffold58_1")
+                contig.image_contig = bimg
+            
+                contig.contig_accession = "IMAGE?"
+                contig.save()
+                
+            contigget = Contig.objects.get(contig_name="scaffold58_1")
+            
+            image = contigget.image_contig
+            
+            testpicture = base64.b64decode(image)
+            writeimg = open("mainsite/static/imagedboutput.png", "wb")
+            writeimg.write(testpicture)
+            write.close()
+            
+            orf_data(contigs)
+            #return render_to_response('tool_contig_submit.html', var)
+            
+            #system("(echo 'this is a test email. see attachment'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
+    return render_to_response('tool_annotation.html', {'image': testpicture, 'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
+
+@login_required
 def AnnotationToolResults(request):
     if request.method == "POST":
         results = request.POST
+
         #pdb.set_trace()
         # (echo "put body content here"; uuencode filename filename) | mail -s "subject here" email_address_here
+        
     return render_to_response('tool_annotation_results.html', {'results': results })
 
+@login_required
 def ContigTool(request):
     context = {'pool':Pooled_Sequencing.objects.all()}
     if request.method == "POST":
@@ -93,15 +131,25 @@ def ContigTool(request):
             pool = Pooled_Sequencing.objects.all()
             details = Pooled_Sequencing.objects.filter(id = pool_id)
             cosmids = Cosmid.objects.filter(pool = pool_id)
-            contigs = Contig.objects.all()
-            context = {'pool': pool, 'detail': details, 'cosmids': cosmids, 'contigs': contigs}
+            filter_cos = []
+            for contig in Contig.objects.all():
+                for cosmid in contig.cosmid.all():
+                    filter_cos.append(cosmid)
+            
+            joined = []
+            notjoined = []
+            for cosmid in cosmids:
+                if cosmid in filter_cos:
+                    joined.append(cosmid)
+                else:
+                    notjoined.append(cosmid)
+            context = {'poolselect': int(pool_id), 'pool': pool, 'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
             
         if 'submit' in request.POST:
             pool = request.POST['pool']
             cos = request.POST.getlist('cos')
             cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values_list('id', 'cosmid_name')
-            contig_pipeline(pool, cos_selected) #need to integrate this step with renes tool and generate the tool
-            results = read_csv('testtest.csv') #where does this come from????? should use database.....
+            results = contig_pipeline(pool, cos_selected) 
             entries = []
             for row in results:
                 entry = row[0:3]
@@ -116,6 +164,7 @@ def ContigTool(request):
     variables = RequestContext(request, context)
     return render_to_response('tool_contig.html', variables)
 
+@login_required
 def ContigToolResults(request):
     if request.method == 'POST':
         if 'submit' in request.POST:
@@ -130,7 +179,6 @@ def ContigToolResults(request):
         
         cosmids = []
         for join in joins:
-            #pdb.set_trace()
             cosmid = Cosmid.objects.get(cosmid_name=join)
             contig = Contig.objects.get(contig_name=joins[join])
             contig.cosmid.add(cosmid)
@@ -138,6 +186,8 @@ def ContigToolResults(request):
         return HttpResponseRedirect('/results/basic/cosmid?query=' + ' '.join(cosmids))
     
     return render_to_response('tool_contig_result.html', {'results': joins}, context_instance=RequestContext(request))
+
+#this function is only called by other views, not directly associated with a URL
 #read csv file into array
 def read_csv(filename):
     import csv
@@ -149,38 +199,35 @@ def read_csv(filename):
     csvfile.closed
     return rows
 
+#this function is only called by other views, not directly associated with a URL
 def contig_pipeline(pool, cos_selected):
-    pool_id = pool
-    contigs = Contig.objects.filter(pool = pool_id).values_list('contig_name', 'contig_sequence')
+    contigs = Contig.objects.filter(pool = pool).values_list('contig_name', 'contig_sequence')
     cosmids = cos_selected
     seqs = End_Tag.objects.select_related('cosmids').values_list('id', 'primer', 'end_tag_sequence')
     primer_set1 = Primer.objects.select_related('primer').filter(primer_pair = '1').values_list('id','primer_name')
     primer_set2 = Primer.objects.select_related('primer').filter(primer_pair = '2').values_list('id','primer_name')
 
-    HttpResponse(write_fasta(contigs), write_csv('primers_1', cosmids, primer_set1, seqs), write_csv('primers_2', cosmids, primer_set2, seqs))
-    HttpResponse(system("perl contig_retrieval_tool/retrieval_pipeline.pl contig_retrieval_tool/primers_1.csv contig_retrieval_tool/primers_2.csv contig_retrieval_tool/contigs.fa"))
-    changed_rows = Contig.objects.filter(pool = pool_id)
-    #for r in changed_rows:
-    #    r.image_contig = Image.open("./img/contig.png")
-    #    r.image_genbank = Image.open("./img/genbank.png")
-    #    r.image_predicted = Image.open("./img/predicted.png")
-    #    r.image_manual = Image.open("./img/manual.png")
-    #    r.save()
-    
+    write_fasta(contigs), write_csv('primers_1', cosmids, primer_set1, seqs), write_csv('primers_2', cosmids, primer_set2, seqs)
+    system("perl contig_retrieval_tool/retrieval_pipeline.pl contig_retrieval_tool/primers_1.csv contig_retrieval_tool/primers_2.csv contig_retrieval_tool/contigs.fa")
+    return read_csv('testtest.csv')
+
+
+#this function is only called by other views, not directly associated with a URL
 def write_csv(file_name, cosmids, primer_set, seqs):
-    with open("./contig_retrieval_tool/tmp/out/%s.csv" %file_name, 'w') as f:
+    with open("./contig_retrieval_tool/%s.csv" %file_name, 'w') as f:
         csv = File(f)
-        seqs = list(seqs)
-        cos = dict(cosmids)
+        seqs = seqs
+        cos = cosmids
         primers = dict(primer_set)
         for x, y, z in seqs:
-            for c_id, csmd in cos.iteritems():
+            for c_id, csmd in cos:
                 for p_id, prmr in primers.iteritems():
                     if y == c_id and x == p_id:
                         csv.write(csmd + ',' + prmr + ',' + z + '\n')
         csv.closed
         f.closed
 
+#this function is only called by other views, not directly associated with a URL
 #writes contigs to fasta file(text.fa)    
 def write_fasta(contigs):
     with open('./contig_retrieval_tool/contigs.fa', 'w') as f:
@@ -191,37 +238,41 @@ def write_fasta(contigs):
         fasta.closed
         f.closed
 
-
-def orf_data(request):
-    contig_id = Contig.objects.filter(contig_name = 'scaffold58_1').values('id')
-    contigs = Contig.objects.filter(contig_name = 'scaffold58_1').values_list('contig_name', 'contig_sequence', 'blast_hit_accession')
+@login_required
+def orf_data(contig):
+    contig_id = Contig.objects.filter(contig_name__in = contig).values('id')
+    contigs = Contig.objects.filter(contig_name__in = contig).values_list('contig_name', 'contig_sequence', 'blast_hit_accession')
     orfs = Contig_ORF_Join.objects.filter(contig = contig_id).values_list('start', 'stop', 'complement', 'prediction_score')
     anno = ORF.objects.filter(contig = contig_id).values_list('annotation', 'orf_sequence')
-   
-    return HttpResponse(write_lib(contigs, orfs, anno))
+ 
+    write_lib(contigs, orfs, anno)
 
+#this function is only called by other views, not directly associated with a URL
 def write_lib(contigs, orfs, anno):
-    with open('./data.lib', 'w') as f:
+    with open("data.lib", 'w') as f:
         data = File(f)
         data.write('#!/usr/bin/perl \n sub data{\n')
-        contig = ''
-        accession = ''
-        count = 1
         for name, seq, access in contigs:
             contig = name
-            accession = access
-            data.write('$contig_orf{' + name + '}\n = [\'' + seq + '\',\n')
-        data.write('{\'glimmer\' => {},\n')
-        data.write('\'genbank\' => {},\n')
-        for start, stop, comp, score in orfs:
-            for ann, seqs in anno:
+            sequence = seq
+            accession = access if access != None else ''
+            data.write('$contig_orf{' + contig + '}\n = [\'' + sequence + '\',\n')
+            data.write('{\'glimmer\' => {},\n')
+            data.write('\'genbank\' => {},\n')
+            data.write('\'manual\' =>{')
+            count = 0
+            for start, stop, comp, score in orfs:
+                for ann, seqs in anno:
+                    count += 1
                     comp = -1 if comp == 1 else 1
-                    data.write('\'manual\' =>{\'' + contig + '-' + str(++count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
+                    data.write('\'' + contig + '-' + str(count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
                     data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
-                    data.write('=>\'' + ann + '\',\n sequence =>\'' + seqs + '\'\n}}}' + accession + '];\n')
-        data.write('return(\%contig_orf);} \n 1;') 
-        data.closed
-        f.closed
+                    annotation = ann if ann != None else ''
+                    data.write('annotation=>\'' + annotation + '\',\n sequence =>\'' + seqs + '\'\n},')
+            data.write('}},\'' + accession + '\'];\n')
+        data.write('return(\%contig_orf);} \n1;')
+    data.closed
+    f.closed
 
 
 #sequence search
@@ -365,11 +416,12 @@ def ContigSearchView(request):
     return render_to_response('contig_search.html', {'advancedform': form, 'basicform': basicform, 'blast_form':blast_form}, context_instance=RequestContext(request))
 
 #can delete this view
-def SearchAll(request):
-    form = AllSearchForm
-    return render_to_response('all_search.html', {'form': form}, context_instance=RequestContext(request))
+#def SearchAll(request):
+#    form = AllSearchForm
+#    return render_to_response('all_search.html', {'form': form}, context_instance=RequestContext(request))
 
 #search result views
+@login_required
 def CosmidResults(request):
     cosmid_name = request.GET.get('cosmid_name')
     host = request.GET.get('host')
@@ -412,7 +464,7 @@ def CosmidResults(request):
     
     return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': cosmid_list, 'queries':queries, 'search':search, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
-
+@login_required
 def SubcloneResults(request):
     name = request.GET.get('subclone_name')
     cosmid = request.GET.get('cosmid')
@@ -453,6 +505,7 @@ def SubcloneResults(request):
     
     return render_to_response('subclone_all.html', {'subclone_list': subclone_list, 'queries':queries, 'search':search, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
+@login_required
 def SubcloneAssayResults(request):
     subclone = request.GET.get('subclone')
     host = request.GET.get('host')
@@ -494,6 +547,7 @@ def SubcloneAssayResults(request):
     
     return render_to_response('subclone_assay_all.html', {'subclone_assay_list': subclone_assay_list, 'search':search, 'queries':queries, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
+@login_required
 def CosmidAssayResults(request):
     #gets all of the user inputted information from the form
     cosmid = request.GET.get('cosmid')
@@ -538,6 +592,7 @@ def CosmidAssayResults(request):
         
     return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': cosmid_assay_list, 'search':search, 'queries':queries, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
+@login_required
 def OrfResults(request):
     annotation = request.GET.get('annotation')
     queries = request.GET.copy();
@@ -566,6 +621,7 @@ def OrfResults(request):
     
     return render_to_response('orf_all.html', {'orf_list': orf_list, 'search':search, 'queries':queries, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
+@login_required
 def ContigResults(request):
     pool = request.GET.get('pool')
     contig_name = request.GET.get('contig_name')
@@ -601,7 +657,7 @@ def ContigResults(request):
 
     return render_to_response('contig_all.html', {'contig_list': contig_list, 'queries':queries, 'search':search, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
-
+@login_required
 def CosmidBasicResults(request):
    #gets the list of words they entered
     query = request.GET.get('query')
@@ -648,6 +704,7 @@ def CosmidBasicResults(request):
             cosmid_list = p.page(1)
     return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': cosmid_list, 'query': query, 'search':search, 'queries':queries, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
+@login_required
 def SubcloneBasicResults(request):
     #gets the list of words they entered
     query = request.GET.get('query')
@@ -695,6 +752,7 @@ def SubcloneBasicResults(request):
             subclone_list = p.page(1)
     return render_to_response('subclone_all.html', {'subclone_list': subclone_list, 'query': query, 'queries':queries, 'search':search, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
+@login_required
 def CosmidAssayBasicResults(request):
     #gets the list of words they entered
     query = request.GET.get('query')
@@ -739,6 +797,7 @@ def CosmidAssayBasicResults(request):
             cosmid_assay_list = p.page(1)
     return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': cosmid_assay_list, 'query': query, 'queries':queries, 'search':search, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
+@login_required
 def SubcloneAssayBasicResults(request):
     #gets the list of words they entered
     query = request.GET.get('query')
@@ -783,6 +842,7 @@ def SubcloneAssayBasicResults(request):
             subclone_assay_list = p.page(1)
     return render_to_response('subclone_assay_all.html', {'subclone_assay_list': subclone_assay_list, 'query': query, 'search':search, 'queries':queries, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
+@login_required
 def OrfBasicResults(request):
     #gets the list of words they entered
     query = request.GET.get('query')
@@ -823,6 +883,7 @@ def OrfBasicResults(request):
             orf_list = p.page(1)
     return render_to_response('orf_all.html', {'orf_list': orf_list, 'query': query, 'search':search, 'queries':queries, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
+@login_required
 def ContigBasicResults(request):
     #gets the list of words they entered
     query = request.GET.get('query')
@@ -864,6 +925,7 @@ def ContigBasicResults(request):
     return render_to_response('contig_all.html', {'contig_list': contig_list, 'query': query, 'search':search, 'queries':queries, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
 #detail views
+@login_required
 def CosmidDetail(request, cosmid_name):
     #returns the Cosmid object requested
     cosmid = Cosmid.objects.get(cosmid_name=cosmid_name)
@@ -897,7 +959,7 @@ def CosmidDetail(request, cosmid_name):
         contigids.append(c.id)
     
     #returns all the orfs for the contigs that are associated with the cosmid
-    orfresults = Contig_ORF_Join.objects.filter(contig_id__in=contigids)
+    orfresults = Contig_ORF_Join.objects.filter(contig_id__in=contigids).order_by('start')
     orfids = []
     for o in orfresults:
         orfids.append(o.orf_id)
@@ -912,6 +974,7 @@ def CosmidDetail(request, cosmid_name):
     
     return render_to_response('cosmid_detail.html', {'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book, 'cosmid_comments': cosmid_comments}, context_instance=RequestContext(request))
 
+@login_required
 def ContigDetail(request, contig_name):
     contig = Contig.objects.get(contig_name=contig_name)
     
@@ -922,7 +985,7 @@ def ContigDetail(request, contig_name):
     accession = contig.contig_accession
     cosmids = Cosmid.objects.filter(contig=contig.id)
     
-    orfresults = Contig_ORF_Join.objects.filter(contig_id=contig.id)
+    orfresults = Contig_ORF_Join.objects.filter(contig_id=contig.id).order_by('start')
     orfids = []
     for o in orfresults:
         orfids.append(o.orf_id)
@@ -931,7 +994,7 @@ def ContigDetail(request, contig_name):
     
     return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
 
-
+@login_required
 def OrfDetail(request, pk):
     orf = ORF.objects.get(id = pk)
     contigorfs = Contig_ORF_Join.objects.filter(orf_id = orf.id)
@@ -975,19 +1038,28 @@ class CosmidEditView(UpdateView):
     slug_url_kwarg = 'cosmid_name'
     success_url = reverse_lazy('cosmid-end-tag-list')
     
-#only for editing a cosmid's endtags -- ideally should be combined with cosmid edit
+    def get_object(self, queryset=None):
+        cosmid_object = Cosmid.objects.get(cosmid_name=self.kwargs['cosmid_name'])
+        return cosmid_object
+    
+    def get_success_url(self):
+        return ('/cosmid/' + self.get_object().cosmid_name)
+
+#only for editing a cosmid's endtags -- ideally should be combined with cosmid edit (Kathy)
 class CosmidEndTagEditView(UpdateView):
     model = Cosmid
-    form_class = EndTagFormSetUpdate #requires both {{ form }} and {{ form_class }} in template
+    form_class = EndTagFormSet #requires both {{ form }} and {{ form_class }} in template
     template_name = 'cosmid_only_end_tag_edit.html'
     slug_field = 'cosmid_name' 
     slug_url_kwarg = 'cosmid_name'
     
-    #redirect to cosmid detailview
-    def get_success_url(self):
-        cosmid_id = self.kwargs['cosmid_id']
-        return reverse_lazy('cosmid-detail', kwargs={'cosmid_id': cosmid_id})
+    def get_object(self, queryset=None):
+        cosmid_object = Cosmid.objects.get(cosmid_name=self.kwargs['cosmid_name'])
+        return cosmid_object
     
+    def get_success_url(self):
+        return ('/cosmid/' + self.get_object().cosmid_name)
+
 class SubcloneEditView(UpdateView):
     model = Subclone
     template_name = 'subclone_edit.html'
@@ -1030,7 +1102,8 @@ class SubcloneListView(ListView):
     template_name = 'subclone_all.html'
     paginate_by = 20
 
-#retrieve SubcloneView queryset to export as csv
+#retrieve SubcloneListView queryset to export as csv
+@login_required
 def subclone_queryset(response):
     qs = Subclone.objects.all()
     return queryset_export_csv(qs)
@@ -1041,6 +1114,7 @@ class CosmidAssayListView(ListView):
     paginate_by = 20
 
 #retrieve CosmidAssayListView queryset to export as csv
+@login_required
 def cosmid_assay_queryset(response):
     qs = Cosmid_Assay.objects.all()
     return queryset_export_csv(qs)
@@ -1050,7 +1124,9 @@ class SubcloneAssayListView(ListView):
     template_name = 'subclone_assay_all.html'
     paginate_by = 20
 
-#retrieve SubcloneListView queryset to export as csv
+
+#retrieve SubcloneAssayListView queryset to export as csv
+@login_required
 def subclone_assay_queryset(response):
     qs = Subclone_Assay.objects.all()
     return queryset_export_csv(qs)
@@ -1061,6 +1137,7 @@ class ORFListView (ListView):
     paginate_by = 20
 
 #retrieve ORFListView queryset to export as csv
+@login_required
 def orf_queryset(response):
     qs = ORF.objects.all()
     return queryset_export_csv(qs)
@@ -1071,6 +1148,7 @@ class ContigListView (ListView):
     paginate_by = 20
 
 #retrieve ContigListView queryset to export as csv
+@login_required
 def contig_queryset(response):
     qs = Contig.objects.all()
     return queryset_export_csv(qs)
@@ -1084,8 +1162,11 @@ class CosmidEndTagListView(ListView):
     
   
 #retrieve CosmidEndTagListView queryset to export as csv
+@login_required
 def cosmid_endtag_queryset(response):
-    qs = Cosmid.objects.all()
+    qs1 = list(Cosmid.objects.all())
+    qs2 = list(End_Tag.objects.all())
+    qs = chain(qs1, qs2)
     return queryset_export_csv(qs)  
     
 class ORFContigListView(ListView):
@@ -1094,6 +1175,7 @@ class ORFContigListView(ListView):
     paginate_by = 20
     
 #retrieve ORFContigListView queryset to export as csv
+@login_required
 def orf_contig_queryset(response):
     qs = Contig_ORF_Join.objects.all()
     return queryset_export_csv(qs)  
@@ -1136,14 +1218,19 @@ def CosmidEndTagCreate(request):
                 
                 #if no end-tags submitted, new_end_tags is an empty list
                 if (new_end_tags):
-                    #remove whitespace from end tag sequences and save 
-                    new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
-                    new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
-                    new_end_tags[0].save()
-                    new_end_tags[1].save()
+                    #check length -- if not empty, then either 1 or 2
+                    if len(new_end_tags) == 2:
+                        #remove whitespace from end tag sequences and save 
+                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
+                        new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
+                        new_end_tags[0].save()
+                        new_end_tags[1].save()
+                    else:
+                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
+                        new_end_tags[0].save()
                 else:
                     pass
-                return HttpResponseRedirect('/cosmid/') 
+                return HttpResponseRedirect('/cosmid/' + new_cosmid.cosmid_name) 
         
     else:
         cosmid_form = CosmidForm(instance=Cosmid())
@@ -1217,14 +1304,17 @@ def ORFContigCreate(request):
                     
                     #calculate start and stop and set
                     #if on the complement, stop is before start on contig
-                    if complement == True:
-                        orf_stop = contig_seq.index(orf_seq) + 1    # +1 to account for string index starting at 0
-                        orf_start = orf_stop + len(orf_seq) - 1     # -1 to account again for indexing
+                    
+                    #SWAPS THE START AND STOP POSITION FOR REVERSE SEQUENCES - NOT DONE BY CONVENTION SO REMOVED
+                    #if complement == True:
+                    #    orf_stop = contig_seq.index(orf_seq) + 1    # +1 to account for string index starting at 0
+                    #    orf_start = orf_stop + len(orf_seq) - 1     # -1 to account again for indexing
 
                     #if not on the complement, start is before stop on contig
-                    else:
-                        orf_start = contig_seq.index(orf_seq) + 1   # +1 to account for string index starting at 0
-                        orf_stop = orf_start + len(orf_seq) - 1     # -1 to account again for indexing
+                    #else:
+                    
+                    orf_start = contig_seq.index(orf_seq) + 1   # +1 to account for string index starting at 0
+                    orf_stop = orf_start + len(orf_seq) - 1     # -1 to account again for indexing
                     
                     #set start and stop
                     new_contig_orf.start = orf_start
@@ -1330,26 +1420,27 @@ def queryset_export_csv(qs):
 
     for obj in qs:
         row = []
-        line = ""
+        val = ""
         for field in headers:
-            val = getattr(obj, field)
+            try:
+                val = getattr(obj, field)
+            except:
+                val = " "
             if callable(val):
                 val = val()
             if type(val) == unicode:
                 val = val.encode("utf-8")
-            if val is None:
-                val =""
-            else:
-                try:
-                    val = silent(val)
-                except:
-                    pass
-                try:
-                    val = val.id
-                except:
-                    pass
-                else:
-                    val = val
+            #else:
+            #    try:
+            #        val = silent(val)
+            #    except:
+            #        pass
+            #    try:
+            #        val = val.id
+            #    except:
+            #        pass
+            #    else:
+            #        val = val
             row.append(val)
         writer.writerow(row)
     return response
@@ -1361,6 +1452,7 @@ class PrimerListView(ListView):
     paginate_by = 20
 
 #retrieve PrimerListView queryset to export as csv
+@login_required
 def primer_queryset(response):
     qs = Primer.objects.all()
     return queryset_export_csv(qs)
@@ -1371,6 +1463,7 @@ class AntibioticListView(ListView):
     paginate_by = 20
 
 #retrieve AntibioticListView queryset to export as csv
+@login_required
 def antibiotic_queryset(response):
     qs = Antibiotic.objects.all()
     return queryset_export_csv(qs)
@@ -1381,6 +1474,7 @@ class HostListView(ListView):
     paginate_by = 20
     
 #retrieve HostListView queryset to export as csv
+@login_required
 def host_queryset(response):
     qs = Host.objects.all()
     return queryset_export_csv(qs)
@@ -1391,6 +1485,7 @@ class ScreenListView(ListView):
     paginate_by = 20
     
 #retrieve ScreenListView queryset to export as csv
+@login_required
 def screen_queryset(response):
     qs = Screen.objects.all()
     return queryset_export_csv(qs)
@@ -1401,6 +1496,7 @@ class LibraryListView(ListView):
     paginate_by = 20
     
 #retrieve LibraryListView queryset to export as csv
+@login_required
 def library_queryset(response):
     qs = Library.objects.all()
     return queryset_export_csv(qs)
@@ -1411,6 +1507,7 @@ class ResearcherListView(ListView):
     paginate_by = 20
     
 #retrieve ResearcherListView queryset to export as csv
+@login_required
 def researcher_queryset(response):
     qs = Researcher.objects.all()
     return queryset_export_csv(qs)
@@ -1421,6 +1518,7 @@ class VectorListView(ListView):
     paginate_by = 20
     
 #retrieve VectorListView queryset to export as csv
+@login_required
 def vector_queryset(response):
     qs = Vector.objects.all()
     return queryset_export_csv(qs)
@@ -1431,6 +1529,7 @@ class PoolListView(ListView):
     paginate_by = 20
     
 #retrieve PoolListView queryset to export as csv
+@login_required
 def pool_queryset(response):
     qs = Pooled_Sequencing.objects.all()
     return queryset_export_csv(qs)
@@ -1441,6 +1540,7 @@ class SubstrateListView(ListView):
     paginate_by = 20
     
 #retrieve SubstrateListView queryset to export as csv
+@login_required
 def substrate_queryset(response):
     qs = Substrate.objects.all()
     return queryset_export_csv(qs)

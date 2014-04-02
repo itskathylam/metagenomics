@@ -66,7 +66,7 @@ class Pooled_Sequencing(models.Model):
         verbose_name_plural = 'Sequencing Pools'
 
 class Cosmid(models.Model):
-    cosmid_name = models.CharField("Cosmid Name", max_length=50)
+    cosmid_name = models.CharField(verbose_name="Cosmid Name", max_length=50)
     host = models.ForeignKey(Host)
     researcher = models.ForeignKey(Researcher)
     library = models.ForeignKey(Library)

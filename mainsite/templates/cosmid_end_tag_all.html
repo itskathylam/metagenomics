@@ -89,7 +89,7 @@
                 {% if cosmid.contig_set.all|length > 0 %}
                         <td>
                         {% for contig in cosmid.contig_set.all %}
-                                    <p><a href="{% url 'contig-list' %}{{contig.contig_name}}">{{contig.contig_name}}</a></p>
+                                    <p class="intable"><a href="{% url 'contig-list' %}{{contig.contig_name}}">{{contig.contig_name}}</a></p>
                         {% endfor %}
                         </td>
                 {% else %}
