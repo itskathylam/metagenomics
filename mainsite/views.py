@@ -72,6 +72,10 @@ def UserDoc(request):
     return (render(request, 'userdoc.html'))
 
 @login_required
+def ContigTool(request):
+    return (render(request, 'contig.html'))
+
+@login_required
 def AnnotationTool(request):
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
@@ -142,7 +146,7 @@ def ContigTool(request):
             context = {'poolselect': int(pool_id), 'pool': pool, 'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
             
         if 'submit' in request.POST:
-            pool = request.POST['poolhidden']
+            pool = request.POST['pool']
             cos = request.POST.getlist('cos')
             cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values_list('id', 'cosmid_name')
             results = contig_pipeline(pool, cos_selected) 
@@ -293,12 +297,12 @@ def BlastResults(request):
     ge = request.POST.get('gap_extension_penalty')
    
     queryseq = SeqRecord(Seq(seq, generic_dna), id="query")
-    queryfh = open("blast_query.fa", "w")
+    queryfh = open("blast_tool/blast_query.fa", "w")
     SeqIO.write(queryseq, queryfh, "fasta") 
     queryfh.close()
 
     #prepare file to write sequences into - for making blast db
-    out = open("blast_db.fa", "w")
+    out = open("blast_tool/blast_db.fa", "w")
     
     #get the url from which redirect occurred; determines what sequences are written in the blast db fasta file
     #possibilities: '/search/blast/', '/search/cosmid/', '/search/contig/', '/search/orf/', '/search/subclone/'
@@ -331,15 +335,15 @@ def BlastResults(request):
     out.close()
     
     #makeblastdb to create BLAST database of files from fastafile
-    system("makeblastdb -in blast_db.fa -out blast_db.db -dbtype nucl")
+    system("makeblastdb -in blast_db.fa -out blast_tool/blast_db.db -dbtype nucl")
 
     #run blast command with query, parameters, and created database
-    cmd = NcbiblastnCommandline(query="blast_query.fa", db="blast_db.db", evalue=float(e), word_size=int(w), reward=int(ma), penalty=int(mi), gapopen=int(go), gapextend=int(ge), outfmt=5, out="blast_results.xml")
+    cmd = NcbiblastnCommandline(query="blast_tool/blast_query.fa", db="blast_tool/blast_db.db", evalue=float(e), word_size=int(w), reward=int(ma), penalty=int(mi), gapopen=int(go), gapextend=int(ge), outfmt=5, out="blast_tool/blast_results.xml")
     system(str(cmd))
     
     #parse xml file
     try:
-        resultsfh = open("blast_results.xml")
+        resultsfh = open("blast_tool/blast_results.xml")
         records = NCBIXML.parse(resultsfh)
         test = records.next()
     except Exception:
@@ -1128,6 +1132,7 @@ class SubcloneAssayCreateView(CreateView):
 def CosmidEndTagCreate(request):
     if request.method == "POST":
         cosmid_form = CosmidForm(request.POST)
+        end_tag_formset = EndTagFormSet(request.POST) #needs to be here
         if cosmid_form.is_valid():
             
             #do not commit new cosmid input until end tag form inputs have been checked 

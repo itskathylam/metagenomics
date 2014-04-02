@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block pagetitle %}
+    <title>ORF Identification and Annotation Tool</title>
+{% endblock %}
+
+{% block subtitle %}
+    <img src="{{ STATIC_URL }}icons/tools256.png" width="64"><h2 class="tools">ORF Finding and Annotation Tool</h2>
+{% endblock %}
+
+{% block content %}
+    
+<p>Thank you for your submission. You will be notified by e-mail about the success of your job;
+the e-mail will be sent in less than twenty four hours to the following address: {{ email }}
+
+<p>The Contigs are currently being processed are:
+<ul>
+{% for contig in contigs %}
+    <li>{{ contig.contig_name }}
+{% endfor %}
+</ul>
+</p>
+
+{% endblock %}
