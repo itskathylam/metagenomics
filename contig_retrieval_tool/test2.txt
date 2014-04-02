@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 PID is:  ----
 1 and - /home/rene/metagenomics/contig_retrieval_toolPID is:  ----
 1 and - /home/rene/metagenomics/contig_retrieval_toolPID is:  ----
@@ -48,3 +49,8 @@ PID is:  ----
 1 and - /home/rene/metagenomics/contig_retrieval_tool/contig_retrieval_tool/primers_2.csvPID is: /home/rene/metagenomics/contig_retrieval_tool/contig_retrieval_tool/primers_2.csv
  ----
 1 and - /home/rene/metagenomics/contig_retrieval_tool/contig_retrieval_tool/primers_2.csv
+=======
+2 and - 11034 /home/rene/metagenomics/contig_retrieval_tool
+2 and - 11131 /home/rene/metagenomics/contig_retrieval_tool
+2 and - 11302 /home/rene/metagenomics/contig_retrieval_tool
+>>>>>>> 5fa0b264356c0b2648c163a495bccdbc545fdc26

@@ -104,7 +104,6 @@ def AnnotationTool(request):
             writeimg.write(testpicture)
             writeimg.close()
 
-            
             #read csv and store in db orf-contigs(also images)
             
             #sends the user an email
