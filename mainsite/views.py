@@ -176,8 +176,7 @@ def read_csv(filename):
 
 #this function is only called by other views, not directly associated with a URL
 def contig_pipeline(pool, cos_selected):
-    pool_id = pool
-    contigs = Contig.objects.filter(pool = pool_id).values_list('contig_name', 'contig_sequence')
+    contigs = Contig.objects.filter(pool = pool).values_list('contig_name', 'contig_sequence')
     cosmids = cos_selected
     seqs = End_Tag.objects.select_related('cosmids').values_list('id', 'primer', 'end_tag_sequence')
     primer_set1 = Primer.objects.select_related('primer').filter(primer_pair = '1').values_list('id','primer_name')
@@ -192,11 +191,11 @@ def contig_pipeline(pool, cos_selected):
 def write_csv(file_name, cosmids, primer_set, seqs):
     with open("./contig_retrieval_tool/%s.csv" %file_name, 'w') as f:
         csv = File(f)
-        seqs = list(seqs)
-        cos = dict(cosmids)
+        seqs = seqs
+        cos = cosmids
         primers = dict(primer_set)
         for x, y, z in seqs:
-            for c_id, csmd in cos.iteritems():
+            for c_id, csmd in cos:
                 for p_id, prmr in primers.iteritems():
                     if y == c_id and x == p_id:
                         csv.write(csmd + ',' + prmr + ',' + z + '\n')
