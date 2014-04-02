@@ -101,6 +101,9 @@ def AnnotationTool(request):
             image = contigget.image_contig
             
             testpicture = base64.b64decode(image)
+            writeimg = open("mainsite/static/imagedboutput.png", "wb")
+            writeimg.write(testpicture)
+            write.close()
             
             #system("(echo 'this is a test email. see attachment'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
     return render_to_response('tool_annotation.html', {'image': testpicture, 'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
