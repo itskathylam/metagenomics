@@ -27,7 +27,6 @@
 {% endblock %}
 
 {% block content %}
-    
 <p>This custom tool assists with retrieving cosmid DNA sequences from assembled Illumina sequencing data, obtained from
 <a href='{{ STATIC_URL }}pooled-sequencing.png'>pooled seqeuncing</a>.</p>
 <p>Briefly, cosmids are first Sanger-sequenced at either end to generate cosmid-specific end-tags;
@@ -53,7 +52,7 @@ Users must validate the contig retrieval results before they are committed to th
     </tr>
     </table>
     <input type="submit" name="detail" value="Display Pool" />
-   
+    </form>
     <table>
         {% for selected in detail %}
             <tr><th>Selected Pool</th><td>{{selected.id}}</td></tr>
@@ -68,13 +67,14 @@ Users must validate the contig retrieval results before they are committed to th
 {% if detail %}
     <section id="tool2">
         {% if notjoined %}
-        
+        <form action="{% url "contig" %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
         <table>
             <tr><th>Retrieve Contigs for the selected Cosmids</th></tr>
                 {% for c in notjoined %}
                 <tr><td><input type="checkbox" name="cos" value="{{ c }}" checked/>{{ c }}</td></tr>
                 {% endfor %}
         </table>
+        <input type="hidden" name="poolhidden" value="{{ poolselect }}"/>
         <input type="submit" name="submit" value="Submit" />
         </form>
         {% else %}

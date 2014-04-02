@@ -72,10 +72,6 @@ def UserDoc(request):
     return (render(request, 'userdoc.html'))
 
 @login_required
-def ContigTool(request):
-    return (render(request, 'contig.html'))
-
-@login_required
 def AnnotationTool(request):
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
@@ -146,7 +142,7 @@ def ContigTool(request):
             context = {'poolselect': int(pool_id), 'pool': pool, 'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
             
         if 'submit' in request.POST:
-            pool = request.POST['pool']
+            pool = request.POST['poolhidden']
             cos = request.POST.getlist('cos')
             cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values_list('id', 'cosmid_name')
             results = contig_pipeline(pool, cos_selected) 
