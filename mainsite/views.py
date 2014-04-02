@@ -80,9 +80,10 @@ def AnnotationTool(request):
     if request.method == "POST":
         if 'submit' in request.POST:
             email = request.POST['email']
-            contigs = request.POST.getlist('contig')
+            con_name = request.POST.getlist('contig')
+            contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
 
-            #orf_data(contigs)
+            orf_data(contigs)
             #read csv and store in db orf-contigs(also images)
             
             #sends the user an email
@@ -103,8 +104,8 @@ def AnnotationTool(request):
             writeimg.write(testpicture)
             writeimg.close()
 
-            orf_data(contigs)
-            read csv and store in db orf-contigs(also images)
+            
+            #read csv and store in db orf-contigs(also images)
             
             #sends the user an email
             with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
@@ -122,9 +123,8 @@ def AnnotationTool(request):
             testpicture = base64.b64decode(image)
             writeimg = open("mainsite/static/imagedboutput.png", "wb")
             writeimg.write(testpicture)
-            write.close()
+            #write.close()
             
-            orf_data(contigs)
             #return render_to_response('tool_contig_submit.html', var)
             
             #system("(echo 'this is a test email. see attachment'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
@@ -166,8 +166,8 @@ def ContigTool(request):
         if 'submit' in request.POST:
             pool = request.POST['poolhidden']
             cos = request.POST.getlist('cos')
-            cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values_list('id', 'cosmid_name')
-            results = contig_pipeline(pool, cos_selected) 
+            cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values("cosmid_name")
+            results = contig_pipeline(pool, cos_selected)
             entries = []
             for row in results:
                 entry = row[0:3]
@@ -219,30 +219,30 @@ def read_csv(filename):
 
 #this function is only called by other views, not directly associated with a URL
 def contig_pipeline(pool, cos_selected):
+    c_id =  Cosmid.objects.filter(cosmid_name__in = cos_selected).values('id')
+    cosmids = Cosmid.objects.filter(cosmid_name__in = cos_selected).values_list('id', 'cosmid_name')
     contigs = Contig.objects.filter(pool = pool).values_list('contig_name', 'contig_sequence')
-    cosmids = cos_selected
-    seqs = End_Tag.objects.select_related('cosmids').values_list('id', 'primer', 'end_tag_sequence')
-    primer_set1 = Primer.objects.select_related('primer').filter(primer_pair = '1').values_list('id','primer_name')
-    primer_set2 = Primer.objects.select_related('primer').filter(primer_pair = '2').values_list('id','primer_name')
-
+    seqs = End_Tag.objects.filter(cosmid = c_id).values_list('id', 'primer', 'end_tag_sequence')
+    p_id = End_Tag.objects.filter(cosmid = c_id).values('primer')
+    primer_set1 = Primer.objects.filter(id__in = p_id).filter(direction = 'F').values_list('id','primer_name')
+    primer_set2 = Primer.objects.filter(id__in = p_id).filter(direction = 'R').values_list('id','primer_name')
+    
     write_fasta(contigs)
     write_csv('primers_1', cosmids, primer_set1, seqs)
     write_csv('primers_2', cosmids, primer_set2, seqs)
     system("perl contig_retrieval_tool/retrieval_pipeline.pl primers_1.csv primers_2.csv contigs.fa")
-    return read_csv('testtest.csv')
+    return read_csv('retrieval.csv')
 
 
 #this function is only called by other views, not directly associated with a URL
 def write_csv(file_name, cosmids, primer_set, seqs):
-    with open("./contig_retrieval_tool/%s.csv" %file_name, 'w') as f:
+    with open("contig_retrieval_tool/%s.csv" %file_name, 'w') as f:
         csv = File(f)
-        seqs = seqs
-        cos = cosmids
-        primers = primer_set
         for x , y, z in seqs:
-            for c_id, c in cos:
-                for p_id, p in primers:
-                    if y == c_id and x == p_id:
+            for c_id, c in cosmids:
+                for p_id, p in primer_set:
+                    if x == c_id and y == p_id:
+                        z = ''.join(z.split())
                         csv.write(c + ',' + p + ',' + z + '\n')
         csv.closed
         f.closed
@@ -250,7 +250,7 @@ def write_csv(file_name, cosmids, primer_set, seqs):
 #this function is only called by other views, not directly associated with a URL
 #writes contigs to fasta file(text.fa)    
 def write_fasta(contigs):
-    with open('./contig_retrieval_tool/contigs.fa', 'w') as f:
+    with open('contig_retrieval_tool/contigs.fa', 'w') as f:
         fasta = File(f)
         contigs = list(contigs)
         for contig, seq in contigs:
@@ -260,10 +260,11 @@ def write_fasta(contigs):
 
 #@login_required
 def orf_data(contig_list):
-    contigs = Contig.objects.filter(contig_name__in = contig_list).values('id','contig_name', 'contig_sequence', 'blast_hit_accession')
-    orfs = Contig_ORF_Join.objects.filter(contig = contigs).values('contig','orf','start', 'stop', 'complement', 'prediction_score')
-    anno = ORF.objects.filter(contig = contigs).values('id','annotation', 'orf_sequence')
-    pdb.set_trace()
+    contig_id = Contig.objects.filter(contig_name__in = contig_list).values('id')
+    contigs = Contig.objects.filter(contig_name__in = contig_list).values_list('id','contig_name', 'contig_sequence', 'blast_hit_accession')
+    orfs = Contig_ORF_Join.objects.filter(contig__in = contig_id).values_list('contig','orf','start', 'stop', 'complement', 'prediction_score')
+    anno = ORF.objects.filter(contig__in = contig_id).values_list('id','annotation', 'orf_sequence')
+    
     write_lib(contigs, orfs, anno)
 
 #this function is only called by other views, not directly associated with a URL
