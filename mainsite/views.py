@@ -966,8 +966,8 @@ class CosmidEndTagEditView(UpdateView):
     model = Cosmid
     form_class = EndTagFormSetUpdate #requires both {{ form }} and {{ form_class }} in template
     template_name = 'cosmid_only_end_tag_edit.html'
-    #slug_field = 'cosmid_name' 
-    #slug_url_kwarg = 'cosmid_name'
+    slug_field = 'cosmid_name' 
+    slug_url_kwarg = 'cosmid_name'
     
     ##after editing, redirect to be the detailview for the cosmid
     #def get(self, request, **kwargs):
