@@ -1096,78 +1096,7 @@ class ContigORFDeleteView(DeleteView):
     template_name = 'contig_orf_delete.html'
     success_url = reverse_lazy('contig-list')
 
-# List views for non-lookup tables (Kathy)
-class SubcloneListView(ListView):
-    model = Subclone
-    template_name = 'subclone_all.html'
-    paginate_by = 20
 
-#retrieve SubcloneListView queryset to export as csv
-@login_required
-def subclone_queryset(response):
-    qs = Subclone.objects.all()
-    return queryset_export_csv(qs)
-    
-class CosmidAssayListView(ListView):
-    model = Cosmid_Assay
-    template_name = 'cosmid_assay_all.html'
-    paginate_by = 20
-
-#retrieve CosmidAssayListView queryset to export as csv
-@login_required
-def cosmid_assay_queryset(response):
-    qs = Cosmid_Assay.objects.all()
-    return queryset_export_csv(qs)
-    
-class SubcloneAssayListView(ListView):
-    model = Subclone_Assay
-    template_name = 'subclone_assay_all.html'
-    paginate_by = 20
-
-
-#retrieve SubcloneAssayListView queryset to export as csv
-@login_required
-def subclone_assay_queryset(response):
-    qs = Subclone_Assay.objects.all()
-    return queryset_export_csv(qs)
-
-class ORFListView (ListView):
-    model = ORF
-    template_name = 'orf_all.html'
-    paginate_by = 20
-
-#retrieve ORFListView queryset to export as csv
-@login_required
-def orf_queryset(response):
-    qs = ORF.objects.all()
-    return queryset_export_csv(qs)
-    
-class ContigListView (ListView):
-    model = Contig
-    template_name = 'contig_all.html'
-    paginate_by = 20
-
-#retrieve ContigListView queryset to export as csv
-@login_required
-def contig_queryset(response):
-    qs = Contig.objects.all()
-    return queryset_export_csv(qs)
-
-# List views for multi-table views (Kathy)
-
-class CosmidEndTagListView(ListView):
-    model = Cosmid
-    template_name = 'cosmid_end_tag_all.html'
-    paginate_by = 20
-    
-  
-#retrieve CosmidEndTagListView queryset to export as csv
-@login_required
-def cosmid_endtag_queryset(response):
-    qs1 = list(Cosmid.objects.all())
-    qs2 = list(End_Tag.objects.all())
-    qs = chain(qs1, qs2)
-    return queryset_export_csv(qs)  
     
 class ORFContigListView(ListView):
     model = Contig_ORF_Join
@@ -1544,3 +1473,174 @@ class SubstrateListView(ListView):
 def substrate_queryset(response):
     qs = Substrate.objects.all()
     return queryset_export_csv(qs)
+
+
+# List views for non-lookup tables, no longer class based views (Katelyn)
+def SubcloneListView(request):
+    queries = request.GET.copy()
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
+    if queries.has_key('page'):
+        del queries['page']
+    search = ''
+    results = Subclone.objects.all().order_by(order_by)
+    total = results.count()
+    p= Paginator(results, 20)
+    page = request.GET.get('page')
+    try:
+        subclone_list = p.page(page)
+    except PageNotAnInteger:
+        subclone_list = p.page(1)
+    return render_to_response('subclone_all.html', {'subclone_list':subclone_list, 'order_by':order_by, 'total':total, 'search':search}, context_instance=RequestContext(request))    
+    
+
+#retrieve SubcloneListView queryset to export as csv
+@login_required
+def subclone_queryset(response):
+    qs = Subclone.objects.all()
+    return queryset_export_csv(qs)
+    
+def CosmidAssayListView(request):
+    queries = request.GET.copy()
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
+    if queries.has_key('page'):
+        del queries['page']
+    search = ''
+    results = Cosmid_Assay.objects.all().order_by(order_by)
+    total = results.count()
+    p= Paginator(results, 20)
+    page = request.GET.get('page')
+    try:
+        cosmid_assay_list = p.page(page)
+    except PageNotAnInteger:
+        cosmid_assay_list = p.page(1)
+    return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list':cosmid_assay_list, 'order_by':order_by, 'total':total, 'search':search}, context_instance=RequestContext(request))    
+    
+
+#retrieve CosmidAssayListView queryset to export as csv
+@login_required
+def cosmid_assay_queryset(response):
+    qs = Cosmid_Assay.objects.all()
+    return queryset_export_csv(qs)
+    
+def SubcloneAssayListView(request):
+    queries = request.GET.copy()
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
+    if queries.has_key('page'):
+        del queries['page']
+    search = ''
+    results = Subclone_Assay.objects.all().order_by(order_by)
+    total = results.count()
+    p= Paginator(results, 20)
+    page = request.GET.get('page')
+    try:
+        subclone_assay_list = p.page(page)
+    except PageNotAnInteger:
+        subclone_assay_list = p.page(1)
+    return render_to_response('subclone_assay_all.html', {'subclone_assay_list':subclone_assay_list, 'order_by':order_by, 'total':total, 'search':search}, context_instance=RequestContext(request))    
+    
+
+
+#retrieve SubcloneAssayListView queryset to export as csv
+@login_required
+def subclone_assay_queryset(response):
+    qs = Subclone_Assay.objects.all()
+    return queryset_export_csv(qs)
+
+
+def ORFListView(request):
+    queries = request.GET.copy()
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
+    if queries.has_key('page'):
+        del queries['page']
+    search = ''
+    results = ORF.objects.all().order_by(order_by)
+    total = results.count()
+    p= Paginator(results, 20)
+    page = request.GET.get('page')
+    try:
+        orf_list = p.page(page)
+    except PageNotAnInteger:
+        orf_list = p.page(1)
+    return render_to_response('orf_all.html', {'orf_list':orf_list, 'order_by':order_by, 'total':total, 'search':search}, context_instance=RequestContext(request))    
+    
+
+#retrieve ORFListView queryset to export as csv
+@login_required
+def orf_queryset(response):
+    qs = ORF.objects.all()
+    return queryset_export_csv(qs)
+    
+def ContigListView(request):
+    queries = request.GET.copy()
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
+    if queries.has_key('page'):
+        del queries['page']
+    search = ''
+    results = Contig.objects.all().order_by(order_by)
+    total = results.count()
+    p= Paginator(results, 20)
+    page = request.GET.get('page')
+    try:
+        contig_list = p.page(page)
+    except PageNotAnInteger:
+        contig_list = p.page(1)
+    return render_to_response('contig_all.html', {'contig_list':contig_list, 'order_by':order_by, 'total':total, 'search':search}, context_instance=RequestContext(request))    
+    
+
+#retrieve ContigListView queryset to export as csv
+@login_required
+def contig_queryset(response):
+    qs = Contig.objects.all()
+    return queryset_export_csv(qs)
+
+# List views for multi-table views (Kathy)
+
+def CosmidEndTagListView(request):
+    queries = request.GET.copy()
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
+    if queries.has_key('page'):
+        del queries['page']
+    search = ''
+    results = Cosmid.objects.all().order_by(order_by)
+    total = results.count()
+    p= Paginator(results, 20)
+    page = request.GET.get('page')
+    try:
+        cosmid_list = p.page(page)
+    except PageNotAnInteger:
+        cosmid_list = p.page(1)
+    return render_to_response('cosmid_end_tag_all.html', {'cosmid_list':cosmid_list, 'order_by':order_by, 'total':total, 'search':search}, context_instance=RequestContext(request))    
+    
+    
+  
+#retrieve CosmidEndTagListView queryset to export as csv
+@login_required
+def cosmid_endtag_queryset(response):
+    qs1 = list(Cosmid.objects.all())
+    qs2 = list(End_Tag.objects.all())
+    qs = chain(qs1, qs2)
+    return queryset_export_csv(qs)  

@@ -88,14 +88,14 @@ urlpatterns = patterns('',
     url(r'^antibiotic/$', login_required(AntibioticListView.as_view()), name='antibiotic-list'),
     
     #listviews for nonlookup tables
-    url(r'^subclone/$', login_required(SubcloneListView.as_view()), name='subclone-list'),
-    url(r'^assay/cosmid/$', login_required(CosmidAssayListView.as_view()), name='cosmid-assay-list'),
-    url(r'^assay/subclone/$', login_required(SubcloneAssayListView.as_view()), name='subclone-assay-list'),
-    url(r'^orf/$', login_required(ORFListView.as_view()), name='orf-list'),
-    url(r'^contig/$', login_required(ContigListView.as_view()), name='contig-list'),
+    url(r'^subclone/$', login_required(SubcloneListView), name='subclone-list'),
+    url(r'^assay/cosmid/$', login_required(CosmidAssayListView), name='cosmid-assay-list'),
+    url(r'^assay/subclone/$', login_required(SubcloneAssayListView), name='subclone-assay-list'),
+    url(r'^orf/$', login_required(ORFListView), name='orf-list'),
+    url(r'^contig/$', login_required(ContigListView), name='contig-list'),
     
     #listviews for multiple-table-based views
-    url(r'^cosmid/$', login_required(CosmidEndTagListView.as_view()), name='cosmid-end-tag-list'), # for cosmid and endtags (Kathy)
+    url(r'^cosmid/$', login_required(CosmidEndTagListView), name='cosmid-end-tag-list'), # for cosmid and endtags (Kathy)
     url(r'^orfcontig/$', login_required(ORFContigListView.as_view()), name='orf-contig-list'), # not a useful view? may remove (Kathy)
     
     #createviews - form to add data to database table  

@@ -8,11 +8,15 @@
     {% if cosmid_assay_list %}
         
         {% if search %}
-        <p><a href="/export/cosmid_assay" >Download All Search Results</a></p>
-        {% if search == 2 %}
-        <p>Search for '{{ query }}' returned {{total}} results</p>
+                <p><a href="/export/cosmid_assay" >Download All Search Results</a></p>
+                {% if search == 2 %}
+                <p>Search for '{{ query }}' returned {{total}} results</p>
+                {% else %}
+                <p>Search returned {{total}} results</p>
+                {% endif %}
         {% else %}
-        <p>Search returned {{total}} results</p>
+                <p><a href="/export/cosmid_assay" >Download All Records</a></p>
+                <p>{{total}} cosmid assay records found</p>
         {% endif %}
                 <div class="pagination">
                     <span class="page-links"><p>
@@ -27,23 +31,6 @@
                             {% endif %}
                     </p></span>
                 </div>
-        {% else %}
-                <p><a href="/export/cosmid_assay" >Download All Records</a></p>
-                <p>All Records</p>
-                <div class="pagination">
-                    <span class="page-links"><p>
-                        {% if page_obj.has_previous %}
-                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
-                        {% endif %}
-                        <span class="page-current">
-                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
-                        </span>
-                        {% if page_obj.has_next %}
-                                <a href="?page={{page_obj.next_page_number}}">Next</a>
-                        {% endif %}
-                    </p></span>
-                </div>
-        {% endif %}
            
         <table class="list">
             <tr>
@@ -71,7 +58,6 @@
             </tr>
         {% endfor %}
     </table>
-        {% if search %}
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if cosmid_assay_list.has_previous %}
@@ -85,21 +71,6 @@
                             {% endif %}
                     </p></span>
                 </div>
-        {% else %}
-                <div class="pagination">
-                    <span class="page-links"><p>
-                        {% if page_obj.has_previous %}
-                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
-                        {% endif %}
-                        <span class="page-current">
-                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
-                        </span>
-                        {% if page_obj.has_next %}
-                                <a href="?page={{page_obj.next_page_number}}">Next</a>
-                        {% endif %}
-                    </p></span>
-                </div>
-        {% endif %}
     {% else %}
             <p>0 Subclone assays found. <a href="{% url 'subclone-assay-search' %}">Try another search</a>.</p>
     {% endif %}

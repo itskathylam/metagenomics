@@ -14,6 +14,10 @@
             {% else %}
                 <p> Search returned {{total}} results</p>
             {% endif %}
+    {% else %}
+            <p><a href="/export/orf" >Download All Records</a></p>
+            <p>{{total}} ORF records found</p>
+    {% endif %}
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if orf_list.has_previous %}
@@ -27,22 +31,6 @@
                             {% endif %}
                     </p></span>
                 </div>
-        {% else %}
-                <p><a href="/export/orf" >Download All Records</a></p>
-                <div class="pagination">
-                    <span class="page-links"><p>
-                        {% if page_obj.has_previous %}
-                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
-                        {% endif %}
-                        <span class="page-current">
-                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
-                        </span>
-                        {% if page_obj.has_next %}
-                                <a href="?page={{page_obj.next_page_number}}">Next</a>
-                        {% endif %}
-                    </p></span>
-                </div>
-        {% endif %}
     <table class="list">
             <tr>
                 <th><a href="?{{queries.urlencode}}&order_by=id">ORF ID</a></th>
@@ -57,7 +45,6 @@
             </tr>
         {% endfor %}
     </table>
-        {% if search %}
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if orf_list.has_previous %}
@@ -71,21 +58,6 @@
                             {% endif %}
                     </p></span>
                 </div>
-        {% else %}
-                <div class="pagination">
-                    <span class="page-links"><p>
-                        {% if page_obj.has_previous %}
-                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
-                        {% endif %}
-                        <span class="page-current">
-                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
-                        </span>
-                        {% if page_obj.has_next %}
-                                <a href="?page={{page_obj.next_page_number}}">Next</a>
-                        {% endif %}
-                    </p></span>
-                </div>
-        {% endif %}
     {% else %}
         <p>0 ORFs found for search '{{ query }}' <a href="{% url 'orf-search' %}">Try another search</a>.</p>
     {% endif%}

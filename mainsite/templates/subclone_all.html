@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-        {% if subclone_list %}
+    {% if subclone_list %}
         {% if search %}
             <p><a href="/export/subclone" >Download All Search Results</a></p>
             {% if search == 2 %}
@@ -13,6 +13,10 @@
             {% else %}
                 <p> Search returned {{ total }} results</p>
             {% endif %}
+        {% else %}
+            <p><a href="/export/subclone" >Download All Records</a></p>
+            <p>{{total}} subclone records found</p>
+        {% endif %}
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if subclone_list.has_previous %}
@@ -26,23 +30,6 @@
                             {% endif %}
                     </p></span>
                 </div>
-        {% else %}
-                <p><a href="/export/subclone" >Download All Records</a></p>
-                <p>All Records</p>
-                <div class="pagination">
-                    <span class="page-links"><p>
-                        {% if page_obj.has_previous %}
-                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
-                        {% endif %}
-                        <span class="page-current">
-                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
-                        </span>
-                        {% if page_obj.has_next %}
-                                <a href="?page={{page_obj.next_page_number}}">Next</a>
-                        {% endif %}
-                    </p></span>
-                </div>
-        {% endif %}
         <table class="list">
                 <tr>
                     <th><a href="?{{queries.urlencode}}&order_by=subclone_name">Subclone Name</a></th>
@@ -67,13 +54,10 @@
                     <td>{{ subclone.primer1_name }}</td>
                     <td>{{ subclone.primer1_seq }}</td>
                     <td>{{ subclone.primer2_name }}</td>
-                    <td>{{ subclone.primer2_seq }}</td>
-    
-                    
+                    <td>{{ subclone.primer2_seq }}</td>   
                 </tr>
             {% endfor %}
         </table>
-        {% if search %}
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if subclone_list.has_previous %}
@@ -87,22 +71,6 @@
                             {% endif %}
                     </p></span>
                 </div>
-        {% else %}
-                <div class="pagination">
-                    <span class="page-links"><p>
-                        {% if page_obj.has_previous %}
-                                <a href="?{page={{page_obj.previous_page_number}}">Previous</a>
-                        {% endif %}
-                        <span class="page-current">
-                                Page {{page_obj.number}} of {{ page_obj.paginator.num_pages}}
-                        </span>
-                        {% if page_obj.has_next %}
-                                <a href="?page={{page_obj.next_page_number}}">Next</a>
-                        {% endif %}
-                    </p></span>
-                </div>
-        {% endif %}
-
     {% else %}
         <p>0 Subclones found. <a href="{% url 'subclone-search' %}">Try another search</a>.</p>
     {% endif%}
