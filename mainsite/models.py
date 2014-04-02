@@ -120,6 +120,7 @@ class Contig(models.Model):
     image_genbank = models.BinaryField(blank=True, null=True)
     image_predicted = models.BinaryField(blank=True, null=True)
     image_manual = models.BinaryField(blank=True, null=True)
+    image_align = models.BinaryField(blank=True, null=True)
         
     def __unicode__(self):
         return self.contig_name
