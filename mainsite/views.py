@@ -969,20 +969,12 @@ class CosmidEndTagEditView(UpdateView):
     slug_field = 'cosmid_name' 
     slug_url_kwarg = 'cosmid_name'
     
-    ##after editing, redirect to be the detailview for the cosmid
-    #def get(self, request, **kwargs):
-    #    self.object = self.res
-    #    form_class = self.get_form_class()
-    #    form = self.get_form(form_class)
-    #    context = self.get_context_data(object=self.object, form=form)
-    #    return self.render_to_response(context)
-    
-    #def get_object(self, queryset=None):
-    #    cosmid_object = Cosmid.objects.get(cosmid_name=self.kwargs['cosmid_name'])
-    #    return cosmid_object
+    def get_object(self, queryset=None):
+        cosmid_object = Cosmid.objects.get(cosmid_name=self.kwargs['cosmid_name'])
+        return cosmid_object
     
     def get_success_url(self):
-        return ('/cosmid/')
+        return ('/cosmid/' + self.get_object().cosmid_name)
 
 class SubcloneEditView(UpdateView):
     model = Subclone
