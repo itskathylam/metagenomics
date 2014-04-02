@@ -104,7 +104,7 @@ def AnnotationTool(request):
             writeimg.close()
 
             orf_data(contigs)
-            read csv and store in db orf-contigs(also images)
+            #read csv and store in db orf-contigs(also images)
             
             #sends the user an email
             with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
