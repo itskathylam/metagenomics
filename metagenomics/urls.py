@@ -44,7 +44,7 @@ urlpatterns = patterns('',
     url(r'^edit/assay/subclone/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_subclone_assay')(SubcloneAssayEditView.as_view()), name='subclone-assay-edit'),
     url(r'^edit/orf/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_orf')(ORFEditView.as_view()), name='orf-edit'),
     url(r'^edit/contig/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_contig')(ContigEditView.as_view()), name='contig-edit'),
-    url(r'^edit/cosmid/endtags/(?P<pk>\d+)$', permission_required(CosmidEndTagEditView.as_view()), name='cosmid-end-tag-edit'), 
+    url(r'^edit/cosmid/endtags/(?P<cosmid_name>.*)$', CosmidEndTagEditView.as_view(), name='cosmid-end-tag-edit'), #cannot add decorator
     
     #Delete views (DeleteViews)
     url(r'^delete/contig-orf/(?P<pk>\d+)$', login_required(ContigORFDeleteView.as_view()), name='contig-orf-delete'),
@@ -75,7 +75,6 @@ urlpatterns = patterns('',
     
     url(r'^search/blast/$', BlastSearch, name='blast-search'),
     url(r'^results/blast/', BlastResults, name='blast-results'),
-
     
     #listviews for lookup tables 
     url(r'^primer/$', login_required(PrimerListView.as_view()), name='primer-list'),
@@ -109,7 +108,6 @@ urlpatterns = patterns('',
     url(r'^add/orfcontig/$', ORFContigCreate, name='orf-contig-add'),
     url(r'^add/contigpool/$', ContigPoolCreate, name='contig-pool-add'),
     
-
     #export URLS
     url(r'^export/primer', primer_queryset),
     url(r'^export/antibiotic', antibiotic_queryset),

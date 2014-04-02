@@ -23,7 +23,7 @@ ORFs are used to BLAST against the RefSeq Protein database to retrieve the top s
 <li><b><p>Genbank</b>: The entire Contig sequence is used to BLAST against the Genbank nt database. The top significant hit is parsed for its
 ORFs/annotations; these genes can be used as a point reference, and can be compared to the FGS prediction/RefSeq annotation results.</p>
 </ul>
-
+<img src="{{ STATIC_URL }}imagedboutput.png">
 <form action = "{% url "annotation" %}" method="post">{% csrf_token %}
 
 <p>Please provide an e-mail to which notification will be sent when the jobs are completed:</p>

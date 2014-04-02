@@ -53,7 +53,7 @@ Users must validate the contig retrieval results before they are committed to th
     </tr>
     </table>
     <input type="submit" name="detail" value="Display Pool" />
-    </form>
+   
     <table>
         {% for selected in detail %}
             <tr><th>Selected Pool</th><td>{{selected.id}}</td></tr>
@@ -68,11 +68,11 @@ Users must validate the contig retrieval results before they are committed to th
 {% if detail %}
     <section id="tool2">
         {% if notjoined %}
-        <form>
+        
         <table>
             <tr><th>Retrieve Contigs for the selected Cosmids</th></tr>
                 {% for c in notjoined %}
-                <tr><td><input type="checkbox" name="cos" checked/>{{ c }}</td></tr>
+                <tr><td><input type="checkbox" name="cos" value="{{ c }}" checked/>{{ c }}</td></tr>
                 {% endfor %}
         </table>
         <input type="submit" name="submit" value="Submit" />

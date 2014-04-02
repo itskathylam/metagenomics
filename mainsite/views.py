@@ -27,6 +27,7 @@ import pdb
 import base64
 from django.db.models import Q
 import re
+import base64 #used to convert pngs to base64 for database storage
 from itertools import chain
 
 
@@ -78,15 +79,38 @@ def ContigTool(request):
 def AnnotationTool(request):
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
-    
+    testpicture = ''
     if request.method == "POST":
         if 'submit' in request.POST:
             email = request.POST['email']
             contigs = request.POST.getlist('contig')
+
+            #orf_data(contigs)
+            #read csv and store in db orf-contigs(also images)
+            
+            #sends the user an email
+            with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
+                bimg = base64.b64encode(img.read())
+                contig = Contig.objects.get(contig_name="scaffold58_1")
+                contig.image_contig = bimg
+            
+                contig.contig_accession = "IMAGE?"
+                contig.save()
+                
+            contigget = Contig.objects.get(contig_name="scaffold58_1")
+            
+            image = contigget.image_contig
+            
+            testpicture = base64.b64decode(image)
+            writeimg = open("mainsite/static/imagedboutput.png", "wb")
+            writeimg.write(testpicture)
+            write.close()
+            
             orf_data(contigs)
             #return render_to_response('tool_contig_submit.html', var)
             
-    return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
+            #system("(echo 'this is a test email. see attachment'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
+    return render_to_response('tool_annotation.html', {'image': testpicture, 'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
 
 @login_required
 def AnnotationToolResults(request):
@@ -95,6 +119,7 @@ def AnnotationToolResults(request):
 
         #pdb.set_trace()
         # (echo "put body content here"; uuencode filename filename) | mail -s "subject here" email_address_here
+        
     return render_to_response('tool_annotation_results.html', {'results': results })
 
 @login_required
@@ -874,7 +899,7 @@ def CosmidDetail(request, cosmid_name):
         contigids.append(c.id)
     
     #returns all the orfs for the contigs that are associated with the cosmid
-    orfresults = Contig_ORF_Join.objects.filter(contig_id__in=contigids)
+    orfresults = Contig_ORF_Join.objects.filter(contig_id__in=contigids).order_by('start')
     orfids = []
     for o in orfresults:
         orfids.append(o.orf_id)
@@ -900,7 +925,7 @@ def ContigDetail(request, contig_name):
     accession = contig.contig_accession
     cosmids = Cosmid.objects.filter(contig=contig.id)
     
-    orfresults = Contig_ORF_Join.objects.filter(contig_id=contig.id)
+    orfresults = Contig_ORF_Join.objects.filter(contig_id=contig.id).order_by('start')
     orfids = []
     for o in orfresults:
         orfids.append(o.orf_id)
@@ -953,19 +978,28 @@ class CosmidEditView(UpdateView):
     slug_url_kwarg = 'cosmid_name'
     success_url = reverse_lazy('cosmid-end-tag-list')
     
-#only for editing a cosmid's endtags -- ideally should be combined with cosmid edit
+    def get_object(self, queryset=None):
+        cosmid_object = Cosmid.objects.get(cosmid_name=self.kwargs['cosmid_name'])
+        return cosmid_object
+    
+    def get_success_url(self):
+        return ('/cosmid/' + self.get_object().cosmid_name)
+
+#only for editing a cosmid's endtags -- ideally should be combined with cosmid edit (Kathy)
 class CosmidEndTagEditView(UpdateView):
     model = Cosmid
-    form_class = EndTagFormSetUpdate #requires both {{ form }} and {{ form_class }} in template
+    form_class = EndTagFormSet #requires both {{ form }} and {{ form_class }} in template
     template_name = 'cosmid_only_end_tag_edit.html'
     slug_field = 'cosmid_name' 
     slug_url_kwarg = 'cosmid_name'
     
-    #redirect to cosmid detailview
-    def get_success_url(self):
-        cosmid_id = self.kwargs['cosmid_id']
-        return reverse_lazy('cosmid-detail', kwargs={'cosmid_id': cosmid_id})
+    def get_object(self, queryset=None):
+        cosmid_object = Cosmid.objects.get(cosmid_name=self.kwargs['cosmid_name'])
+        return cosmid_object
     
+    def get_success_url(self):
+        return ('/cosmid/' + self.get_object().cosmid_name)
+
 class SubcloneEditView(UpdateView):
     model = Subclone
     template_name = 'subclone_edit.html'
@@ -1129,14 +1163,19 @@ def CosmidEndTagCreate(request):
                 
                 #if no end-tags submitted, new_end_tags is an empty list
                 if (new_end_tags):
-                    #remove whitespace from end tag sequences and save 
-                    new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
-                    new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
-                    new_end_tags[0].save()
-                    new_end_tags[1].save()
+                    #check length -- if not empty, then either 1 or 2
+                    if len(new_end_tags) == 2:
+                        #remove whitespace from end tag sequences and save 
+                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
+                        new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
+                        new_end_tags[0].save()
+                        new_end_tags[1].save()
+                    else:
+                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
+                        new_end_tags[0].save()
                 else:
                     pass
-                return HttpResponseRedirect('/cosmid/') 
+                return HttpResponseRedirect('/cosmid/' + new_cosmid.cosmid_name) 
         
     else:
         cosmid_form = CosmidForm(instance=Cosmid())
@@ -1210,14 +1249,17 @@ def ORFContigCreate(request):
                     
                     #calculate start and stop and set
                     #if on the complement, stop is before start on contig
-                    if complement == True:
-                        orf_stop = contig_seq.index(orf_seq) + 1    # +1 to account for string index starting at 0
-                        orf_start = orf_stop + len(orf_seq) - 1     # -1 to account again for indexing
+                    
+                    #SWAPS THE START AND STOP POSITION FOR REVERSE SEQUENCES - NOT DONE BY CONVENTION SO REMOVED
+                    #if complement == True:
+                    #    orf_stop = contig_seq.index(orf_seq) + 1    # +1 to account for string index starting at 0
+                    #    orf_start = orf_stop + len(orf_seq) - 1     # -1 to account again for indexing
 
                     #if not on the complement, start is before stop on contig
-                    else:
-                        orf_start = contig_seq.index(orf_seq) + 1   # +1 to account for string index starting at 0
-                        orf_stop = orf_start + len(orf_seq) - 1     # -1 to account again for indexing
+                    #else:
+                    
+                    orf_start = contig_seq.index(orf_seq) + 1   # +1 to account for string index starting at 0
+                    orf_stop = orf_start + len(orf_seq) - 1     # -1 to account again for indexing
                     
                     #set start and stop
                     new_contig_orf.start = orf_start
