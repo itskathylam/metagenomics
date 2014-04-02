@@ -54,7 +54,6 @@ my %_contig_retrieval;
 #-----------------------------------------------------------------------#
 
 my %end_tag_seq;
-#print @ARGV;
 if(scalar(@ARGV) != 4){
     print @ARGV, "\n";
     print "Endtag_F, Endtag_R and Databse required\n";
@@ -64,12 +63,7 @@ if(scalar(@ARGV) != 4){
 # ARGV[1] = End tag R CSV file
 # ARGV[2] = Sequence file
     my ($end_tag_f_file, $end_tag_r_file, $seq_file, $cwd) = @ARGV;
-    open(my $outt, ">>" , "/home/rene/Make.txt");
-    system('touch /home/nina/metagenomics/hello.txt');
-    print $outt "$end_tag_f_file, $end_tag_r_file, $seq_file, $cwd\n";
-    print $outt "$cwd\n";
     chdir("$cwd");
-    
 
 #Current segment is TEMPORARY:
 # Parses an Excel file containing all the End Tag unique ID's and stores them in a hash
@@ -78,11 +72,15 @@ if(scalar(@ARGV) != 4){
 # This area will be overwritten with extraction of the information from the database
 # to generate the same type of has with End Tag Unique ID key pointing to the F_ and
 # R_ Sequences
-
+    open(my $pid_fh, ">>", "/home/rene/metagenomics/contig_retrieval_tool/pid.txt");
+    print $pid_fh "$end_tag_f_file\n";
+    print $pid_fh "$end_tag_r_file\n";
+    close($pid_fh);
     open(my $f_file, "<", $end_tag_f_file) or die "No! $!\n";
     my @f_seqs = <$f_file>;
     open(my $r_file, "<", $end_tag_r_file) or die "No! $!\n";
     my @r_seqs = <$r_file>;
+
     
     foreach my $line(@f_seqs){
         $line =~ s/\r//g;
@@ -138,10 +136,6 @@ if(scalar(@ARGV) != 4){
             my $result = $blast_obj->blastn(
                                 -query => $seq_obj,
                                 -outfile => "temp/tmp/$_/$for_rev_name");
-
-            #print "*" x 50, "\n";
-            #print "End Tag Sequence: ", $_, "\n";
-            #print "Number of hits: ", $result->num_hits(), "\n";
             
             
             #Parse the newly created BLAST file 
@@ -213,7 +207,6 @@ if(scalar(@ARGV) != 4){
         } 
     }
     store (\%_contig_retrieval, "temp/storage/write.$$") or die "could not store";
-    print $$;
     $blast_obj->cleanup();
 }
 
