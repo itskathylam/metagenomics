@@ -1,10 +1,8 @@
 {% extends "base.html" %}
-
-
+{% block head %}<title>All Antibiotics</title>{% endblock %}
 {% block subtitle %}
 <img src="{{ STATIC_URL }}icons/allblack64.png"><h2 class="list">Antibiotics</h2>
 {% endblock %}
-
 {% block content %}
     <table class="list">
             <tr>
@@ -30,7 +28,6 @@
         </p></span>
     </div>
 {% endblock %}
-
 {% block second %}
     <section id="second">
         <h3>Quick Links</h3>

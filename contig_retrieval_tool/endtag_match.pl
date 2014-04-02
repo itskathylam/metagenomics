@@ -21,8 +21,6 @@ use File::Path qw/make_path remove_tree/;
 use Storable;
 use Cwd 'chdir';
 #$" = "\n";
-open(my $testout2, ">>", "test2.txt");
-    print $testout2 scalar(@ARGV) . " and - @ARGV";
 
 my %contig_orf;
 if (scalar(@ARGV) == 2) {
@@ -45,11 +43,7 @@ if (scalar(@ARGV) == 2) {
     my %_contig_retrieval = %{$_contig_retrieval};
     my $row_count = 0;
     my %_graphic_output;
-    system("touch temp/out/testtest.csv");
-    open(my $testout, ">>", "test.txt");
-    print $testout "Where the fuck am I?\n";
-    open(my $_outcsv, ">>", "tmp/out/testtest.csv") or die "Could not export to CSV file, $!\n";
-    print $_outcsv "hello in there\n";
+    open(my $_outcsv, ">>", "tmp/out/retrieval.csv") or die "Could not export to CSV file, $!\n";
 
     
     

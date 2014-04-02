@@ -20,16 +20,13 @@ if (scalar(@ARGV) == 3) {
         $f_file = $cwd . '/' . $f_file;
         $r_file = $cwd . '/' . $r_file;
         $database = $cwd . '/' . $database;
-        open(my $here, ">>", "here.txt");
-        print $here "$f_file,\n $r_file,\n $database\n";
+        
         print $log "********************************\nExecution of Contig Retrieval Pipeline\n********************************\n";
         print $log "Executing Endtag Setup\n";
-        `perl endtag_setup.pl $f_file $r_file $database $cwd`;
+        my $pid = `perl endtag_setup.pl $f_file $r_file $database $cwd`;
         
-        my $pid = `tail -1 pid.txt`;
-        open(my $testout2, ">>", "test2.txt");
-    print $testout2 "PID is: $pid ----\n";
-        
+        print "$pid and $cwd\n";
+        #10961 and /home/rene/metagenomics/contig_retrieval_tool
         print $log "Matching the contigs to the cosmids\n";
         $pid = `perl endtag_match.pl $pid $cwd`;
         print $log "Contigs Retrieval Complete\n";     

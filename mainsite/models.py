@@ -113,7 +113,7 @@ class Contig(models.Model):
     pool = models.ForeignKey(Pooled_Sequencing, verbose_name="Sequencing Pool")
     contig_name = models.CharField("Contig Name", max_length=200, unique=True)
     contig_sequence = models.TextField("Contig Sequence")
-    cosmid = models.ManyToManyField(Cosmid) #, related_name="cosmid")
+    cosmid = models.ManyToManyField(Cosmid)
     contig_accession = models.CharField("Contig NCBI Acccession", max_length=50, blank=True, null=True)
     blast_hit_accession = models.CharField("Top BLAST Hit NCBI Accession", max_length=50, blank=True, null=True)
     image_contig = models.BinaryField(blank=True, null=True)
