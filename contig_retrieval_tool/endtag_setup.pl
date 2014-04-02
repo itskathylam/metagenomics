@@ -72,10 +72,7 @@ if(scalar(@ARGV) != 4){
 # This area will be overwritten with extraction of the information from the database
 # to generate the same type of has with End Tag Unique ID key pointing to the F_ and
 # R_ Sequences
-    open(my $pid_fh, ">>", "/home/rene/metagenomics/contig_retrieval_tool/pid.txt");
-    print $pid_fh "$end_tag_f_file\n";
-    print $pid_fh "$end_tag_r_file\n";
-    close($pid_fh);
+
     open(my $f_file, "<", $end_tag_f_file) or die "No! $!\n";
     my @f_seqs = <$f_file>;
     open(my $r_file, "<", $end_tag_r_file) or die "No! $!\n";
@@ -207,6 +204,7 @@ if(scalar(@ARGV) != 4){
         } 
     }
     store (\%_contig_retrieval, "temp/storage/write.$$") or die "could not store";
+    print $$;
     $blast_obj->cleanup();
 }
 
