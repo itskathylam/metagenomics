@@ -71,10 +71,6 @@ def Faq(request):
 def UserDoc(request):
     return (render(request, 'userdoc.html'))
 
-@login_required
-<<<<<<< HEAD
-def ContigTool(request):
-    return (render(request, 'contig.html'))
 
 #@login_required
 def AnnotationTool(request):
@@ -86,26 +82,47 @@ def AnnotationTool(request):
             email = request.POST['email']
             contigs = request.POST.getlist('contig')
 
-            ##orf_data(contigs)
-            ##read csv and store in db orf-contigs(also images)
-            #
-            ##sends the user an email
-            #with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
-            #    bimg = base64.b64encode(img.read())
-            #    contig = Contig.objects.get(contig_name="scaffold58_1")
-            #    contig.image_contig = bimg
-            #
-            #    contig.contig_accession = "IMAGE?"
-            #    contig.save()
-            #    
-            #contigget = Contig.objects.get(contig_name="scaffold58_1")
-            #
-            #image = contigget.image_contig
-            #
-            #testpicture = base64.b64decode(image)
-            #writeimg = open("mainsite/static/imagedboutput.png", "wb")
-            #writeimg.write(testpicture)
-            #writeimg.close()
+            #orf_data(contigs)
+            #read csv and store in db orf-contigs(also images)
+            
+            #sends the user an email
+            with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
+                bimg = base64.b64encode(img.read())
+                contig = Contig.objects.get(contig_name="scaffold58_1")
+                contig.image_contig = bimg
+            
+                contig.contig_accession = "IMAGE?"
+                contig.save()
+                
+            contigget = Contig.objects.get(contig_name="scaffold58_1")
+            
+            image = contigget.image_contig
+            
+            testpicture = base64.b64decode(image)
+            writeimg = open("mainsite/static/imagedboutput.png", "wb")
+            writeimg.write(testpicture)
+            writeimg.close()
+
+            orf_data(contigs)
+            read csv and store in db orf-contigs(also images)
+            
+            #sends the user an email
+            with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
+                bimg = base64.b64encode(img.read())
+                contig = Contig.objects.get(contig_name="scaffold58_1")
+                contig.image_contig = bimg
+            
+                contig.contig_accession = "IMAGE?"
+                contig.save()
+                
+            contigget = Contig.objects.get(contig_name="scaffold58_1")
+            
+            image = contigget.image_contig
+            
+            testpicture = base64.b64decode(image)
+            writeimg = open("mainsite/static/imagedboutput.png", "wb")
+            writeimg.write(testpicture)
+            write.close()
             
             orf_data(contigs)
             #return render_to_response('tool_contig_submit.html', var)
@@ -1152,13 +1169,13 @@ def CosmidEndTagCreate(request):
                 if (new_end_tags):
                     #check length -- if not empty, then either 1 or 2
                     if len(new_end_tags) == 2:
-                        #remove whitespace from end tag sequences and save 
-                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
-                        new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
+                        #remove whitespace from end tag sequences, make uppercase and save 
+                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split()).upper()
+                        new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split()).upper()
                         new_end_tags[0].save()
                         new_end_tags[1].save()
                     else:
-                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
+                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split()).upper()
                         new_end_tags[0].save()
                 else:
                     pass
