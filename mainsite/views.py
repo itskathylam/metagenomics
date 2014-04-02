@@ -385,12 +385,17 @@ def CosmidResults(request):
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
     qargs = {}
     for k, v in values.items():
         if v != '':
             qargs[k] = v
     if any(qargs):
-        results = Cosmid.objects.filter(**qargs)
+        results = Cosmid.objects.filter(**qargs).order_by(order_by)
         total = results.count
         p= Paginator(results, 20)
         page = request.GET.get('page')
@@ -405,7 +410,7 @@ def CosmidResults(request):
         search = ''
         total = None
     
-    return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': cosmid_list, 'queries':queries, 'search':search, 'total':total}, context_instance=RequestContext(request))
+    return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': cosmid_list, 'queries':queries, 'search':search, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
 
 def SubcloneResults(request):
@@ -420,12 +425,17 @@ def SubcloneResults(request):
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
     qargs = {}
     for k, v in values.items():
         if v != '':
             qargs[k] = v
     if any(qargs):
-        results = Subclone.objects.filter(**qargs)
+        results = Subclone.objects.filter(**qargs).order_by(order_by)
         total = results.count
         p= Paginator(results, 20)
         page = request.GET.get('page')
@@ -441,7 +451,7 @@ def SubcloneResults(request):
         total = None
     
     
-    return render_to_response('subclone_all.html', {'subclone_list': subclone_list, 'queries':queries, 'search':search, 'total':total}, context_instance=RequestContext(request))
+    return render_to_response('subclone_all.html', {'subclone_list': subclone_list, 'queries':queries, 'search':search, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
 def SubcloneAssayResults(request):
     subclone = request.GET.get('subclone')
@@ -457,14 +467,19 @@ def SubcloneAssayResults(request):
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
     qargs = {}
     for k, v in values.items():
         if v != '':
             qargs[k] = v
     if any(qargs):
-        results = Subclone_Assay.objects.filter(**qargs)
+        results = Subclone_Assay.objects.filter(**qargs).order_by(order_by)
         total = results.count
-        p= Paginator(results, 20)
+        p= Paginator(results, 5)
         page = request.GET.get('page')
         search = 1
         try:
@@ -477,7 +492,7 @@ def SubcloneAssayResults(request):
         search = ''
         total = None
     
-    return render_to_response('subclone_assay_all.html', {'subclone_assay_list': subclone_assay_list, 'search':search, 'queries':queries, 'total':total}, context_instance=RequestContext(request))
+    return render_to_response('subclone_assay_all.html', {'subclone_assay_list': subclone_assay_list, 'search':search, 'queries':queries, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
 def CosmidAssayResults(request):
     #gets all of the user inputted information from the form
@@ -495,13 +510,18 @@ def CosmidAssayResults(request):
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
     #iterates through dictionary and assigns an arg value if it was entered
     qargs = {}
     for k, v in values.items():
         if v != '':
             qargs[k] = v
     if any(qargs):
-        results = Cosmid_Assay.objects.filter(**qargs) #returns queryset of results based on qargs4
+        results = Cosmid_Assay.objects.filter(**qargs).order_by(order_by) #returns queryset of results based on qargs4
         total = results.count
         p= Paginator(results, 20)           #splits result sets into 20/page
         page = request.GET.get('page')      #gets current page
@@ -516,15 +536,20 @@ def CosmidAssayResults(request):
         search = ''
         total = None
         
-    return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': cosmid_assay_list, 'search':search, 'queries':queries, 'total':total}, context_instance=RequestContext(request))
+    return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': cosmid_assay_list, 'search':search, 'queries':queries, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
 def OrfResults(request):
-    orf_list = request.GET.get('annotation')
+    annotation = request.GET.get('annotation')
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
     if (annotation):
-        results = ORF.objects.filter(annotation__icontains=annotation)
+        results = ORF.objects.filter(annotation__icontains=annotation).order_by(order_by)
         total = results.count
         p= Paginator(results, 20)
         page = request.GET.get('page')
@@ -539,7 +564,7 @@ def OrfResults(request):
         search = ''
         total = None
     
-    return render_to_response('orf_all.html', {'orf_list': orf_list, 'search':search, 'queries':queries, 'total':total}, context_instance=RequestContext(request))
+    return render_to_response('orf_all.html', {'orf_list': orf_list, 'search':search, 'queries':queries, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
 def ContigResults(request):
     pool = request.GET.get('pool')
@@ -549,12 +574,17 @@ def ContigResults(request):
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
     qargs = {}
     for k, v in values.items():
         if v != '':
             qargs[k] = v
     if any(qargs):
-        results = Contig.objects.filter(**qargs) #returns queryset of results based on qargs
+        results = Contig.objects.filter(**qargs).order_by(order_by) #returns queryset of results based on qargs
         total = results.count
         p= Paginator(results, 20)
         page = request.GET.get('page')
@@ -569,7 +599,7 @@ def ContigResults(request):
         search = ''
         total = None
 
-    return render_to_response('contig_all.html', {'contig_list': contig_list, 'queries':queries, 'search':search, 'total':total}, context_instance=RequestContext(request))
+    return render_to_response('contig_all.html', {'contig_list': contig_list, 'queries':queries, 'search':search, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
 
 def CosmidBasicResults(request):
@@ -578,6 +608,11 @@ def CosmidBasicResults(request):
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
     #if no words entered, returns no results
     if query == '':
         results = None
@@ -601,7 +636,7 @@ def CosmidBasicResults(request):
         
         #combines all the Q objects with the OR operator
         final_q = reduce(operator.or_, list_name_qs + list_host_qs + list_researcher_qs + list_library_qs + list_screen_qs + list_ec_collection_qs + list_original_media_qs + list_pool_qs + list_labbook_qs + list_comments_qs)
-        results = Cosmid.objects.filter(final_q)
+        results = Cosmid.objects.filter(final_q).order_by(order_by)
         total = results.count
         
         p= Paginator(results, 20)
@@ -611,7 +646,7 @@ def CosmidBasicResults(request):
             cosmid_list = p.page(page)
         except PageNotAnInteger:
             cosmid_list = p.page(1)
-    return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': cosmid_list, 'query': query, 'search':search, 'queries':queries, 'total':total}, context_instance=RequestContext(request))
+    return render_to_response('cosmid_end_tag_all.html', {'cosmid_list': cosmid_list, 'query': query, 'search':search, 'queries':queries, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
 def SubcloneBasicResults(request):
     #gets the list of words they entered
@@ -621,6 +656,11 @@ def SubcloneBasicResults(request):
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
     
     #if no words entered, returns no results
     if query == '':
@@ -644,7 +684,7 @@ def SubcloneBasicResults(request):
         list_primer2_qs = [Q(primer2_name__icontains=word) for word in keywords]        
         #combines all the Q objects with the OR operator
         final_q = reduce(operator.or_, list_name_qs + list_cosmid_qs + list_orfid_qs + list_orfanno_qs + list_vector_qs + list_ec_collection_qs + list_researcher_qs + list_primer1_qs + list_primer2_qs)
-        results = Subclone.objects.filter(final_q)
+        results = Subclone.objects.filter(final_q).order_by(order_by)
         total = results.count
         p= Paginator(results, 20)
         page = request.GET.get('page')
@@ -653,7 +693,7 @@ def SubcloneBasicResults(request):
             subclone_list = p.page(page)
         except PageNotAnInteger:
             subclone_list = p.page(1)
-    return render_to_response('subclone_all.html', {'subclone_list': subclone_list, 'query': query, 'queries':queries, 'search':search, 'total':total}, context_instance=RequestContext(request))
+    return render_to_response('subclone_all.html', {'subclone_list': subclone_list, 'query': query, 'queries':queries, 'search':search, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
 def CosmidAssayBasicResults(request):
     #gets the list of words they entered
@@ -663,6 +703,11 @@ def CosmidAssayBasicResults(request):
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
     
     #if no words entered, returns no results
     if query == '':
@@ -683,7 +728,7 @@ def CosmidAssayBasicResults(request):
         list_comments_qs = [Q(cosmid_comments__icontains=word) for word in keywords]
         #combines all the Q objects with the OR operator
         final_q = reduce(operator.or_, list_name_qs + list_host_qs + list_substrate_qs + list_antibiotic_qs + list_researcher_qs + list_km_qs + list_temp_qs + list_ph_qs + list_comments_qs)
-        results = Cosmid_Assay.objects.filter(final_q)
+        results = Cosmid_Assay.objects.filter(final_q).order_by(order_by)
         total = results.count
         p= Paginator(results, 20)
         page = request.GET.get('page')
@@ -692,7 +737,7 @@ def CosmidAssayBasicResults(request):
             cosmid_assay_list = p.page(page)
         except PageNotAnInteger:
             cosmid_assay_list = p.page(1)
-    return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': cosmid_assay_list, 'query': query, 'queries':queries, 'search':search, 'total':total}, context_instance=RequestContext(request))
+    return render_to_response('cosmid_assay_all.html', {'cosmid_assay_list': cosmid_assay_list, 'query': query, 'queries':queries, 'search':search, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
 def SubcloneAssayBasicResults(request):
     #gets the list of words they entered
@@ -702,6 +747,11 @@ def SubcloneAssayBasicResults(request):
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
     
     #if no words entered, returns no results
     if query == '':
@@ -722,7 +772,7 @@ def SubcloneAssayBasicResults(request):
         list_comments_qs = [Q(subclone_comments__icontains=word) for word in keywords]
         #combines all the Q objects with the OR operator
         final_q = reduce(operator.or_, list_subclone_qs + list_host_qs + list_substrate_qs + list_antibiotic_qs + list_researcher_qs + list_km_qs + list_temp_qs + list_ph_qs + list_comments_qs)
-        results = Subclone_Assay.objects.filter(final_q)
+        results = Subclone_Assay.objects.filter(final_q).order_by(order_by)
         total = results.count
         p= Paginator(results, 20)
         page = request.GET.get('page')
@@ -731,7 +781,7 @@ def SubcloneAssayBasicResults(request):
             subclone_assay_list = p.page(page)
         except PageNotAnInteger:
             subclone_assay_list = p.page(1)
-    return render_to_response('subclone_assay_all.html', {'subclone_assay_list': subclone_assay_list, 'query': query, 'search':search, 'queries':queries, 'total':total}, context_instance=RequestContext(request))
+    return render_to_response('subclone_assay_all.html', {'subclone_assay_list': subclone_assay_list, 'query': query, 'search':search, 'queries':queries, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
 def OrfBasicResults(request):
     #gets the list of words they entered
@@ -741,7 +791,11 @@ def OrfBasicResults(request):
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
-    
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
     
     #if no words entered, returns no results
     if query == '':
@@ -758,7 +812,7 @@ def OrfBasicResults(request):
         list_orfanno_qs = [Q(annotation__icontains=word) for word in keywords]
         list_subclone_qs = [Q(subclone__subclone_name__icontains=word) for word in keywords]
         final_q = reduce(operator.or_, list_subclone_qs + list_orfanno_qs + list_orfid_qs)
-        results = ORF.objects.filter(final_q)
+        results = ORF.objects.filter(final_q).order_by(order_by)
         total = results.count
         p= Paginator(results, 20)
         page = request.GET.get('page')
@@ -767,7 +821,7 @@ def OrfBasicResults(request):
             orf_list = p.page(page)
         except PageNotAnInteger:
             orf_list = p.page(1)
-    return render_to_response('orf_all.html', {'orf_list': orf_list, 'query': query, 'search':search, 'queries':queries, 'total':total}, context_instance=RequestContext(request))
+    return render_to_response('orf_all.html', {'orf_list': orf_list, 'query': query, 'search':search, 'queries':queries, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
 def ContigBasicResults(request):
     #gets the list of words they entered
@@ -777,6 +831,11 @@ def ContigBasicResults(request):
     queries = request.GET.copy();
     if queries.has_key('page'):
         del queries['page']
+    if queries.has_key('order_by'):
+        del queries['order_by']
+        order_by = request.GET.get('order_by')
+    else:
+        order_by = 'id'
     
     #if no words entered, returns no results
     if query == '':
@@ -793,7 +852,7 @@ def ContigBasicResults(request):
         list_name_qs = [Q(contig_name__icontains=word) for word in keywords]
         list_accession_qs = [Q(contig_accession__icontains=word) for word in keywords]
         final_q = reduce(operator.or_, list_poolid_qs + list_name_qs + list_accession_qs)
-        results = Contig.objects.filter(final_q)
+        results = Contig.objects.filter(final_q).order_by(order_by)
         total = results.count
         p= Paginator(results, 20)
         page = request.GET.get('page')
@@ -802,7 +861,7 @@ def ContigBasicResults(request):
             contig_list = p.page(page)
         except PageNotAnInteger:
             contig_list = p.page(1)
-    return render_to_response('contig_all.html', {'contig_list': contig_list, 'query': query, 'search':search, 'queries':queries, 'total':total}, context_instance=RequestContext(request))
+    return render_to_response('contig_all.html', {'contig_list': contig_list, 'query': query, 'search':search, 'queries':queries, 'total':total, 'order_by':order_by}, context_instance=RequestContext(request))
 
 #detail views
 def CosmidDetail(request, cosmid_name):
@@ -1022,11 +1081,6 @@ class CosmidEndTagListView(ListView):
     model = Cosmid
     template_name = 'cosmid_end_tag_all.html'
     paginate_by = 20
-    #context_object_name = 'cosmid_list'
-    #def get_context_data(self, **kwargs):
-    #    context=super(CosmidEndTagListView, self).get_context_data(**kwargs)
-    #    context['contig_list']=Contig.objects.filter(id=Cosmid.contig_cosmid.contig_id)
-    #    return context
     
   
 #retrieve CosmidEndTagListView queryset to export as csv

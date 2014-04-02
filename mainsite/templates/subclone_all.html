@@ -16,13 +16,13 @@
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if subclone_list.has_previous %}
-                                    <a href="?{{queries.urlencode}}&page={{subclone_list.previous_page_number}}">Previous</a>
+                                    <a href="?{{queries.urlencode}}&page={{subclone_list.previous_page_number}}&order_by={{order_by}}">Previous</a>
                             {% endif %}
                             <span class="page-current">
                                     Page {{subclone_list.number}} of {{ subclone_list.paginator.num_pages}}
                             </span>
                             {% if subclone_list.has_next %}
-                                    <a href="?{{queries.urlencode}}&page={{subclone_list.next_page_number}}">Next</a>
+                                    <a href="?{{queries.urlencode}}&page={{subclone_list.next_page_number}}&order_by={{order_by}}">Next</a>
                             {% endif %}
                     </p></span>
                 </div>
@@ -45,11 +45,11 @@
         {% endif %}
         <table class="list">
                 <tr>
-                    <th>Subclone Name</th>
-                    <th>Researcher Name</th>
-                    <th>Parent Cosmid Name</th>
-                    <th>ORF ID</th>
-                    <th>Vector</th>
+                    <th><a href="?{{queries.urlencode}}&order_by=subclone_name">Subclone Name</a></th>
+                    <th><a href="?{{queries.urlencode}}&order_by=researcher">Researcher Name</a></th>
+                    <th><a href="?{{queries.urlencode}}&order_by=cosmid">Parent Cosmid Name</a></th>
+                    <th><a href="?{{queries.urlencode}}&order_by=orf">ORF ID</a></th>
+                    <th><a href="?{{queries.urlencode}}&order_by=vector">Vector</a></th>
                     <th>E. coli Stock Location</th>
                     <th>Primer 1 Name</th>
                     <th>Primer 1 Sequence</th>
@@ -77,13 +77,13 @@
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if subclone_list.has_previous %}
-                                    <a href="?{{queries.urlencode}}&page={{subclone_list.previous_page_number}}">Previous</a>
+                                    <a href="?{{queries.urlencode}}&page={{subclone_list.previous_page_number}}&order_by={{order_by}}">Previous</a>
                             {% endif %}
                             <span class="page-current">
                                     Page {{subclone_list.number}} of {{ subclone_list.paginator.num_pages}}
                             </span>
                             {% if subclone_list.has_next %}
-                                    <a href="?{{queries.urlencode}}&page={{subclone_list.next_page_number}}">Next</a>
+                                    <a href="?{{queries.urlencode}}&page={{subclone_list.next_page_number}}&order_by={{order_by}}">Next</a>
                             {% endif %}
                     </p></span>
                 </div>

@@ -17,13 +17,13 @@
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if contig_list.has_previous %}
-                                    <a href="?{{queries.urlencode}}&page={{contig_list.previous_page_number}}">Previous</a>
+                                    <a href="?{{queries.urlencode}}&page={{contig_list.previous_page_number}}&order_by={{order_by}}">Previous</a>
                             {% endif %}
                             <span class="page-current">
                                     Page {{contig_list.number}} of {{ contig_list.paginator.num_pages}}
                             </span>
                             {% if contig_list.has_next %}
-                                    <a href="?{{queries.urlencode}}&page={{contig_list.next_page_number}}">Next</a>
+                                    <a href="?{{queries.urlencode}}&page={{contig_list.next_page_number}}&order_by={{order_by}}">Next</a>
                             {% endif %}
                     </p></span>
                 </div>
@@ -47,8 +47,8 @@
 
         <table class="list">
             <tr>
-                <th>Contig Name</th>
-                <th>Pool ID</th>
+                <th><a href="?{{queries.urlencode}}&order_by=contig_name">Contig Name</a></th>
+                <th><a href="?{{queries.urlencode}}&order_by=pool">Pool ID</a></th>
                 <th>Contig Sequence</th>
                 <th>Contig NCBI Accession</th>
                 <th>BLAST Hit NCBI Accession</th>                
@@ -68,13 +68,13 @@
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if contig_list.has_previous %}
-                                    <a href="?{{queries.urlencode}}&page={{contig_list.previous_page_number}}">Previous</a>
+                                    <a href="?{{queries.urlencode}}&page={{contig_list.previous_page_number}}&order_by={{order_by}}">Previous</a>
                             {% endif %}
                             <span class="page-current">
                                     Page {{contig_list.number}} of {{ contig_list.paginator.num_pages}}
                             </span>
                             {% if contig_list.has_next %}
-                                    <a href="?{{queries.urlencode}}&page={{contig_list.next_page_number}}">Next</a>
+                                    <a href="?{{queries.urlencode}}&page={{contig_list.next_page_number}}&order_by={{order_by}}">Next</a>
                             {% endif %}
                     </p></span>
                 </div>

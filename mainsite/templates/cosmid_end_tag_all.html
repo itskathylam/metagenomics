@@ -18,13 +18,13 @@
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if cosmid_list.has_previous %}
-                                    <a href="?{{queries.urlencode}}&page={{cosmid_list.previous_page_number}}">Previous</a>
+                                    <a href="?{{queries.urlencode}}&page={{cosmid_list.previous_page_number}}&order_by={{order_by}}">Previous</a>
                             {% endif %}
                             <span class="page-current">
                                     Page {{cosmid_list.number}} of {{ cosmid_list.paginator.num_pages}}
                             </span>
                             {% if cosmid_list.has_next %}
-                                    <a href="?{{queries.urlencode}}&page={{cosmid_list.next_page_number}}">Next</a>
+                                    <a href="?{{queries.urlencode}}&page={{cosmid_list.next_page_number}}&order_by={{order_by}}">Next</a>
                             {% endif %}
                     </p></span>
                 </div>
@@ -49,13 +49,13 @@
     
         <table class="list">
                 <tr>
-                <th>Cosmid Name</th>
-                <th>Researcher Name</th>
-                <th>Library</th>
-                <th>Screen Expression Host</th>
-                <th>Screen Name</th>
-                <th>E. coli Stock Location</th>
-                <th>Sequencing Pool</th>
+                <th><a href="?{{queries.urlencode}}&order_by=cosmid_name">Cosmid Name</a></th>
+                <th><a href="?{{queries.urlencode}}&order_by=researcher">Researcher Name</a></th>
+                <th><a href="?{{queries.urlencode}}&order_by=library">Library</a></th>
+                <th><a href="?{{queries.urlencode}}&order_by=host">Screen Expression Host</a></th>
+                <th><a href="?{{queries.urlencode}}&order_by=screen">Screen Name</a></th>
+                <th><a href="?{{queries.urlencode}}&order_by=ec_collection">E. coli Stock Location</a></th>
+                <th><a href="?{{queries.urlencode}}&order_by=pool">Sequencing Pool</a></th>
                 <th>End Tag 1</th>
                 <th>End Tag 2</th>
                 <th>Associated Contigs</th>
@@ -89,7 +89,7 @@
                 {% if cosmid.contig_set.all|length > 0 %}
                         <td>
                         {% for contig in cosmid.contig_set.all %}
-                                    <a href="{% url 'contig-list' %}{{contig.contig_name}}">{{contig.contig_name}}</a><br>
+                                    <p><a href="{% url 'contig-list' %}{{contig.contig_name}}">{{contig.contig_name}}</a></p>
                         {% endfor %}
                         </td>
                 {% else %}
@@ -103,13 +103,13 @@
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if cosmid_list.has_previous %}
-                                    <a href="?{{queries.urlencode}}&page={{cosmid_list.previous_page_number}}">Previous</a>
+                                    <a href="?{{queries.urlencode}}&page={{cosmid_list.previous_page_number}}&order_by={{order_by}}">Previous</a>
                             {% endif %}
                             <span class="page-current">
                                     Page {{cosmid_list.number}} of {{ cosmid_list.paginator.num_pages}}
                             </span>
                             {% if cosmid_list.has_next %}
-                                    <a href="?{{queries.urlencode}}&page={{cosmid_list.next_page_number}}">Next</a>
+                                    <a href="?{{queries.urlencode}}&page={{cosmid_list.next_page_number}}&order_by={{order_by}}">Next</a>
                             {% endif %}
                     </p></span>
                 </div>

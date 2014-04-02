@@ -17,13 +17,13 @@
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if cosmid_assay_list.has_previous %}
-                                    <a href="?{{queries.urlencode}}&page={{cosmid_assay_list.previous_page_number}}">Previous</a>
+                                    <a href="?{{queries.urlencode}}&page={{cosmid_assay_list.previous_page_number}}&order_by={{order_by}}">Previous</a>
                             {% endif %}
                             <span class="page-current">
                                     Page {{cosmid_assay_list.number}} of {{ cosmid_assay_list.paginator.num_pages}}
                             </span>
                             {% if cosmid_assay_list.has_next %}
-                                    <a href="?{{queries.urlencode}}&page={{cosmid_assay_list.next_page_number}}">Next</a>
+                                    <a href="?{{queries.urlencode}}&page={{cosmid_assay_list.next_page_number}}&order_by={{order_by}}">Next</a>
                             {% endif %}
                     </p></span>
                 </div>
@@ -47,14 +47,14 @@
            
         <table class="list">
             <tr>
-                <th>Cosmid Name</th>
-                <th>Expression Host</th>
-                <th>Substrate</th>
-                <th>Antibiotic</th>
-                <th>Researcher Name</th>
-                <th>Km (mM)</th>
-                <th>Temp Optimum</th>
-                <th>pH Optimum</th>
+                <th><a href="?{{queries.urlencode}}&order_by=cosmid">Cosmid Name</a></th>
+                <th><a href="?{{queries.urlencode}}&order_by=host">Expression Host</a></th>
+                <th><a href="?{{queries.urlencode}}&order_by=substrate">Substrate</a></th>
+                <th><a href="?{{queries.urlencode}}&order_by=antibiotic">Antibiotic</a></th>
+                <th><a href="?{{queries.urlencode}}&order_by=researcher">Researcher Name</a></th>
+                <th><a href="?{{queries.urlencode}}&order_by=cosmid_km">Km (mM)</a></th>
+                <th><a href="?{{queries.urlencode}}&order_by=cosmid_ph">pH Optimum</a></th>
+                <th><a href="?{{queries.urlencode}}&order_by=cosmid_temp">Temp Optimum</a></th>
                 <th>Comments/Observations</th>
             </tr>
         {% for cosmid_assay in cosmid_assay_list %}
@@ -75,13 +75,13 @@
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if cosmid_assay_list.has_previous %}
-                                    <a href="?{{queries.urlencode}}&page={{cosmid_assay_list.previous_page_number}}">Previous</a>
+                                    <a href="?{{queries.urlencode}}&page={{cosmid_assay_list.previous_page_number}}&order_by={{order_by}}">Previous</a>
                             {% endif %}
                             <span class="page-current">
                                     Page {{cosmid_assay_list.number}} of {{ cosmid_assay_list.paginator.num_pages}}
                             </span>
                             {% if cosmid_assay_list.has_next %}
-                                    <a href="?{{queries.urlencode}}&page={{cosmid_assay_list.next_page_number}}">Next</a>
+                                    <a href="?{{queries.urlencode}}&page={{cosmid_assay_list.next_page_number}}&order_by={{order_by}}">Next</a>
                             {% endif %}
                     </p></span>
                 </div>

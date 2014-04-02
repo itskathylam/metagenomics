@@ -17,13 +17,13 @@
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if orf_list.has_previous %}
-                                    <a href="?{{queries.urlencode}}&page={{orf_list.previous_page_number}}">Previous</a>
+                                    <a href="?{{queries.urlencode}}&page={{orf_list.previous_page_number}}&order_by={{order_by}}">Previous</a>
                             {% endif %}
                             <span class="page-current">
                                     Page {{orf_list.number}} of {{ orf_list.paginator.num_pages}}
                             </span>
                             {% if orf_list.has_next %}
-                                    <a href="?{{queries.urlencode}}&page={{orf_list.next_page_number}}">Next</a>
+                                    <a href="?{{queries.urlencode}}&page={{orf_list.next_page_number}}&order_by={{order_by}}">Next</a>
                             {% endif %}
                     </p></span>
                 </div>
@@ -45,9 +45,9 @@
         {% endif %}
     <table class="list">
             <tr>
-                <th>ORF ID</th>
+                <th><a href="?{{queries.urlencode}}&order_by=id">ORF ID</a></th>
                 <th>ORF Sequence</th>
-                <th>Annotation (Optional)</th>
+                <th><a href="?{{queries.urlencode}}&order_by=annotation">Annotation (Optional)</a></th>
             </tr>
         {% for orf in orf_list %}
             <tr>
@@ -61,13 +61,13 @@
                 <div class="pagination">
                     <span class="page-links"><p>
                             {% if orf_list.has_previous %}
-                                    <a href="?{{queries.urlencode}}&page={{orf_list.previous_page_number}}">Previous</a>
+                                    <a href="?{{queries.urlencode}}&page={{orf_list.previous_page_number}}&order_by={{order_by}}">Previous</a>
                             {% endif %}
                             <span class="page-current">
                                     Page {{orf_list.number}} of {{ orf_list.paginator.num_pages}}
                             </span>
                             {% if orf_list.has_next %}
-                                    <a href="?{{queries.urlencode}}&page={{orf_list.next_page_number}}">Next</a>
+                                    <a href="?{{queries.urlencode}}&page={{orf_list.next_page_number}}&order_by={{order_by}}">Next</a>
                             {% endif %}
                     </p></span>
                 </div>
