@@ -964,7 +964,7 @@ class CosmidEditView(UpdateView):
 #only for editing a cosmid's endtags -- ideally should be combined with cosmid edit (Kathy)
 class CosmidEndTagEditView(UpdateView):
     model = Cosmid
-    form_class = EndTagFormSetUpdate #requires both {{ form }} and {{ form_class }} in template
+    form_class = EndTagFormSet #requires both {{ form }} and {{ form_class }} in template
     template_name = 'cosmid_only_end_tag_edit.html'
     slug_field = 'cosmid_name' 
     slug_url_kwarg = 'cosmid_name'
@@ -1147,11 +1147,16 @@ def CosmidEndTagCreate(request):
                 
                 #if no end-tags submitted, new_end_tags is an empty list
                 if (new_end_tags):
-                    #remove whitespace from end tag sequences and save 
-                    new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
-                    new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
-                    new_end_tags[0].save()
-                    new_end_tags[1].save()
+                    #check length -- if not empty, then either 1 or 2
+                    if len(new_end_tags) == 2:
+                        #remove whitespace from end tag sequences and save 
+                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
+                        new_end_tags[1].end_tag_sequence = "".join(new_end_tags[1].end_tag_sequence.split())
+                        new_end_tags[0].save()
+                        new_end_tags[1].save()
+                    else:
+                        new_end_tags[0].end_tag_sequence = "".join(new_end_tags[0].end_tag_sequence.split())
+                        new_end_tags[0].save()
                 else:
                     pass
                 return HttpResponseRedirect('/cosmid/' + new_cosmid.cosmid_name) 
