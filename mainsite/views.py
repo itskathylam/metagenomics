@@ -1115,8 +1115,6 @@ class ContigORFDeleteView(DeleteView):
     model=Contig_ORF_Join
     template_name = 'contig_orf_delete.html'
     success_url = reverse_lazy('contig-list')
-
-
     
 class ORFContigListView(ListView):
     model = Contig_ORF_Join
