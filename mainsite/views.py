@@ -22,18 +22,20 @@ from Bio.SeqRecord import SeqRecord
 
 import types
 import StringIO
-from os import system
+import os
+from os import system, listdir
 import pdb
 import base64
 from django.db.models import Q
 import re
 import base64 #used to convert pngs to base64 for database storage
 from itertools import chain
+from re import match
 import csv
 
 #Main, About etc
 
-@login_required  #UNCOMMENT THIS BEFORE DEPLOYMENT
+@login_required
 def MainPage(request):
     template_name = 'index.html'
     return (render(request, 'index.html'))
@@ -72,7 +74,7 @@ def UserDoc(request):
     return (render(request, 'userdoc.html'))
 
 
-#@login_required
+@login_required
 def AnnotationTool(request):
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
@@ -82,52 +84,43 @@ def AnnotationTool(request):
             email = request.POST['email']
             con_name = request.POST.getlist('contig')
             contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
-
             orf_data(contigs)
-            #read csv and store in db orf-contigs(also images)
-            
-            #sends the user an email
-            with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
-                bimg = base64.b64encode(img.read())
-                contig = Contig.objects.get(contig_name="scaffold58_1")
-                contig.image_contig = bimg
-            
-                contig.contig_accession = "IMAGE?"
-                contig.save()
-                
-            contigget = Contig.objects.get(contig_name="scaffold58_1")
-            
-            image = contigget.image_contig
-            
-            testpicture = base64.b64decode(image)
-            writeimg = open("mainsite/static/imagedboutput.png", "wb")
-            writeimg.write(testpicture)
-            writeimg.close()
 
-            #read csv and store in db orf-contigs(also images)
+            save_images("tool")
+            read_csv("annotations_tool/tool/out/annotations.csv")
             
             #sends the user an email
-            with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
-                bimg = base64.b64encode(img.read())
-                contig = Contig.objects.get(contig_name="scaffold58_1")
-                contig.image_contig = bimg
+            system("(echo 'success'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
             
-                contig.contig_accession = "IMAGE?"
-                contig.save()
-                
-            contigget = Contig.objects.get(contig_name="scaffold58_1")
-            
-            image = contigget.image_contig
-            
-            testpicture = base64.b64decode(image)
-            writeimg = open("mainsite/static/imagedboutput.png", "wb")
-            writeimg.write(testpicture)
-            #write.close()
-            
-            #return render_to_response('tool_contig_submit.html', var)
-            
-            #system("(echo 'this is a test email. see attachment'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
-    return render_to_response('tool_annotation.html', {'image': testpicture, 'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
+    return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
+
+
+#gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
+def save_images(folder):
+    re_contigname = re.compile('^(.+)-(ALIGN|CONTIG|GLIM|GENBANK|MANUAL)\.png$')
+    for file in listdir('annotation_tool/%s/img/' %folder):
+        with open("annotation_tool/%s/img/" %folder + file,  "rb") as img:
+            imgbinary = base64.b64encode(img.read())
+        
+        filename = re_contigname.match(file)
+        
+        imgcontigname = filename.group(1)
+        contig = Contig.objects.get(contig_name=imgcontigname)
+          
+        if filename.group(2) == 'ALIGN':
+            contig.image_align = imgbinary
+        elif filename.group(2) == 'CONTIG':
+            contig.image_contig = imgbinary
+        elif filename.group(2) == 'GLIM':
+            contig.image_predicted = imgbinary
+        elif filename.group(2) == 'GENBANK':
+            contig.image_genbank = imgbinary
+        elif filename.group(2) =='MANUAL':
+            contig.image_manual = imgbinary
+        else:
+            #ERROR CATCHING THERE IS A PNG WITH NO MATCH???
+            pass
+        contig.save()
 
 @login_required
 def AnnotationToolResults(request):
@@ -163,7 +156,7 @@ def ContigTool(request):
             context = {'poolselect': int(pool_id), 'pool': pool, 'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
             
         if 'submit' in request.POST:
-            pool = request.POST['pool']
+            pool = request.POST['poolhidden']
             cos = request.POST.getlist('cos')
             cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values("cosmid_name")
             results = contig_pipeline(pool, cos_selected)
@@ -218,33 +211,38 @@ def read_csv(filename):
 
 #this function is only called by other views, not directly associated with a URL
 def contig_pipeline(pool, cos_selected):
-    c_id =  Cosmid.objects.filter(cosmid_name__in = cos_selected).values('id')
-    cosmids = Cosmid.objects.filter(cosmid_name__in = cos_selected).values_list('id', 'cosmid_name')
     contigs = Contig.objects.filter(pool = pool).values_list('contig_name', 'contig_sequence')
-    seqs = End_Tag.objects.filter(cosmid = c_id).values_list('id', 'primer', 'end_tag_sequence')
-    p_id = End_Tag.objects.filter(cosmid = c_id).values('primer')
-    primer_set1 = Primer.objects.filter(id__in = p_id).filter(direction = 'F').values_list('id','primer_name')
-    primer_set2 = Primer.objects.filter(id__in = p_id).filter(direction = 'R').values_list('id','primer_name')
+    c_id =  Cosmid.objects.filter(cosmid_name__in = cos_selected).values('id')
+    seqs = End_Tag.objects.filter(cosmid = c_id).select_related('cosmid__primer')
     
     write_fasta(contigs)
-    write_csv('primers_1', cosmids, primer_set1, seqs)
-    write_csv('primers_2', cosmids, primer_set2, seqs)
+    write_csv(seqs)
     system("perl contig_retrieval_tool/retrieval_pipeline.pl primers_1.csv primers_2.csv contigs.fa")
     return read_csv('retrieval.csv')
 
-
 #this function is only called by other views, not directly associated with a URL
-def write_csv(file_name, cosmids, primer_set, seqs):
-    with open("contig_retrieval_tool/%s.csv" %file_name, 'w') as f:
-        csv = File(f)
-        for x , y, z in seqs:
-            for c_id, c in cosmids:
-                for p_id, p in primer_set:
-                    if x == c_id and y == p_id:
-                        z = ''.join(z.split())
-                        csv.write(c + ',' + p + ',' + z + '\n')
-        csv.closed
-        f.closed
+def write_csv(seqs):
+    with open("contig_retrieval_tool/primers_1.csv" , 'w') as f1:
+        csv1 = File(f1)
+        for entry in seqs:
+            cos = entry.cosmid.cosmid_name
+            primer = entry.primer.primer_name
+            seq = entry.end_tag_sequence.strip()
+            if entry.primer.direction == 'F':
+                csv1.write(cos + ',' + primer + ',' + seq + '\n')
+    csv1.closed
+    f1.closed
+    
+    with open("contig_retrieval_tool/primers_2.csv" , 'w') as f2:
+        csv2 = File(f2)
+        for entry in seqs:
+            cos = entry.cosmid.cosmid_name
+            primer = entry.primer.primer_name
+            seq = entry.end_tag_sequence.strip()
+            if entry.primer.direction == 'R':
+                csv2.write(cos + ',' + primer + ',' + seq + '\n')
+    csv2.closed
+    f2.closed
 
 #this function is only called by other views, not directly associated with a URL
 #writes contigs to fasta file(text.fa)    
@@ -257,13 +255,12 @@ def write_fasta(contigs):
         fasta.closed
         f.closed
 
-#@login_required
+#retieve data to write to library file for annotations tool to run 
 def orf_data(contig_list):
     contig_id = Contig.objects.filter(contig_name__in = contig_list).values('id')
     contigs = Contig.objects.filter(contig_name__in = contig_list).values_list('id','contig_name', 'contig_sequence', 'blast_hit_accession')
     orfs = Contig_ORF_Join.objects.filter(contig__in = contig_id).values_list('contig','orf','start', 'stop', 'complement', 'prediction_score')
     anno = ORF.objects.filter(contig__in = contig_id).values_list('id','annotation', 'orf_sequence')
-    
     write_lib(contigs, orfs, anno)
 
 #this function is only called by other views, not directly associated with a URL
@@ -304,9 +301,10 @@ def BlastSearch(request):
 @login_required
 def BlastResults(request):
 
-    #get query sequence, clean of whitespace
-    seq = request.POST.get('sequence')
-    seq = ''.join(seq.split())
+    #change directory to blast_tool
+    old_dir = os.getcwd()
+    new_dir = old_dir + '/blast_tool/'
+    os.chdir(new_dir)
     
     #get parameters, and write to file
     e = request.POST.get('expect_threshold')
@@ -315,7 +313,10 @@ def BlastResults(request):
     mi = request.POST.get('mismatch_score')
     go = request.POST.get('gap_open_penalty')
     ge = request.POST.get('gap_extension_penalty')
-   
+    
+    #get query sequence, clean of whitespace, and write
+    seq = request.POST.get('sequence')
+    seq = ''.join(seq.split())
     queryseq = SeqRecord(Seq(seq, generic_dna), id="query")
     queryfh = open("blast_query.fa", "w")
     SeqIO.write(queryseq, queryfh, "fasta") 
@@ -397,6 +398,9 @@ def BlastResults(request):
                 result['hsp_subject'] = hsp_subject
                 result['hsp'] = hsp
                 results_list.append(result)
+    
+    #change directory back to old dir
+    os.chdir(old_dir)
             
     return render_to_response('blast_results.html', {'results_list': results_list, 'query': seq}, context_instance=RequestContext(request))
 
@@ -975,8 +979,10 @@ def CosmidDetail(request, cosmid_name):
     #returns queryset of all contigs associated with the cosmid requested
     contigresults = Contig.objects.filter(cosmid=c_id)
     contigids = []
+    blankimg = None
     for c in contigresults:
         contigids.append(c.id)
+        blankimg = GenerateImage(c)
     
     #returns all the orfs for the contigs that are associated with the cosmid
     orfresults = Contig_ORF_Join.objects.filter(contig_id__in=contigids).order_by('start')
@@ -985,14 +991,30 @@ def CosmidDetail(request, cosmid_name):
         orfids.append(o.orf_id)
     #returns all the sequences for all the associated orfs
     seq = ORF.objects.filter(id__in=orfids)
-    
+            
     def get_context_data(self, **kwargs):
         context = super(CosmidEditView, self).get_context_data(**kwargs)
         #Add in queryset of end tags
         context['end_tag_list'] = End_Tag.objects.all()
         return context
     
-    return render_to_response('cosmid_detail.html', {'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book, 'cosmid_comments': cosmid_comments}, context_instance=RequestContext(request))
+    return render_to_response('cosmid_detail.html', {'blank': blankimg, 'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book, 'cosmid_comments': cosmid_comments}, context_instance=RequestContext(request))
+
+def GenerateImage(contig):
+    #get the picture and make a file.
+    binaryimage = {'contig': contig.image_contig, 'align': contig.image_align, 'genbank': contig.image_genbank, 'predicted': contig.image_predicted, 'manual': contig.image_manual}
+    name = contig.contig_name
+    blanks = []
+    for imgtype, img in binaryimage.items():
+        if img:
+            decodedimg = base64.b64decode(img)
+            writeimg = open("mainsite/static/tempdisplay/" + name +  imgtype + ".png", "wb")
+            writeimg.write(decodedimg)
+            writeimg.close()
+        else:
+            blanks.append(imgtype)
+    
+    return blanks
 
 @login_required
 def ContigDetail(request, contig_name):
@@ -1011,8 +1033,11 @@ def ContigDetail(request, contig_name):
         orfids.append(o.orf_id)
     orfseq = ORF.objects.filter(id__in=orfids)
     
-    
-    return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
+    #get the picture and make a file.
+    blankimg = GenerateImage(contig)
+            
+    return render_to_response('contig_detail.html', {'blank': blankimg, 'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
+
 
 @login_required
 def OrfDetail(request, pk):
@@ -1100,9 +1125,21 @@ class SubcloneAssayEditView(UpdateView):
 class ORFEditView(UpdateView):
     model = ORF
     fields = ['orf_sequence', 'annotation']
-    #exclude = ['contig']
     template_name = 'orf_edit.html'
     success_url = reverse_lazy('orf-list')
+   
+    #def get_object(self, queryset=None):
+    #    orf_object = ORF.objects.get(id=self.kwargs['id'])
+    #    return orf_object
+    #
+    #def get_success_url(self):
+    #    contig = self.get_object().contig
+    #    pdb.set_trace()
+    #
+   
+   
+        #orf_data()
+        #save_images("tmp")
 
 class ContigEditView(UpdateView):
     model = Contig
@@ -1115,6 +1152,12 @@ class ContigORFDeleteView(DeleteView):
     model=Contig_ORF_Join
     template_name = 'contig_orf_delete.html'
     success_url = reverse_lazy('contig-list')
+    
+
+def update_annotations(response):
+    qs = Contig_ORF_Join.objects.all()
+    pdb.set_trace()
+    
     
 class ORFContigListView(ListView):
     model = Contig_ORF_Join
@@ -1304,6 +1347,11 @@ def ORFContigCreate(request):
     else:
         contig_orf_form = ContigORFJoinForm(instance=Contig_ORF_Join())
         orf_form = ORFForm(instance=ORF())
+    
+    #update images in database with the new contig_orf  
+    orf_data(new_contig_orf)
+    save_images("tmp")
+    
     return render_to_response('orf_contig_add.html', {'contig_orf_form': contig_orf_form, 'orf_form': orf_form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
 #Add contigs to a given pool; contigs from FASTA file (Kathy)
@@ -1729,5 +1777,3 @@ def cosmid_endtag_queryset(response):
                          cosmid.screen.screen_name, cosmid.host.host_name, cosmid.ec_collection, pool, endtag1, endtag2,
                          contig1, contig2, cosmid.cosmid_comments])
     return response
-
-
