@@ -22,14 +22,15 @@ from Bio.SeqRecord import SeqRecord
 
 import types
 import StringIO
-from os import system
+from os import system, listdir
 import pdb
 import base64
 from django.db.models import Q
 import re
 import base64 #used to convert pngs to base64 for database storage
 from itertools import chain
-
+from re import match
+import csv
 
 #Main, About etc
 
@@ -86,15 +87,36 @@ def AnnotationTool(request):
             orf_data(contigs)
             read_csv("annotations_tool/tool/out/annotations")
             
-            #sends the user an email
-            with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
-                bimg = base64.b64encode(img.read())
-                contig = Contig.objects.get(contig_name="scaffold58_1")
-                contig.image_contig = bimg
-            
-                contig.contig_accession = "IMAGE?"
+            #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
+            re_contigname = re.compile('^(.+)-(ALIGN|CONTIG|GLIM|GENBANK|MANUAL)\.png$')
+            for file in listdir('annotation_tool/tmp/img/'):
+                with open("annotation_tool/tmp/img/" + file, "rb") as img:
+                    imgbinary = base64.b64encode(img.read())
+                
+                filename = re_contigname.match(file)
+                
+                imgcontigname = filename.group(1)
+                contig = Contig.objects.get(contig_name=imgcontigname)
+                  
+                if filename.group(2) == 'ALIGN':
+                    contig.image_align = imgbinary
+                elif filename.group(2) == 'CONTIG':
+                    contig.image_contig = imgbinary
+                elif filename.group(2) == 'GLIM':
+                    contig.image_predicted = imgbinary
+                elif filename.group(2) == 'GENBANK':
+                    contig.image_genbank = imgbinary
+                elif filename.group(2) =='MANUAL':
+                    contig.image_manual = imgbinary
+                else:
+                    #ERROR CATCHING THERE IS A PNG WITH NO MATCH???
+                    pass
                 contig.save()
                 
+<<<<<<< HEAD
+            """
+            THIS IS A EXAMPLE OF HOW TO TAKE AN IMAG AND SAVE IT AS A BLOB TO THE DATABAASE AND THEN EXTRACT IT AND DISPLAY IT
+=======
             contigget = Contig.objects.get(contig_name="scaffold58_1")
             
             image = contigget.image_contig
@@ -107,13 +129,14 @@ def AnnotationTool(request):
             #read csv and store in db orf-contigs(also images)
             
             #sends the user an email
+>>>>>>> 0192445fcee5f758fef639182249b9ead0d8d6b9
             with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
                 bimg = base64.b64encode(img.read())
                 contig = Contig.objects.get(contig_name="scaffold58_1")
-                contig.image_contig = bimg
+                
             
                 contig.contig_accession = "IMAGE?"
-                contig.save()
+                
                 
             contigget = Contig.objects.get(contig_name="scaffold58_1")
             
@@ -122,10 +145,20 @@ def AnnotationTool(request):
             testpicture = base64.b64decode(image)
             writeimg = open("mainsite/static/imagedboutput.png", "wb")
             writeimg.write(testpicture)
+<<<<<<< HEAD
+            writeimg.close()
+            """
+            #orf_data(contigs)
+            #read csv and store in db orf-contigs(also images)
+            
+            
+            #orf_data(contigs)
+=======
             #write.close()
             
+>>>>>>> 0192445fcee5f758fef639182249b9ead0d8d6b9
             #return render_to_response('tool_contig_submit.html', var)
-            
+            #sends the user an email
             #system("(echo 'this is a test email. see attachment'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
     return render_to_response('tool_annotation.html', {'image': testpicture, 'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
 
@@ -268,7 +301,6 @@ def orf_data(contig_list):
     contigs = Contig.objects.filter(contig_name__in = contig_list).values_list('id','contig_name', 'contig_sequence', 'blast_hit_accession')
     orfs = Contig_ORF_Join.objects.filter(contig__in = contig_id).values_list('contig','orf','start', 'stop', 'complement', 'prediction_score')
     anno = ORF.objects.filter(contig__in = contig_id).values_list('id','annotation', 'orf_sequence')
-    
     write_lib(contigs, orfs, anno)
 
 #this function is only called by other views, not directly associated with a URL
@@ -322,12 +354,12 @@ def BlastResults(request):
     ge = request.POST.get('gap_extension_penalty')
    
     queryseq = SeqRecord(Seq(seq, generic_dna), id="query")
-    queryfh = open("blast_tool/blast_query.fa", "w")
+    queryfh = open("blast_query.fa", "w")
     SeqIO.write(queryseq, queryfh, "fasta") 
     queryfh.close()
 
     #prepare file to write sequences into - for making blast db
-    out = open("blast_tool/blast_db.fa", "w")
+    out = open("blast_db.fa", "w")
     
     #get the url from which redirect occurred; determines what sequences are written in the blast db fasta file
     #possibilities: '/search/blast/', '/search/cosmid/', '/search/contig/', '/search/orf/', '/search/subclone/'
@@ -360,15 +392,15 @@ def BlastResults(request):
     out.close()
     
     #makeblastdb to create BLAST database of files from fastafile
-    system("makeblastdb -in blast_db.fa -out blast_tool/blast_db.db -dbtype nucl")
+    system("makeblastdb -in blast_db.fa -out blast_db.db -dbtype nucl")
 
     #run blast command with query, parameters, and created database
-    cmd = NcbiblastnCommandline(query="blast_tool/blast_query.fa", db="blast_tool/blast_db.db", evalue=float(e), word_size=int(w), reward=int(ma), penalty=int(mi), gapopen=int(go), gapextend=int(ge), outfmt=5, out="blast_tool/blast_results.xml")
+    cmd = NcbiblastnCommandline(query="blast_query.fa", db="blast_db.db", evalue=float(e), word_size=int(w), reward=int(ma), penalty=int(mi), gapopen=int(go), gapextend=int(ge), outfmt=5, out="blast_results.xml")
     system(str(cmd))
     
     #parse xml file
     try:
-        resultsfh = open("blast_tool/blast_results.xml")
+        resultsfh = open("blast_results.xml")
         records = NCBIXML.parse(resultsfh)
         test = records.next()
     except Exception:
@@ -991,6 +1023,9 @@ def CosmidDetail(request, cosmid_name):
     #returns all the sequences for all the associated orfs
     seq = ORF.objects.filter(id__in=orfids)
     
+    
+            
+            
     def get_context_data(self, **kwargs):
         context = super(CosmidEditView, self).get_context_data(**kwargs)
         #Add in queryset of end tags
@@ -1016,7 +1051,23 @@ def ContigDetail(request, contig_name):
         orfids.append(o.orf_id)
     orfseq = ORF.objects.filter(id__in=orfids)
     
+    #get the picture and make a file.
+            
+
+   # contig_image = contig.image_contig
+   # align_image = contig.image_align
+    #genkbank_image = contig.image_genbank
+    #predicted_image = contig.image_predicted
+   #manual_image = contig.image_manual
     
+    binaryimage = {'contig_image': contig.image_contig, 'align_image': contig.image_align, 'genkbank_image': contig.image_genbank, 'predicted_image': contig.image_predicted, 'manual_image': contig.image_manual}
+    image = []
+    for imgtype, img in binaryimage:
+        imgtype[img] = base64.b64decode(imgtype[img])
+        writeimg = open("mainsite/tempdisplay/" + contig +  imgtype + ".png", "wb")
+        writeimg.write(imgtype[img])
+        writeimg.close()
+            
     return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
 
 @login_required
@@ -1639,8 +1690,31 @@ def ContigListView(request):
 #retrieve ContigListView queryset to export as csv
 @login_required
 def contig_queryset(response):
-    qs = Contig.objects.all()
-    return queryset_export_csv(qs)
+    contigs = Contig.objects.all()
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment;filename="export.csv"'
+    writer = csv.writer(response)
+    
+    #hard code columns names for lack of time
+    writer.writerow(['Contig Name', 'Sequencing Pool', 'Contig Sequence', 'Contig NCBI Accession', 'BLAST Hit Accession'])
+    for contig in contigs:
+
+        #get contig accession, which can be none
+        try:
+            contig_acc = contig.contig_accession
+        except Exception:
+            contig_acc = ""
+        
+        #get blast accession, which can be none
+        try:
+            blast_acc = contig.blast_hit_accession
+        except Exception:
+            blast_acc = ""
+        
+        #write to csv
+        writer.writerow([contig.contig_name, contig.pool.id, contig.contig_sequence,contig_acc, blast_acc])
+    return response
+    
 
 # List views for multi-table views (Kathy)
 
@@ -1666,10 +1740,55 @@ def CosmidEndTagListView(request):
     
     
   
-#retrieve CosmidEndTagListView queryset to export as csv
+#custom csv export for CosmidEndTagListView -- 8 tables/models, and many-to-many relationships
 @login_required
 def cosmid_endtag_queryset(response):
-    qs1 = list(Cosmid.objects.all())
-    qs2 = list(End_Tag.objects.all())
-    qs = chain(qs1, qs2)
-    return queryset_export_csv(qs)  
+    cosmids = Cosmid.objects.all().select_related('end_tag__contig__researcher__library__screen__host__screen')
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment;filename="export.csv"'
+    writer = csv.writer(response)
+    
+    #hard code columns names for lack of time
+    writer.writerow(['Cosmid Name', 'Researcher Name', 'Library', 'Screen', 'Expression Host',
+                     'E. coli Stock Location', 'Sequencing Pool', 'End Tag 1', 'End Tag 2', 'Contig 1', 'Contig 2', 'Comments'])
+    for cosmid in cosmids:
+        
+        #get contigs, which can be none
+        contigs = []
+        for contig in cosmid.contig_set.all():
+            contigs.append(contig.contig_name)
+        try:
+            contig1 = contigs[0]
+        except Exception:
+            contig1 = ""
+        try:
+            contig2 = contigs[1]
+        except Exception:
+            contig2 = ""
+        
+        #get pool, which can be none
+        try:
+            pool = cosmid.pool.id
+        except Exception:
+            pool = ""
+       
+        #get endtags, which can be none
+        end_tags = []
+        for end_tag in cosmid.end_tag_set.all():
+            end_tags.append(end_tag.end_tag_sequence)
+        try:
+            endtag1 = end_tags[0]
+        except Exception:
+            endtag1 = ""
+        try:
+            endtag2 = end_tags[1]
+        except Exception:
+            endtag2 = ""
+        
+        #write to csv
+        writer.writerow([cosmid.cosmid_name, cosmid.researcher.researcher_name, cosmid.library.library_name,
+                         cosmid.screen.screen_name, cosmid.host.host_name, cosmid.ec_collection, pool, endtag1, endtag2,
+                         contig1, contig2, cosmid.cosmid_comments])
+    return response
+
+
