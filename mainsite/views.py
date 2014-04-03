@@ -79,7 +79,6 @@ def AnnotationTool(request):
     testpicture = ''
     if request.method == "POST":
         if 'submit' in request.POST:
-            system("perl annotation_tool/annotation_pipeline.pl -annotate")
             email = request.POST['email']
             con_name = request.POST.getlist('contig')
             contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
