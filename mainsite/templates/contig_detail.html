@@ -39,22 +39,32 @@
 {% endblock %}
 
 {% block orfimg %}
-    <div id="1" class="link" style="max-height:100px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
-    <img src="{{ STATIC_URL }}tempdisplay/{{ name }}contig.png">
-    </div>
-    <div id="2" class="link" style="max-height:100px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
-    <img src="{{ STATIC_URL }}tempdisplay/{{ name }}align.png">
-    </div>
-    <div id="2" class="link" style="max-height:150px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
-    <img src="{{ STATIC_URL }}tempdisplay/{{ name }}genbank.png">
-    </div>
-    <div id="2" class="link" style="max-height:150px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
-    <img src="{{ STATIC_URL }}tempdisplay/{{ name }}predicted.png">
-    </div>
-    <div id="2" class="link" style="max-height:150px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
-    <img src="{{ STATIC_URL }}tempdisplay/{{ name }}manual.png">
-    </div>
-
+    {% if 'contig' not in blank %}
+        <div class="link" style="max-height:100px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
+        <img src="{{ STATIC_URL }}tempdisplay/{{ name }}contig.png">
+        </div>
+    {% endif %}
+    {% if 'align' not in blank %}
+        <div class="link" style="max-height:100px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
+        <img src="{{ STATIC_URL }}tempdisplay/{{ name }}align.png">
+        </div>
+    {% endif %}
+    {% if 'genbank' not in blank %}
+        <div class="link" style="max-height:150px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
+        <img src="{{ STATIC_URL }}tempdisplay/{{ name }}genbank.png">
+        </div>
+    {% endif %}
+    {% if 'predicted' not in blank %}
+        <div class="link" style="max-height:150px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
+        <img src="{{ STATIC_URL }}tempdisplay/{{ name }}predicted.png">
+        </div>
+    {% endif %}
+    {% if 'manual' not in blank %}
+        <div class="link" style="max-height:150px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
+        <img src="{{ STATIC_URL }}tempdisplay/{{ name }}manual.png">
+        </div>
+    {% endif %}
+    
     <p>Open reading frames in {{ name }}</p>
     <p><a href="{% url 'orf-contig-add' %}">Add new ORF</a></p>
     <table>

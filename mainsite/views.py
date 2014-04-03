@@ -978,9 +978,10 @@ def CosmidDetail(request, cosmid_name):
     #returns queryset of all contigs associated with the cosmid requested
     contigresults = Contig.objects.filter(cosmid=c_id)
     contigids = []
+    blankimg = None
     for c in contigresults:
         contigids.append(c.id)
-        GenerateImage(c)
+        blankimg = GenerateImage(c)
     
     #returns all the orfs for the contigs that are associated with the cosmid
     orfresults = Contig_ORF_Join.objects.filter(contig_id__in=contigids).order_by('start')
@@ -998,18 +999,24 @@ def CosmidDetail(request, cosmid_name):
         context['end_tag_list'] = End_Tag.objects.all()
         return context
     
-    return render_to_response('cosmid_detail.html', {'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book, 'cosmid_comments': cosmid_comments}, context_instance=RequestContext(request))
+    return render_to_response('cosmid_detail.html', {'blank': blankimg, 'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book, 'cosmid_comments': cosmid_comments}, context_instance=RequestContext(request))
 
 def GenerateImage(contig):
     #get the picture and make a file.
     binaryimage = {'contig': contig.image_contig, 'align': contig.image_align, 'genbank': contig.image_genbank, 'predicted': contig.image_predicted, 'manual': contig.image_manual}
+    name = contig.contig_name
+    blanks = []
     for imgtype, img in binaryimage.items():
         if img:
             decodedimg = base64.b64decode(img)
             writeimg = open("mainsite/static/tempdisplay/" + name +  imgtype + ".png", "wb")
             writeimg.write(decodedimg)
             writeimg.close()
+        else:
+            blanks.append(imgtype)
     
+    return blanks
+
 @login_required
 def ContigDetail(request, contig_name):
     contig = Contig.objects.get(contig_name=contig_name)
@@ -1028,9 +1035,9 @@ def ContigDetail(request, contig_name):
     orfseq = ORF.objects.filter(id__in=orfids)
     
     #get the picture and make a file.
-    GenerateImage(contig)
+    blankimg = GenerateImage(contig)
             
-    return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
+    return render_to_response('contig_detail.html', {'blank': blankimg, 'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
 
 @login_required
 def OrfDetail(request, pk):
