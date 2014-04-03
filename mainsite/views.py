@@ -83,84 +83,43 @@ def AnnotationTool(request):
             email = request.POST['email']
             con_name = request.POST.getlist('contig')
             contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
-
             orf_data(contigs)
-            read_csv("annotations_tool/tool/out/annotations")
+            save_images("tool")
+            read_csv("annotations_tool/tool/out/annotations.csv")
             
-            #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
-            re_contigname = re.compile('^(.+)-(ALIGN|CONTIG|GLIM|GENBANK|MANUAL)\.png$')
-            for file in listdir('annotation_tool/tmp/img/'):
-                with open("annotation_tool/tmp/img/" + file, "rb") as img:
-                    imgbinary = base64.b64encode(img.read())
-                
-                filename = re_contigname.match(file)
-                
-                imgcontigname = filename.group(1)
-                contig = Contig.objects.get(contig_name=imgcontigname)
-                  
-                if filename.group(2) == 'ALIGN':
-                    contig.image_align = imgbinary
-                elif filename.group(2) == 'CONTIG':
-                    contig.image_contig = imgbinary
-                elif filename.group(2) == 'GLIM':
-                    contig.image_predicted = imgbinary
-                elif filename.group(2) == 'GENBANK':
-                    contig.image_genbank = imgbinary
-                elif filename.group(2) =='MANUAL':
-                    contig.image_manual = imgbinary
-                else:
-                    #ERROR CATCHING THERE IS A PNG WITH NO MATCH???
-                    pass
-                contig.save()
-                
-<<<<<<< HEAD
-            """
-            THIS IS A EXAMPLE OF HOW TO TAKE AN IMAG AND SAVE IT AS A BLOB TO THE DATABAASE AND THEN EXTRACT IT AND DISPLAY IT
-=======
-            contigget = Contig.objects.get(contig_name="scaffold58_1")
+            #sends the user an email
+            system("(echo 'success'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
             
-            image = contigget.image_contig
-            
-            testpicture = base64.b64decode(image)
-            writeimg = open("mainsite/static/imagedboutput.png", "wb")
-            writeimg.write(testpicture)
-            writeimg.close()
+    return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
 
-            #read csv and store in db orf-contigs(also images)
-            
-            #sends the user an email
->>>>>>> 0192445fcee5f758fef639182249b9ead0d8d6b9
-            with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
-                bimg = base64.b64encode(img.read())
-                contig = Contig.objects.get(contig_name="scaffold58_1")
-                
-            
-                contig.contig_accession = "IMAGE?"
-                
-                
-            contigget = Contig.objects.get(contig_name="scaffold58_1")
-            
-            image = contigget.image_contig
-            
-            testpicture = base64.b64decode(image)
-            writeimg = open("mainsite/static/imagedboutput.png", "wb")
-            writeimg.write(testpicture)
-<<<<<<< HEAD
-            writeimg.close()
-            """
-            #orf_data(contigs)
-            #read csv and store in db orf-contigs(also images)
-            
-            
-            #orf_data(contigs)
-=======
-            #write.close()
-            
->>>>>>> 0192445fcee5f758fef639182249b9ead0d8d6b9
-            #return render_to_response('tool_contig_submit.html', var)
-            #sends the user an email
-            #system("(echo 'this is a test email. see attachment'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
-    return render_to_response('tool_annotation.html', {'image': testpicture, 'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
+
+#gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
+def save_images(folder):
+    re_contigname = re.compile('^(.+)-(ALIGN|CONTIG|GLIM|GENBANK|MANUAL)\.png$')
+    for file in listdir('annotation_tool/%s/img/' %folder):
+        with open("annotation_tool/%s/img/" %folder + file,  "rb") as img:
+            imgbinary = base64.b64encode(img.read())
+        
+        filename = re_contigname.match(file)
+        
+        imgcontigname = filename.group(1)
+        contig = Contig.objects.get(contig_name=imgcontigname)
+          
+        if filename.group(2) == 'ALIGN':
+            contig.image_align = imgbinary
+        elif filename.group(2) == 'CONTIG':
+            contig.image_contig = imgbinary
+        elif filename.group(2) == 'GLIM':
+            contig.image_predicted = imgbinary
+        elif filename.group(2) == 'GENBANK':
+            contig.image_genbank = imgbinary
+        elif filename.group(2) =='MANUAL':
+            contig.image_manual = imgbinary
+        else:
+            #ERROR CATCHING THERE IS A PNG WITH NO MATCH???
+            pass
+        contig.save()
+
 
 @login_required
 def AnnotationToolResults(request):
@@ -295,7 +254,7 @@ def write_fasta(contigs):
         fasta.closed
         f.closed
 
-#@login_required
+#retieve data to write to library file for annotations tool to run 
 def orf_data(contig_list):
     contig_id = Contig.objects.filter(contig_name__in = contig_list).values('id')
     contigs = Contig.objects.filter(contig_name__in = contig_list).values_list('id','contig_name', 'contig_sequence', 'blast_hit_accession')
@@ -1022,8 +981,7 @@ def CosmidDetail(request, cosmid_name):
         orfids.append(o.orf_id)
     #returns all the sequences for all the associated orfs
     seq = ORF.objects.filter(id__in=orfids)
-    
-    
+    ContigORFDeleteView
             
             
     def get_context_data(self, **kwargs):
@@ -1050,15 +1008,6 @@ def ContigDetail(request, contig_name):
     for o in orfresults:
         orfids.append(o.orf_id)
     orfseq = ORF.objects.filter(id__in=orfids)
-    
-    #get the picture and make a file.
-            
-
-   # contig_image = contig.image_contig
-   # align_image = contig.image_align
-    #genkbank_image = contig.image_genbank
-    #predicted_image = contig.image_predicted
-   #manual_image = contig.image_manual
     
     binaryimage = {'contig_image': contig.image_contig, 'align_image': contig.image_align, 'genkbank_image': contig.image_genbank, 'predicted_image': contig.image_predicted, 'manual_image': contig.image_manual}
     image = []
@@ -1156,9 +1105,21 @@ class SubcloneAssayEditView(UpdateView):
 class ORFEditView(UpdateView):
     model = ORF
     fields = ['orf_sequence', 'annotation']
-    #exclude = ['contig']
     template_name = 'orf_edit.html'
     success_url = reverse_lazy('orf-list')
+   
+    #def get_object(self, queryset=None):
+    #    orf_object = ORF.objects.get(id=self.kwargs['id'])
+    #    return orf_object
+    #
+    #def get_success_url(self):
+    #    contig = self.get_object().contig
+    #    pdb.set_trace()
+    #
+   
+   
+        #orf_data()
+        #save_images("tmp")
 
 class ContigEditView(UpdateView):
     model = Contig
@@ -1171,6 +1132,12 @@ class ContigORFDeleteView(DeleteView):
     model=Contig_ORF_Join
     template_name = 'contig_orf_delete.html'
     success_url = reverse_lazy('contig-list')
+    
+
+def update_annotations(response):
+    qs = Contig_ORF_Join.objects.all()
+    pdb.set_trace()
+    
     
 class ORFContigListView(ListView):
     model = Contig_ORF_Join
@@ -1363,7 +1330,7 @@ def ORFContigCreate(request):
     
     #update images in database with the new contig_orf  
     orf_data(new_contig_orf)
-    
+    save_images("tmp")
     
     return render_to_response('orf_contig_add.html', {'contig_orf_form': contig_orf_form, 'orf_form': orf_form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
