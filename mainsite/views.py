@@ -22,14 +22,14 @@ from Bio.SeqRecord import SeqRecord
 
 import types
 import StringIO
-from os import system
+from os import system, listdir
 import pdb
 import base64
 from django.db.models import Q
 import re
 import base64 #used to convert pngs to base64 for database storage
 from itertools import chain
-
+from re import match
 
 #Main, About etc
 
@@ -85,14 +85,41 @@ def AnnotationTool(request):
             #orf_data(contigs)
             #read csv and store in db orf-contigs(also images)
             
-            #sends the user an email
+            #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
+            re_contigname = re.compile('^(.+)-(ALIGN|CONTIG|GLIM|GENBANK|MANUAL)\.png$')
+            for file in listdir('annotation_tool/tmp/img/'):
+                with open("annotation_tool/tmp/img/" + file, "rb") as img:
+                    imgbinary = base64.b64encode(img.read())
+                
+                filename = re_contigname.match(file)
+                
+                imgcontigname = filename.group(1)
+                contig = Contig.objects.get(contig_name=imgcontigname)
+                  
+                if filename.group(2) == 'ALIGN':
+                    contig.image_align = imgbinary
+                elif filename.group(2) == 'CONTIG':
+                    contig.image_contig = imgbinary
+                elif filename.group(2) == 'GLIM':
+                    contig.image_predicted = imgbinary
+                elif filename.group(2) == 'GENBANK':
+                    contig.image_genbank = imgbinary
+                elif filename.group(2) =='MANUAL':
+                    contig.image_manual = imgbinary
+                else:
+                    #ERROR CATCHING THERE IS A PNG WITH NO MATCH???
+                    pass
+                contig.save()
+                
+            """
+            THIS IS A EXAMPLE OF HOW TO TAKE AN IMAG AND SAVE IT AS A BLOB TO THE DATABAASE AND THEN EXTRACT IT AND DISPLAY IT
             with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
                 bimg = base64.b64encode(img.read())
                 contig = Contig.objects.get(contig_name="scaffold58_1")
-                contig.image_contig = bimg
+                
             
                 contig.contig_accession = "IMAGE?"
-                contig.save()
+                
                 
             contigget = Contig.objects.get(contig_name="scaffold58_1")
             
@@ -102,31 +129,14 @@ def AnnotationTool(request):
             writeimg = open("mainsite/static/imagedboutput.png", "wb")
             writeimg.write(testpicture)
             writeimg.close()
-
-            orf_data(contigs)
-            read csv and store in db orf-contigs(also images)
+            """
+            #orf_data(contigs)
+            #read csv and store in db orf-contigs(also images)
             
-            #sends the user an email
-            with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
-                bimg = base64.b64encode(img.read())
-                contig = Contig.objects.get(contig_name="scaffold58_1")
-                contig.image_contig = bimg
             
-                contig.contig_accession = "IMAGE?"
-                contig.save()
-                
-            contigget = Contig.objects.get(contig_name="scaffold58_1")
-            
-            image = contigget.image_contig
-            
-            testpicture = base64.b64decode(image)
-            writeimg = open("mainsite/static/imagedboutput.png", "wb")
-            writeimg.write(testpicture)
-            write.close()
-            
-            orf_data(contigs)
+            #orf_data(contigs)
             #return render_to_response('tool_contig_submit.html', var)
-            
+            #sends the user an email
             #system("(echo 'this is a test email. see attachment'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
     return render_to_response('tool_annotation.html', {'image': testpicture, 'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
 
@@ -263,7 +273,7 @@ def orf_data(contig_list):
     contigs = Contig.objects.filter(contig_name__in = contig_list).values('id','contig_name', 'contig_sequence', 'blast_hit_accession')
     orfs = Contig_ORF_Join.objects.filter(contig = contigs).values('contig','orf','start', 'stop', 'complement', 'prediction_score')
     anno = ORF.objects.filter(contig = contigs).values('id','annotation', 'orf_sequence')
-    pdb.set_trace()
+    #pdb.set_trace()
     write_lib(contigs, orfs, anno)
 
 #this function is only called by other views, not directly associated with a URL
@@ -986,6 +996,9 @@ def CosmidDetail(request, cosmid_name):
     #returns all the sequences for all the associated orfs
     seq = ORF.objects.filter(id__in=orfids)
     
+    
+            
+            
     def get_context_data(self, **kwargs):
         context = super(CosmidEditView, self).get_context_data(**kwargs)
         #Add in queryset of end tags
@@ -1011,7 +1024,23 @@ def ContigDetail(request, contig_name):
         orfids.append(o.orf_id)
     orfseq = ORF.objects.filter(id__in=orfids)
     
+    #get the picture and make a file.
+            
+
+   # contig_image = contig.image_contig
+   # align_image = contig.image_align
+    #genkbank_image = contig.image_genbank
+    #predicted_image = contig.image_predicted
+   #manual_image = contig.image_manual
     
+    binaryimage = {'contig_image': contig.image_contig, 'align_image': contig.image_align, 'genkbank_image': contig.image_genbank, 'predicted_image': contig.image_predicted, 'manual_image': contig.image_manual}
+    image = []
+    for imgtype, img in binaryimage:
+        imgtype[img] = base64.b64decode(imgtype[img])
+        writeimg = open("mainsite/tempdisplay/" + contig +  imgtype + ".png", "wb")
+        writeimg.write(imgtype[img])
+        writeimg.close()
+            
     return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
 
 @login_required
