@@ -75,20 +75,20 @@
                 Accession: {{ list.contig_accession }}<br>
                 <label>Sequence: <br>
                 <textarea rows="15" cols="70" readonly=true>{{ list.contig_sequence }}</textarea></label><br><br>
-                    <div class="link" style=width:100%;max-height:100px;overflow-y:auto;overflow-x:hiddenl;border-style:solid;border-width:thin;>
-                        <img src="{{ STATIC_URL }}scaffold109_1-CONTIG.png" alt="ORF's for Contig"><br>
+                    <div class="link">
+                        <img src="{{ STATIC_URL }}tempdisplay/{{ name }}contig.png" alt="Contig"><br>
                     </div>
                     <div class="link" style=width:100%;max-height:100px;overflow-y:auto;overflow-x:hidden;border-style:solid;border-width:thin;>
-                        <img src="{{ STATIC_URL }}scaffold109_1-ALIGN.png" alt="ORF's for Contig"><br>
+                        <img src="{{ STATIC_URL }}tempdisplay/{{ name }}align.png" alt="Contig aligned to genbank record with blast"><br>
                     </div>
                     <div class="link" style=width:100%;max-height:150px;overflow-y:auto;overflow-x:hidden;border-style:solid;border-width:thin;>
-                        <img src="{{ STATIC_URL }}scaffold109_1-GENBANK.png" alt="ORF's for Contig"><br>
+                        <img src="{{ STATIC_URL }}tempdisplay/{{ name }}genbank.png" alt="Genbank ORFs"><br>
                     </div>
                     <div class="link" style=width:100%;max-height:150px;overflow-y:auto;overflow-x:hidden;border-style:solid;border-width:thin;>
-                        <img src="{{ STATIC_URL }}scaffold109_1-GLIM.png" alt="ORF's for Contig"><br>
+                        <img src="{{ STATIC_URL }}tempdisplay/{{ name }}predicted.png" alt="Predicted ORFs"><br>
                     </div>
                     <div class="link" style=width:100%;max-height:150px;overflow-y:auto;overflow-x:hidden;border-style:solid;border-width:thin;>
-                        <img src="{{ STATIC_URL }}scaffold109_1-MANUAL.png" alt="ORF's for Contig"><br>
+                        <img src="{{ STATIC_URL }}tempdisplay/{{ name }}manual.png" alt="Manually Added ORFs"><br>
                     </div>
                 <br>
                 <h3>Open reading frames in {{ list.contig_name }}</h3>
