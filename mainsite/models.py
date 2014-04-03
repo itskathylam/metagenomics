@@ -86,6 +86,7 @@ class Cosmid(models.Model):
 class Primer(models.Model):
     primer_name = models.CharField("Primer Name", max_length=50, unique=True)
     primer_pair = models.PositiveIntegerField("Primer Pair ID")
+    direction = models.CharField("Direction", max_length=1)
     primer_sequence = models.CharField("Primer Sequence", max_length=200)
     cosmid = models.ManyToManyField(Cosmid, through='End_Tag')
     
@@ -112,13 +113,14 @@ class Contig(models.Model):
     pool = models.ForeignKey(Pooled_Sequencing, verbose_name="Sequencing Pool")
     contig_name = models.CharField("Contig Name", max_length=200, unique=True)
     contig_sequence = models.TextField("Contig Sequence")
-    cosmid = models.ManyToManyField(Cosmid) #, related_name="cosmid")
+    cosmid = models.ManyToManyField(Cosmid)
     contig_accession = models.CharField("Contig NCBI Acccession", max_length=50, blank=True, null=True)
     blast_hit_accession = models.CharField("Top BLAST Hit NCBI Accession", max_length=50, blank=True, null=True)
     image_contig = models.BinaryField(blank=True, null=True)
     image_genbank = models.BinaryField(blank=True, null=True)
     image_predicted = models.BinaryField(blank=True, null=True)
     image_manual = models.BinaryField(blank=True, null=True)
+    image_align = models.BinaryField(blank=True, null=True)
         
     def __unicode__(self):
         return self.contig_name

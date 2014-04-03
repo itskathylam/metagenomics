@@ -30,6 +30,7 @@ import re
 import base64 #used to convert pngs to base64 for database storage
 from itertools import chain
 from re import match
+import csv
 
 #Main, About etc
 
@@ -80,9 +81,10 @@ def AnnotationTool(request):
     if request.method == "POST":
         if 'submit' in request.POST:
             email = request.POST['email']
-            contigs = request.POST.getlist('contig')
+            con_name = request.POST.getlist('contig')
+            contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
 
-            #orf_data(contigs)
+            orf_data(contigs)
             #read csv and store in db orf-contigs(also images)
             
             #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
@@ -111,8 +113,23 @@ def AnnotationTool(request):
                     pass
                 contig.save()
                 
+<<<<<<< HEAD
             """
             THIS IS A EXAMPLE OF HOW TO TAKE AN IMAG AND SAVE IT AS A BLOB TO THE DATABAASE AND THEN EXTRACT IT AND DISPLAY IT
+=======
+            contigget = Contig.objects.get(contig_name="scaffold58_1")
+            
+            image = contigget.image_contig
+            
+            testpicture = base64.b64decode(image)
+            writeimg = open("mainsite/static/imagedboutput.png", "wb")
+            writeimg.write(testpicture)
+            writeimg.close()
+
+            #read csv and store in db orf-contigs(also images)
+            
+            #sends the user an email
+>>>>>>> 0192445fcee5f758fef639182249b9ead0d8d6b9
             with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
                 bimg = base64.b64encode(img.read())
                 contig = Contig.objects.get(contig_name="scaffold58_1")
@@ -128,6 +145,7 @@ def AnnotationTool(request):
             testpicture = base64.b64decode(image)
             writeimg = open("mainsite/static/imagedboutput.png", "wb")
             writeimg.write(testpicture)
+<<<<<<< HEAD
             writeimg.close()
             """
             #orf_data(contigs)
@@ -135,6 +153,10 @@ def AnnotationTool(request):
             
             
             #orf_data(contigs)
+=======
+            #write.close()
+            
+>>>>>>> 0192445fcee5f758fef639182249b9ead0d8d6b9
             #return render_to_response('tool_contig_submit.html', var)
             #sends the user an email
             #system("(echo 'this is a test email. see attachment'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
@@ -174,10 +196,10 @@ def ContigTool(request):
             context = {'poolselect': int(pool_id), 'pool': pool, 'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
             
         if 'submit' in request.POST:
-            pool = request.POST['poolhidden']
+            pool = request.POST['pool']
             cos = request.POST.getlist('cos')
-            cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values_list('id', 'cosmid_name')
-            results = contig_pipeline(pool, cos_selected) 
+            cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values("cosmid_name")
+            results = contig_pipeline(pool, cos_selected)
             entries = []
             for row in results:
                 entry = row[0:3]
@@ -229,30 +251,30 @@ def read_csv(filename):
 
 #this function is only called by other views, not directly associated with a URL
 def contig_pipeline(pool, cos_selected):
+    c_id =  Cosmid.objects.filter(cosmid_name__in = cos_selected).values('id')
+    cosmids = Cosmid.objects.filter(cosmid_name__in = cos_selected).values_list('id', 'cosmid_name')
     contigs = Contig.objects.filter(pool = pool).values_list('contig_name', 'contig_sequence')
-    cosmids = cos_selected
-    seqs = End_Tag.objects.select_related('cosmids').values_list('id', 'primer', 'end_tag_sequence')
-    primer_set1 = Primer.objects.select_related('primer').filter(primer_pair = '1').values_list('id','primer_name')
-    primer_set2 = Primer.objects.select_related('primer').filter(primer_pair = '2').values_list('id','primer_name')
-
+    seqs = End_Tag.objects.filter(cosmid = c_id).values_list('id', 'primer', 'end_tag_sequence')
+    p_id = End_Tag.objects.filter(cosmid = c_id).values('primer')
+    primer_set1 = Primer.objects.filter(id__in = p_id).filter(direction = 'F').values_list('id','primer_name')
+    primer_set2 = Primer.objects.filter(id__in = p_id).filter(direction = 'R').values_list('id','primer_name')
+    
     write_fasta(contigs)
     write_csv('primers_1', cosmids, primer_set1, seqs)
     write_csv('primers_2', cosmids, primer_set2, seqs)
     system("perl contig_retrieval_tool/retrieval_pipeline.pl primers_1.csv primers_2.csv contigs.fa")
-    return read_csv('testtest.csv')
+    return read_csv('retrieval.csv')
 
 
 #this function is only called by other views, not directly associated with a URL
 def write_csv(file_name, cosmids, primer_set, seqs):
-    with open("./contig_retrieval_tool/%s.csv" %file_name, 'w') as f:
+    with open("contig_retrieval_tool/%s.csv" %file_name, 'w') as f:
         csv = File(f)
-        seqs = seqs
-        cos = cosmids
-        primers = primer_set
         for x , y, z in seqs:
-            for c_id, c in cos:
-                for p_id, p in primers:
-                    if y == c_id and x == p_id:
+            for c_id, c in cosmids:
+                for p_id, p in primer_set:
+                    if x == c_id and y == p_id:
+                        z = ''.join(z.split())
                         csv.write(c + ',' + p + ',' + z + '\n')
         csv.closed
         f.closed
@@ -260,7 +282,7 @@ def write_csv(file_name, cosmids, primer_set, seqs):
 #this function is only called by other views, not directly associated with a URL
 #writes contigs to fasta file(text.fa)    
 def write_fasta(contigs):
-    with open('./contig_retrieval_tool/contigs.fa', 'w') as f:
+    with open('contig_retrieval_tool/contigs.fa', 'w') as f:
         fasta = File(f)
         contigs = list(contigs)
         for contig, seq in contigs:
@@ -270,10 +292,10 @@ def write_fasta(contigs):
 
 #@login_required
 def orf_data(contig_list):
-    contigs = Contig.objects.filter(contig_name__in = contig_list).values('id','contig_name', 'contig_sequence', 'blast_hit_accession')
-    orfs = Contig_ORF_Join.objects.filter(contig = contigs).values('contig','orf','start', 'stop', 'complement', 'prediction_score')
-    anno = ORF.objects.filter(contig = contigs).values('id','annotation', 'orf_sequence')
-    #pdb.set_trace()
+    contig_id = Contig.objects.filter(contig_name__in = contig_list).values('id')
+    contigs = Contig.objects.filter(contig_name__in = contig_list).values_list('id','contig_name', 'contig_sequence', 'blast_hit_accession')
+    orfs = Contig_ORF_Join.objects.filter(contig__in = contig_id).values_list('contig','orf','start', 'stop', 'complement', 'prediction_score')
+    anno = ORF.objects.filter(contig__in = contig_id).values_list('id','annotation', 'orf_sequence')
     write_lib(contigs, orfs, anno)
 
 #this function is only called by other views, not directly associated with a URL
@@ -1144,8 +1166,6 @@ class ContigORFDeleteView(DeleteView):
     model=Contig_ORF_Join
     template_name = 'contig_orf_delete.html'
     success_url = reverse_lazy('contig-list')
-
-
     
 class ORFContigListView(ListView):
     model = Contig_ORF_Join
@@ -1181,6 +1201,7 @@ class SubcloneAssayCreateView(CreateView):
 def CosmidEndTagCreate(request):
     if request.method == "POST":
         cosmid_form = CosmidForm(request.POST)
+        end_tag_formset = EndTagFormSet(request.POST) #needs to be here
         if cosmid_form.is_valid():
             
             #do not commit new cosmid input until end tag form inputs have been checked 
@@ -1659,8 +1680,31 @@ def ContigListView(request):
 #retrieve ContigListView queryset to export as csv
 @login_required
 def contig_queryset(response):
-    qs = Contig.objects.all()
-    return queryset_export_csv(qs)
+    contigs = Contig.objects.all()
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment;filename="export.csv"'
+    writer = csv.writer(response)
+    
+    #hard code columns names for lack of time
+    writer.writerow(['Contig Name', 'Sequencing Pool', 'Contig Sequence', 'Contig NCBI Accession', 'BLAST Hit Accession'])
+    for contig in contigs:
+
+        #get contig accession, which can be none
+        try:
+            contig_acc = contig.contig_accession
+        except Exception:
+            contig_acc = ""
+        
+        #get blast accession, which can be none
+        try:
+            blast_acc = contig.blast_hit_accession
+        except Exception:
+            blast_acc = ""
+        
+        #write to csv
+        writer.writerow([contig.contig_name, contig.pool.id, contig.contig_sequence,contig_acc, blast_acc])
+    return response
+    
 
 # List views for multi-table views (Kathy)
 
@@ -1686,10 +1730,55 @@ def CosmidEndTagListView(request):
     
     
   
-#retrieve CosmidEndTagListView queryset to export as csv
+#custom csv export for CosmidEndTagListView -- 8 tables/models, and many-to-many relationships
 @login_required
 def cosmid_endtag_queryset(response):
-    qs1 = list(Cosmid.objects.all())
-    qs2 = list(End_Tag.objects.all())
-    qs = chain(qs1, qs2)
-    return queryset_export_csv(qs)  
+    cosmids = Cosmid.objects.all().select_related('end_tag__contig__researcher__library__screen__host__screen')
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment;filename="export.csv"'
+    writer = csv.writer(response)
+    
+    #hard code columns names for lack of time
+    writer.writerow(['Cosmid Name', 'Researcher Name', 'Library', 'Screen', 'Expression Host',
+                     'E. coli Stock Location', 'Sequencing Pool', 'End Tag 1', 'End Tag 2', 'Contig 1', 'Contig 2', 'Comments'])
+    for cosmid in cosmids:
+        
+        #get contigs, which can be none
+        contigs = []
+        for contig in cosmid.contig_set.all():
+            contigs.append(contig.contig_name)
+        try:
+            contig1 = contigs[0]
+        except Exception:
+            contig1 = ""
+        try:
+            contig2 = contigs[1]
+        except Exception:
+            contig2 = ""
+        
+        #get pool, which can be none
+        try:
+            pool = cosmid.pool.id
+        except Exception:
+            pool = ""
+       
+        #get endtags, which can be none
+        end_tags = []
+        for end_tag in cosmid.end_tag_set.all():
+            end_tags.append(end_tag.end_tag_sequence)
+        try:
+            endtag1 = end_tags[0]
+        except Exception:
+            endtag1 = ""
+        try:
+            endtag2 = end_tags[1]
+        except Exception:
+            endtag2 = ""
+        
+        #write to csv
+        writer.writerow([cosmid.cosmid_name, cosmid.researcher.researcher_name, cosmid.library.library_name,
+                         cosmid.screen.screen_name, cosmid.host.host_name, cosmid.ec_collection, pool, endtag1, endtag2,
+                         contig1, contig2, cosmid.cosmid_comments])
+    return response
+
+

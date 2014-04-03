@@ -6,8 +6,11 @@
 
 {% block urlform %}{% url "cosmid-end-tag-add" %}{% endblock %}
 
-{% block form %}
 
+
+
+
+{% block form %}
     {% for field in cosmid_form %}
         <tr>
             <th>
@@ -20,9 +23,13 @@
             <td>
             {{ field }}
             </td>
+            {% if field.errors %}
+                <td style="background:#FFFFFF">
+                <p style="color:red">{{ field.errors.as_text }}</p>
+                </td>
+            {% endif %}
         </tr>
     {% endfor %}
-
     </table>
     <h3>End Tags</h3>
     <table>

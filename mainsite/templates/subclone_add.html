@@ -8,6 +8,10 @@ Add Subclone
 Add Subclone
 {% endblock %}
 
+
+
+
+
 {% block urlform %}
 {% url "subclone-add" %}
 {% endblock %}
@@ -26,6 +30,11 @@ Add Subclone
                 <td>
                 {{ field }}
                 </td>
+                {% if field.errors %}
+                <td style="background:#FFFFFF">
+                <p style="color:red">{{ field.errors.as_text }}</p>
+                </td>
+            {% endif %}
             </tr>
         {% endfor %}
         
