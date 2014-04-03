@@ -35,7 +35,7 @@ import csv
 
 #Main, About etc
 
-@login_required  #UNCOMMENT THIS BEFORE DEPLOYMENT
+@login_required
 def MainPage(request):
     template_name = 'index.html'
     return (render(request, 'index.html'))
