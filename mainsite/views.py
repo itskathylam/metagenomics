@@ -76,6 +76,10 @@ def UserDoc(request):
 
 @login_required
 def AnnotationTool(request):
+    
+    #track errors with dict
+    form_errors = {}
+    
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
     testpicture = ''
@@ -83,81 +87,55 @@ def AnnotationTool(request):
         if 'submit' in request.POST:
             email = request.POST['email']
             con_name = request.POST.getlist('contig')
-            contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
-
-            orf_data(contigs)
-            read_csv("annotations_tool/tool/out/annotations")
             
-            #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
-            re_contigname = re.compile('^(.+)-(ALIGN|CONTIG|GLIM|GENBANK|MANUAL)\.png$')
-            for file in listdir('annotation_tool/tmp/img/'):
-                with open("annotation_tool/tmp/img/" + file, "rb") as img:
-                    imgbinary = base64.b64encode(img.read())
+            #check the number of contigs selected
+            length = len(con_name)
+            max_length = 20 #set arbitrary number for now since we are not sure of what sharcnet is capcable of 
+            if length > max_length:
+                form_errors['error'] = "Error: " + str(length) + " contigs chosen. Please select " + str(max_length) + " or fewer."
+            
+            #process if number of contigs chosen is less than the max allowed
+            else:
+                contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
+    
+                orf_data(contigs)
+                read_csv("annotations_tool/tool/out/annotations")
                 
-                filename = re_contigname.match(file)
+                #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
+                re_contigname = re.compile('^(.+)-(ALIGN|CONTIG|GLIM|GENBANK|MANUAL)\.png$')
+                for file in listdir('annotation_tool/tmp/img/'):
+                    with open("annotation_tool/tmp/img/" + file, "rb") as img:
+                        imgbinary = base64.b64encode(img.read())
+                    
+                    filename = re_contigname.match(file)
+                    
+                    imgcontigname = filename.group(1)
+                    contig = Contig.objects.get(contig_name=imgcontigname)
+                      
+                    if filename.group(2) == 'ALIGN':
+                        contig.image_align = imgbinary
+                    elif filename.group(2) == 'CONTIG':
+                        contig.image_contig = imgbinary
+                    elif filename.group(2) == 'GLIM':
+                        contig.image_predicted = imgbinary
+                    elif filename.group(2) == 'GENBANK':
+                        contig.image_genbank = imgbinary
+                    elif filename.group(2) =='MANUAL':
+                        contig.image_manual = imgbinary
+                    else:
+                        #ERROR CATCHING THERE IS A PNG WITH NO MATCH???
+                        pass
+                    contig.save()
+                    
+                #orf_data(contigs)
+                #read csv and store in db orf-contigs(also images)          
                 
-                imgcontigname = filename.group(1)
-                contig = Contig.objects.get(contig_name=imgcontigname)
-                  
-                if filename.group(2) == 'ALIGN':
-                    contig.image_align = imgbinary
-                elif filename.group(2) == 'CONTIG':
-                    contig.image_contig = imgbinary
-                elif filename.group(2) == 'GLIM':
-                    contig.image_predicted = imgbinary
-                elif filename.group(2) == 'GENBANK':
-                    contig.image_genbank = imgbinary
-                elif filename.group(2) =='MANUAL':
-                    contig.image_manual = imgbinary
-                else:
-                    #ERROR CATCHING THERE IS A PNG WITH NO MATCH???
-                    pass
-                contig.save()
-                
-
-            """
-            THIS IS A EXAMPLE OF HOW TO TAKE AN IMAG AND SAVE IT AS A BLOB TO THE DATABAASE AND THEN EXTRACT IT AND DISPLAY IT
-
-            contigget = Contig.objects.get(contig_name="scaffold58_1")
-            
-            image = contigget.image_contig
-            
-            testpicture = base64.b64decode(image)
-            writeimg = open("mainsite/static/imagedboutput.png", "wb")
-            writeimg.write(testpicture)
-            writeimg.close()
-
-            #read csv and store in db orf-contigs(also images)
-            
-            #sends the user an email
-
-            with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
-                bimg = base64.b64encode(img.read())
-                contig = Contig.objects.get(contig_name="scaffold58_1")
-                
-            
-                contig.contig_accession = "IMAGE?"
-                
-                
-            contigget = Contig.objects.get(contig_name="scaffold58_1")
-            
-            image = contigget.image_contig
-            
-            testpicture = base64.b64decode(image)
-            writeimg = open("mainsite/static/imagedboutput.png", "wb")
-            writeimg.write(testpicture)
-            writeimg.close()
-            """
-            #orf_data(contigs)
-            #read csv and store in db orf-contigs(also images)          
-            
-            #orf_data(contigs)
-
-            #write.close()      
-            #return render_to_response('tool_contig_submit.html', var)
-            #sends the user an email
-            #system("(echo 'this is a test email. see attachment'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
-    return render_to_response('tool_annotation.html', {'image': testpicture, 'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
+                #orf_data(contigs)
+                #write.close()      
+                #return render_to_response('tool_contig_submit.html', var)
+                #sends the user an email
+                #system("(echo 'this is a test email. see attachment'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
+    return render_to_response('tool_annotation.html', {'image': testpicture, 'email_form': email_form, 'all_contigs': all_contigs, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
 @login_required
 def AnnotationToolResults(request):
