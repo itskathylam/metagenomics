@@ -1,5 +1,5 @@
 {% extends "detail.html" %}
-
+{%block head %}<title>Contig {{ name }}</title>{% endblock %}
 {% block titletext %}Contig {{ name }}{% endblock %}
 
 {% block head2 %}
@@ -51,7 +51,7 @@
     <img src="{{ STATIC_URL }}scaffold177_1-F1.png">
     </div>
     <div id="2" class="link" style= width:100%;overflow:scroll;border-style:solid;border-width:thin;>
-    <img src="{{ STATIC_URL }}scaffold177_1-F1.png">
+    <img src="{{ STATIC_URL }}contigtest.png">
     </div>
 
     <p>Open reading frames in {{ name }}</p>
