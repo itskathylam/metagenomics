@@ -22,6 +22,7 @@ from Bio.SeqRecord import SeqRecord
 
 import types
 import StringIO
+import os
 from os import system, listdir
 import pdb
 import base64
@@ -34,7 +35,7 @@ import csv
 
 #Main, About etc
 
-@login_required  #UNCOMMENT THIS BEFORE DEPLOYMENT
+@login_required
 def MainPage(request):
     template_name = 'index.html'
     return (render(request, 'index.html'))
@@ -84,6 +85,7 @@ def AnnotationTool(request):
             con_name = request.POST.getlist('contig')
             contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
             orf_data(contigs)
+
             save_images("tool")
             read_csv("annotations_tool/tool/out/annotations.csv")
             
@@ -119,7 +121,6 @@ def save_images(folder):
             #ERROR CATCHING THERE IS A PNG WITH NO MATCH???
             pass
         contig.save()
-
 
 @login_required
 def AnnotationToolResults(request):
@@ -300,9 +301,10 @@ def BlastSearch(request):
 @login_required
 def BlastResults(request):
 
-    #get query sequence, clean of whitespace
-    seq = request.POST.get('sequence')
-    seq = ''.join(seq.split())
+    #change directory to blast_tool
+    old_dir = os.getcwd()
+    new_dir = old_dir + '/blast_tool/'
+    os.chdir(new_dir)
     
     #get parameters, and write to file
     e = request.POST.get('expect_threshold')
@@ -311,7 +313,10 @@ def BlastResults(request):
     mi = request.POST.get('mismatch_score')
     go = request.POST.get('gap_open_penalty')
     ge = request.POST.get('gap_extension_penalty')
-   
+    
+    #get query sequence, clean of whitespace, and write
+    seq = request.POST.get('sequence')
+    seq = ''.join(seq.split())
     queryseq = SeqRecord(Seq(seq, generic_dna), id="query")
     queryfh = open("blast_query.fa", "w")
     SeqIO.write(queryseq, queryfh, "fasta") 
@@ -393,6 +398,9 @@ def BlastResults(request):
                 result['hsp_subject'] = hsp_subject
                 result['hsp'] = hsp
                 results_list.append(result)
+    
+    #change directory back to old dir
+    os.chdir(old_dir)
             
     return render_to_response('blast_results.html', {'results_list': results_list, 'query': seq}, context_instance=RequestContext(request))
 
@@ -971,8 +979,10 @@ def CosmidDetail(request, cosmid_name):
     #returns queryset of all contigs associated with the cosmid requested
     contigresults = Contig.objects.filter(cosmid=c_id)
     contigids = []
+    blankimg = None
     for c in contigresults:
         contigids.append(c.id)
+        blankimg = GenerateImage(c)
     
     #returns all the orfs for the contigs that are associated with the cosmid
     orfresults = Contig_ORF_Join.objects.filter(contig_id__in=contigids).order_by('start')
@@ -981,8 +991,6 @@ def CosmidDetail(request, cosmid_name):
         orfids.append(o.orf_id)
     #returns all the sequences for all the associated orfs
     seq = ORF.objects.filter(id__in=orfids)
-    ContigORFDeleteView
-            
             
     def get_context_data(self, **kwargs):
         context = super(CosmidEditView, self).get_context_data(**kwargs)
@@ -990,7 +998,23 @@ def CosmidDetail(request, cosmid_name):
         context['end_tag_list'] = End_Tag.objects.all()
         return context
     
-    return render_to_response('cosmid_detail.html', {'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book, 'cosmid_comments': cosmid_comments}, context_instance=RequestContext(request))
+    return render_to_response('cosmid_detail.html', {'blank': blankimg, 'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book, 'cosmid_comments': cosmid_comments}, context_instance=RequestContext(request))
+
+def GenerateImage(contig):
+    #get the picture and make a file.
+    binaryimage = {'contig': contig.image_contig, 'align': contig.image_align, 'genbank': contig.image_genbank, 'predicted': contig.image_predicted, 'manual': contig.image_manual}
+    name = contig.contig_name
+    blanks = []
+    for imgtype, img in binaryimage.items():
+        if img:
+            decodedimg = base64.b64decode(img)
+            writeimg = open("mainsite/static/tempdisplay/" + name +  imgtype + ".png", "wb")
+            writeimg.write(decodedimg)
+            writeimg.close()
+        else:
+            blanks.append(imgtype)
+    
+    return blanks
 
 @login_required
 def ContigDetail(request, contig_name):
@@ -1009,15 +1033,11 @@ def ContigDetail(request, contig_name):
         orfids.append(o.orf_id)
     orfseq = ORF.objects.filter(id__in=orfids)
     
-    binaryimage = {'contig_image': contig.image_contig, 'align_image': contig.image_align, 'genkbank_image': contig.image_genbank, 'predicted_image': contig.image_predicted, 'manual_image': contig.image_manual}
-    image = []
-    for imgtype, img in binaryimage:
-        imgtype[img] = base64.b64decode(imgtype[img])
-        writeimg = open("mainsite/tempdisplay/" + contig +  imgtype + ".png", "wb")
-        writeimg.write(imgtype[img])
-        writeimg.close()
+    #get the picture and make a file.
+    blankimg = GenerateImage(contig)
             
-    return render_to_response('contig_detail.html', {'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
+    return render_to_response('contig_detail.html', {'blank': blankimg, 'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
+
 
 @login_required
 def OrfDetail(request, pk):
@@ -1757,5 +1777,3 @@ def cosmid_endtag_queryset(response):
                          cosmid.screen.screen_name, cosmid.host.host_name, cosmid.ec_collection, pool, endtag1, endtag2,
                          contig1, contig2, cosmid.cosmid_comments])
     return response
-
-
