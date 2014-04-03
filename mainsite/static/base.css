@@ -330,6 +330,8 @@ table {
     font-size: 12px;
     border: 0px;
     border-spacing:5px;
+    border-collapse: separate;
+    border-spacing: 2px;
 }
 
 td {
@@ -350,6 +352,8 @@ table.search {
     font-size: 12px;
     border: 0px;
     border-spacing:5px;
+    border-collapse: separate;
+    border-spacing: 2px;
 }
 
 table.search td{
