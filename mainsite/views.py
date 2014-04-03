@@ -23,6 +23,7 @@ from Bio.SeqRecord import SeqRecord
 import types
 import StringIO
 from os import system
+import os
 import pdb
 import base64
 from django.db.models import Q
@@ -304,9 +305,10 @@ def BlastSearch(request):
 @login_required
 def BlastResults(request):
 
-    #get query sequence, clean of whitespace
-    seq = request.POST.get('sequence')
-    seq = ''.join(seq.split())
+    #change directory to blast_tool
+    old_dir = os.getcwd()
+    new_dir = old_dir + '/blast_tool/'
+    os.chdir(new_dir)
     
     #get parameters, and write to file
     e = request.POST.get('expect_threshold')
@@ -315,7 +317,10 @@ def BlastResults(request):
     mi = request.POST.get('mismatch_score')
     go = request.POST.get('gap_open_penalty')
     ge = request.POST.get('gap_extension_penalty')
-   
+    
+    #get query sequence, clean of whitespace, and write
+    seq = request.POST.get('sequence')
+    seq = ''.join(seq.split())
     queryseq = SeqRecord(Seq(seq, generic_dna), id="query")
     queryfh = open("blast_query.fa", "w")
     SeqIO.write(queryseq, queryfh, "fasta") 
@@ -397,6 +402,9 @@ def BlastResults(request):
                 result['hsp_subject'] = hsp_subject
                 result['hsp'] = hsp
                 results_list.append(result)
+    
+    #change directory back to old dir
+    os.chdir(old_dir)
             
     return render_to_response('blast_results.html', {'results_list': results_list, 'query': seq}, context_instance=RequestContext(request))
 
