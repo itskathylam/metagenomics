@@ -107,6 +107,7 @@ header img {
 nav {
     width: 100%;
     background-color: #000000;
+    z-index: 100;
 }
 nav ul ul {
     display: none
@@ -305,8 +306,7 @@ nav ul ul ul {
     background-color: #000000;
     color: #fff;
     text-align: center;
-    line-height: 80px;
-    z-index: -1; 
+    line-height: 80px; 
 }
 
 #footer a {

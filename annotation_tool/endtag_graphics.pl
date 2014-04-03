@@ -91,7 +91,68 @@ if (scalar(@ARGV) == 2) {
             open(my $output_contig, ">", "tmp/img/$contig_desc" . "-CONTIG.png") or die ("could not create, $!\n");
             print $output_contig $panel_contig->png;
             close($output_contig);
+    
+        #-------------------------------------------------------------------------------------------
+        #                       GENBANK Panel
+        #-------------------------------------------------------------------------------------------
+
+            my $panel_gen = Bio::Graphics::Panel->new(
+                                                -length =>  $contig_len,   #length of segment sequence in bp
+                                                -key_style => 'between',
+                                                -width  =>  $width,    #width of image in pixels (600 default)
+                                                -pad_left   =>  10, #Adds white space padding
+                                                -pad_right  =>  $_pad_right,
+                                            );
+
+            my $genbank_track = $panel_gen->add_track($feature,
+                            -glyph  =>  'transcript2',
+                            -stranded => 1,
+                            -label  =>  1,
+                            -key    => 'Genbank',
+                            -bgcolor    =>  'green',
+                            -height =>  10,
+                            -font   =>  'gdLargeFont',
+                            -font2color =>  'black',  #color for description
+                            -bump   =>  2,
+                            -description    =>  sub{
+                                my $feature = shift;
+                                my $anno = $feature->annotation;
+                                my $st = $feature->start;
+                                return "$anno, Start=$st";
+                            },
+                        );
+
+            foreach(keys(%{$contig_orf{$scaffold}->[1]{'genbank'}})){
+                unless ($contig_orf{$scaffold}->[1]{'genbank'}{$_}{'start'}) {
+                    delete $contig_orf{$scaffold}->[1]{'genbank'}{$_};
+                }
+            }
+            foreach my $retrieve(sort{$contig_orf{$scaffold}->[1]{'genbank'}{$a}{'start'} <=> $contig_orf{$scaffold}->[1]{'genbank'}{$b}{'start'}}keys(%{$contig_orf{$scaffold}->[1]{'genbank'}})){
+                my $_gen_anno = $contig_orf{$scaffold}->[1]{'genbank'}{$retrieve}{'annotation'};
+                unless($contig_orf{$scaffold}->[1]{'genbank'}{$retrieve}{'annotation'}){
+                    $_gen_anno = '_';
+                }
+                if ($contig_orf{$scaffold}->[1]{'genbank'}{$retrieve}{'reading_frame'}) {
+                    ($contig_orf{$scaffold}->[1]{'genbank'}{$retrieve}{'reading_frame'} > 0 ) ? ($_strand = 1) : ($_strand = -1);
+                } else {
+                    $_strand = 0;
+                }
+                
+                my $feature = Bio::SeqFeature::Generic->new(
+                                                #-display_name   =>  $name[$i],
+                                                -strand => $_strand,
+                                                -score  =>  $contig_orf{$scaffold}->[1]{'genbank'}{$retrieve}{'score'},
+                                                -annotation =>  $_gen_anno,
+                                                -start  =>  $contig_orf{$scaffold}->[1]{'genbank'}{$retrieve}{'start'},     # Start of range
+                                                -end    =>  $contig_orf{$scaffold}->[1]{'genbank'}{$retrieve}{'end'},        # End of range
+                                                );
+                $genbank_track->add_feature($feature);
+            }
             
+            open(my $output_gen, ">", "tmp/img/$contig_desc" . "-GENBANK.png") or die ("could not create, $!\n");
+            print $output_gen $panel_gen->png;
+            close($output_gen);
+    
     #-------------------------------------------------------------------------------------------
     #                       GLIMMER Panel
     #-------------------------------------------------------------------------------------------
@@ -106,7 +167,9 @@ if (scalar(@ARGV) == 2) {
             #print "Glimmer RF: $contig_orf{$scaffold}->[1]{'glimmer'}{$retrieve}{'reading_frame'}\n"; 
             #($contig_orf{$scaffold}->[1]{'glimmer'}{$retrieve}{'reading_frame'} > 0 ) ? ($_strand = 1) : ($_strand = -1);
             my $glimmer_track = $panel_glim->add_track(
-                -glyph  =>  'generic',
+                $feature,
+                -glyph  =>  'transcript2',
+                -stranded => 1,
                 -label  =>  1,
                 -key    => "Predicted ORFs",
                 -bgcolor    =>  'red',
@@ -130,8 +193,15 @@ if (scalar(@ARGV) == 2) {
                         $_glim_anno = '_';
                     }
                     
+                    if ($contig_orf{$scaffold}->[1]{'glimmer'}{$retrieve}{'reading_frame'}) {
+                        ($contig_orf{$scaffold}->[1]{'glimmer'}{$retrieve}{'reading_frame'} > 0 ) ? ($_strand = 1) : ($_strand = -1);
+                    } else {
+                        $_strand = 0;
+                    }
+                    
                     my $feature = Bio::SeqFeature::Generic->new(
                                                     #-display_name   =>  $name[$i],
+                                                    -strand => $_strand,
                                                     -score  =>  $contig_orf{$scaffold}->[1]{'glimmer'}{$retrieve}{'score'},
                                                     -annotation =>  $_glim_anno,
                                                     -start  =>  $contig_orf{$scaffold}->[1]{'glimmer'}{$retrieve}{'start'},     # Start of range
@@ -195,58 +265,7 @@ if (scalar(@ARGV) == 2) {
             }
             
             
-    #-------------------------------------------------------------------------------------------
-    #                       GENBANK Panel
-    #-------------------------------------------------------------------------------------------
 
-            my $panel_gen = Bio::Graphics::Panel->new(
-                                                -length =>  $contig_len,   #length of segment sequence in bp
-                                                -key_style => 'between',
-                                                -width  =>  $width,    #width of image in pixels (600 default)
-                                                -pad_left   =>  10, #Adds white space padding
-                                                -pad_right  =>  $_pad_right,
-                                            );
-            
-            print "Genbank RF: $contig_orf{$scaffold}->[1]{'genbank'}{$retrieve}{'reading_frame'}\n"; 
-            #($contig_orf{$scaffold}->[1]{'genbank'}{$retrieve}{'reading_frame'} > 0 ) ? ($_strand = 1) : ($_strand = -1);
-            my $genbank_track = $panel_gen->add_track(
-                            -glyph  =>  'transcript2',
-                            -stranded => 1,
-                            -strand => $_strand,
-                            -label  =>  1,
-                            -key    => 'Genbank',
-                            -bgcolor    =>  'green',
-                            -height =>  10,
-                            -font   =>  'gdLargeFont',
-                            -font2color =>  'black',  #color for description
-                            -bump   =>  2,
-                            -description    =>  sub{
-                                my $feature = shift;
-                                my $anno = $feature->annotation;
-                                my $st = $feature->start;
-                                return "$anno, Start=$st";
-                            },
-                        );
-            
-            foreach my $retrieve(sort{$contig_orf{$scaffold}->[1]{'genbank'}{$a}{'start'} <=> $contig_orf{$scaffold}->[1]{'genbank'}{$b}{'start'}}keys(%{$contig_orf{$scaffold}->[1]{'genbank'}})){
-                my $_gen_anno = $contig_orf{$scaffold}->[1]{'genbank'}{$retrieve}{'annotation'};
-                unless($contig_orf{$scaffold}->[1]{'genbank'}{$retrieve}{'annotation'}){
-                    $_gen_anno = '_';
-                }
-                
-                my $feature = Bio::SeqFeature::Generic->new(
-                                                #-display_name   =>  $name[$i],
-                                                -score  =>  $contig_orf{$scaffold}->[1]{'genbank'}{$retrieve}{'score'},
-                                                -annotation =>  $_gen_anno,
-                                                -start  =>  $contig_orf{$scaffold}->[1]{'genbank'}{$retrieve}{'start'},     # Start of range
-                                                -end    =>  $contig_orf{$scaffold}->[1]{'genbank'}{$retrieve}{'end'},        # End of range
-                                                );
-                $genbank_track->add_feature($feature);
-            }
-            
-            open(my $output_gen, ">", "tmp/img/$contig_desc" . "-GENBANK.png") or die ("could not create, $!\n");
-            print $output_gen $panel_gen->png;
-            close($output_gen);
     #-------------------------------------------------------------------------------------------
     #                       MANUAL Panel
     #-------------------------------------------------------------------------------------------
@@ -260,7 +279,8 @@ if (scalar(@ARGV) == 2) {
             
             #($contig_orf{$scaffold}->[1]{'manual'}{$retrieve}{'reading_frame'} > 0 ) ? ($_strand = 1) : ($_strand = -1);
             my $manual_track = $panel_manual->add_track(
-                            -glyph  =>  'generic',
+                            -glyph  =>  'transcript2',
+                            -stranded => 1,
                             -label  =>  1,
                             -key    => 'Manual',
                             -bgcolor    =>  'yellow',
@@ -281,9 +301,15 @@ if (scalar(@ARGV) == 2) {
                 unless($contig_orf{$scaffold}->[1]{'manual'}{$retrieve}{'annotation'}){
                     $_man_anno = '_';
                 }
+                if ($contig_orf{$scaffold}->[1]{'manual'}{$retrieve}{'reading_frame'}) {
+                    ($contig_orf{$scaffold}->[1]{'manual'}{$retrieve}{'reading_frame'} > 0 ) ? ($_strand = 1) : ($_strand = -1);
+                } else {
+                    $_strand = 0;
+                }
                 
                 my $feature = Bio::SeqFeature::Generic->new(
                                                 #-display_name   =>  $name[$i],
+                                                -strand => $_strand,
                                                 -score  =>  $contig_orf{$scaffold}->[1]{'manual'}{$retrieve}{'score'},
                                                 -annotation =>  $_man_anno,
                                                 -start  =>  $contig_orf{$scaffold}->[1]{'manual'}{$retrieve}{'start'},     # Start of range
