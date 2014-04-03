@@ -29,7 +29,7 @@ from django.db.models import Q
 import re
 import base64 #used to convert pngs to base64 for database storage
 from itertools import chain
-
+import csv
 
 #Main, About etc
 
@@ -317,12 +317,12 @@ def BlastResults(request):
     ge = request.POST.get('gap_extension_penalty')
    
     queryseq = SeqRecord(Seq(seq, generic_dna), id="query")
-    queryfh = open("blast_tool/blast_query.fa", "w")
+    queryfh = open("blast_query.fa", "w")
     SeqIO.write(queryseq, queryfh, "fasta") 
     queryfh.close()
 
     #prepare file to write sequences into - for making blast db
-    out = open("blast_tool/blast_db.fa", "w")
+    out = open("blast_db.fa", "w")
     
     #get the url from which redirect occurred; determines what sequences are written in the blast db fasta file
     #possibilities: '/search/blast/', '/search/cosmid/', '/search/contig/', '/search/orf/', '/search/subclone/'
@@ -355,15 +355,15 @@ def BlastResults(request):
     out.close()
     
     #makeblastdb to create BLAST database of files from fastafile
-    system("makeblastdb -in blast_db.fa -out blast_tool/blast_db.db -dbtype nucl")
+    system("makeblastdb -in blast_db.fa -out blast_db.db -dbtype nucl")
 
     #run blast command with query, parameters, and created database
-    cmd = NcbiblastnCommandline(query="blast_tool/blast_query.fa", db="blast_tool/blast_db.db", evalue=float(e), word_size=int(w), reward=int(ma), penalty=int(mi), gapopen=int(go), gapextend=int(ge), outfmt=5, out="blast_tool/blast_results.xml")
+    cmd = NcbiblastnCommandline(query="blast_query.fa", db="blast_db.db", evalue=float(e), word_size=int(w), reward=int(ma), penalty=int(mi), gapopen=int(go), gapextend=int(ge), outfmt=5, out="blast_results.xml")
     system(str(cmd))
     
     #parse xml file
     try:
-        resultsfh = open("blast_tool/blast_results.xml")
+        resultsfh = open("blast_results.xml")
         records = NCBIXML.parse(resultsfh)
         test = records.next()
     except Exception:
@@ -1631,8 +1631,31 @@ def ContigListView(request):
 #retrieve ContigListView queryset to export as csv
 @login_required
 def contig_queryset(response):
-    qs = Contig.objects.all()
-    return queryset_export_csv(qs)
+    contigs = Contig.objects.all()
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment;filename="export.csv"'
+    writer = csv.writer(response)
+    
+    #hard code columns names for lack of time
+    writer.writerow(['Contig Name', 'Sequencing Pool', 'Contig Sequence', 'Contig NCBI Accession', 'BLAST Hit Accession'])
+    for contig in contigs:
+
+        #get contig accession, which can be none
+        try:
+            contig_acc = contig.contig_accession
+        except Exception:
+            contig_acc = ""
+        
+        #get blast accession, which can be none
+        try:
+            blast_acc = contig.blast_hit_accession
+        except Exception:
+            blast_acc = ""
+        
+        #write to csv
+        writer.writerow([contig.contig_name, contig.pool.id, contig.contig_sequence,contig_acc, blast_acc])
+    return response
+    
 
 # List views for multi-table views (Kathy)
 
@@ -1658,10 +1681,55 @@ def CosmidEndTagListView(request):
     
     
   
-#retrieve CosmidEndTagListView queryset to export as csv
+#custom csv export for CosmidEndTagListView -- 8 tables/models, and many-to-many relationships
 @login_required
 def cosmid_endtag_queryset(response):
-    qs1 = list(Cosmid.objects.all())
-    qs2 = list(End_Tag.objects.all())
-    qs = chain(qs1, qs2)
-    return queryset_export_csv(qs)  
+    cosmids = Cosmid.objects.all().select_related('end_tag__contig__researcher__library__screen__host__screen')
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment;filename="export.csv"'
+    writer = csv.writer(response)
+    
+    #hard code columns names for lack of time
+    writer.writerow(['Cosmid Name', 'Researcher Name', 'Library', 'Screen', 'Expression Host',
+                     'E. coli Stock Location', 'Sequencing Pool', 'End Tag 1', 'End Tag 2', 'Contig 1', 'Contig 2', 'Comments'])
+    for cosmid in cosmids:
+        
+        #get contigs, which can be none
+        contigs = []
+        for contig in cosmid.contig_set.all():
+            contigs.append(contig.contig_name)
+        try:
+            contig1 = contigs[0]
+        except Exception:
+            contig1 = ""
+        try:
+            contig2 = contigs[1]
+        except Exception:
+            contig2 = ""
+        
+        #get pool, which can be none
+        try:
+            pool = cosmid.pool.id
+        except Exception:
+            pool = ""
+       
+        #get endtags, which can be none
+        end_tags = []
+        for end_tag in cosmid.end_tag_set.all():
+            end_tags.append(end_tag.end_tag_sequence)
+        try:
+            endtag1 = end_tags[0]
+        except Exception:
+            endtag1 = ""
+        try:
+            endtag2 = end_tags[1]
+        except Exception:
+            endtag2 = ""
+        
+        #write to csv
+        writer.writerow([cosmid.cosmid_name, cosmid.researcher.researcher_name, cosmid.library.library_name,
+                         cosmid.screen.screen_name, cosmid.host.host_name, cosmid.ec_collection, pool, endtag1, endtag2,
+                         contig1, contig2, cosmid.cosmid_comments])
+    return response
+
+
