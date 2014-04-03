@@ -72,7 +72,7 @@ def UserDoc(request):
     return (render(request, 'userdoc.html'))
 
 
-#@login_required
+@login_required
 def AnnotationTool(request):
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
@@ -84,7 +84,7 @@ def AnnotationTool(request):
             contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
 
             orf_data(contigs)
-            #read csv and store in db orf-contigs(also images)
+            read_csv("annotations_tool/tool/out/annotations")
             
             #sends the user an email
             with open("mainsite/static/scaffold109_1-ALIGN.png", "rb") as img:
@@ -163,7 +163,7 @@ def ContigTool(request):
             context = {'poolselect': int(pool_id), 'pool': pool, 'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
             
         if 'submit' in request.POST:
-            pool = request.POST['pool']
+            pool = request.POST['poolhidden']
             cos = request.POST.getlist('cos')
             cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values("cosmid_name")
             results = contig_pipeline(pool, cos_selected)
@@ -218,33 +218,38 @@ def read_csv(filename):
 
 #this function is only called by other views, not directly associated with a URL
 def contig_pipeline(pool, cos_selected):
-    c_id =  Cosmid.objects.filter(cosmid_name__in = cos_selected).values('id')
-    cosmids = Cosmid.objects.filter(cosmid_name__in = cos_selected).values_list('id', 'cosmid_name')
     contigs = Contig.objects.filter(pool = pool).values_list('contig_name', 'contig_sequence')
-    seqs = End_Tag.objects.filter(cosmid = c_id).values_list('id', 'primer', 'end_tag_sequence')
-    p_id = End_Tag.objects.filter(cosmid = c_id).values('primer')
-    primer_set1 = Primer.objects.filter(id__in = p_id).filter(direction = 'F').values_list('id','primer_name')
-    primer_set2 = Primer.objects.filter(id__in = p_id).filter(direction = 'R').values_list('id','primer_name')
+    c_id =  Cosmid.objects.filter(cosmid_name__in = cos_selected).values('id')
+    seqs = End_Tag.objects.filter(cosmid = c_id).select_related('cosmid__primer')
     
     write_fasta(contigs)
-    write_csv('primers_1', cosmids, primer_set1, seqs)
-    write_csv('primers_2', cosmids, primer_set2, seqs)
+    write_csv(seqs)
     system("perl contig_retrieval_tool/retrieval_pipeline.pl primers_1.csv primers_2.csv contigs.fa")
     return read_csv('retrieval.csv')
 
-
 #this function is only called by other views, not directly associated with a URL
-def write_csv(file_name, cosmids, primer_set, seqs):
-    with open("contig_retrieval_tool/%s.csv" %file_name, 'w') as f:
-        csv = File(f)
-        for x , y, z in seqs:
-            for c_id, c in cosmids:
-                for p_id, p in primer_set:
-                    if x == c_id and y == p_id:
-                        z = ''.join(z.split())
-                        csv.write(c + ',' + p + ',' + z + '\n')
-        csv.closed
-        f.closed
+def write_csv(seqs):
+    with open("contig_retrieval_tool/primers_1.csv" , 'w') as f1:
+        csv1 = File(f1)
+        for entry in seqs:
+            cos = entry.cosmid.cosmid_name
+            primer = entry.primer.primer_name
+            seq = entry.end_tag_sequence.strip()
+            if entry.primer.direction == 'F':
+                csv1.write(cos + ',' + primer + ',' + seq + '\n')
+    csv1.closed
+    f1.closed
+    
+    with open("contig_retrieval_tool/primers_2.csv" , 'w') as f2:
+        csv2 = File(f2)
+        for entry in seqs:
+            cos = entry.cosmid.cosmid_name
+            primer = entry.primer.primer_name
+            seq = entry.end_tag_sequence.strip()
+            if entry.primer.direction == 'R':
+                csv2.write(cos + ',' + primer + ',' + seq + '\n')
+    csv2.closed
+    f2.closed
 
 #this function is only called by other views, not directly associated with a URL
 #writes contigs to fasta file(text.fa)    
@@ -1304,6 +1309,11 @@ def ORFContigCreate(request):
     else:
         contig_orf_form = ContigORFJoinForm(instance=Contig_ORF_Join())
         orf_form = ORFForm(instance=ORF())
+    
+    #update images in database with the new contig_orf  
+    orf_data(new_contig_orf)
+    
+    
     return render_to_response('orf_contig_add.html', {'contig_orf_form': contig_orf_form, 'orf_form': orf_form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
 #Add contigs to a given pool; contigs from FASTA file (Kathy)
