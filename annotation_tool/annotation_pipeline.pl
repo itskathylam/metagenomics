@@ -3,8 +3,8 @@ use warnings;
 use strict;
 use Cwd qw/abs_path chdir/;
 my $cwd;
-if (abs_path('contig_retrieval_tool/annotation_pipeline.pl')) {
-    $cwd = abs_path('contig_retrieval_tool/annotation_pipeline.pl');
+if (abs_path('annotation_tool/annotation_pipeline.pl')) {
+    $cwd = abs_path('annotation_tool/annotation_pipeline.pl');
 } elsif (abs_path('annotation_pipeline.pl')){
     $cwd = abs_path('annotation_pipeline.pl');
 }
@@ -23,6 +23,7 @@ if (scalar(@ARGV == 1)) {
         # This will run a pipesline that will annotate each scaffold based on known genbank
         # annotations, and generate their own orf predictions based on FragGeneScan (Can
         # be changed to support Glimmer, or MetaGeneMark)
+        
         if (($status eq '-annotate') && (-s 'data.lib')) {
             print $log "********************************\nExecution of Contig Annotation Pipeline\n********************************\n";
             print $log "Retrieving contig information...";
@@ -90,17 +91,17 @@ if (scalar(@ARGV == 1)) {
         # them more recent.
         } elsif(($status eq '-update') && (-s 'data.lib')){
             print $log "********************************\nUpdating Contig Annotations\n********************************\n";
-            my $pid = `perl endtag_retrieve.pl`;
+            my $pid = `perl endtag_retrieve.pl $cwd`;
             print $log "ParentID: $pid\n";
             
             # Will use accession number to retrieve their respective genbank document.  The
             # genbank documnet will be parsed for CDS information
             print $log "Retrieving Genbank information and updating Blast alignments...\n";
-            $pid = `perl endtag_genbank_update.pl $pid`;
+            $pid = `perl endtag_genbank_update.pl $pid $cwd`;
             
             #Generates the graphics based on all the cumulative data.
             print $log "Generating graphics...\n";
-            $pid = `perl endtag_graphics.pl $pid`;
+            $pid = `perl endtag_graphics.pl $pid $cwd`;
             print $log "Images have been generated!\n Annotation update complete\n";          
         }
         #cleanUp();   
@@ -119,7 +120,9 @@ sub cleanUp{
 
 sub setup{
     my $ret = 0;
-    (system("mkdir temp")) unless (-d "temp");    
+    (system("mkdir temp")) unless (-d "temp");
+    (system("mkdir -p tool/img")) unless (-d "tool/img");
+    (system("mkdir -p tool/out")) unless (-d "tool/out");
     (system("mkdir temp/tmp")) unless (-d "temp/tmp");
     (system("mkdir -p tmp/out")) unless (-d "tmp/out");
     (system("mkdir -p temp/data/blast")) unless (-d "temp/data");
@@ -128,7 +131,7 @@ sub setup{
     (system("mkdir -p temp/predicts/blast")) unless (-d "temp/predicts");
     (system("mkdir temp/storage")) unless (-d "temp/storage");
     (system("mkdir temp/genbank")) unless (-d "temp/genbank");
-    if ((-d "temp/tmp") && (-d "temp/data") && (-d "tmp/img") && (-d "tmp/out") && (-d "temp/genbank") && (-d "temp/orf_seq") && (-d "temp/predicts") && (-d "temp/storage")){
+    if ((-d "temp/tmp") && (-d "temp/data") && (-d "tool/img") && (-d "tool/out") && (-d "tmp/img") && (-d "tmp/out") && (-d "temp/genbank") && (-d "temp/orf_seq") && (-d "temp/predicts") && (-d "temp/storage")){
         $ret = 1;
     }
     return $ret;

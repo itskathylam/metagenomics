@@ -13,7 +13,7 @@ use Cwd;
 
 my $cwd = $ARGV[0];
 chdir($cwd);
-s
+
 open(my $data, "<", "data.lib") or die "Could not open data.lib file: $!\n";
 
 require "data.lib";
@@ -26,6 +26,7 @@ foreach my $scaf(keys(%contig_orf)){
                                    -format => 'fasta');
     $outseq_o->write_seq($seq_o);
 }
-
+open(my $outt, ">>", "Test.txt")or die "Da fuck? $!\n";
+print $outt Dumper(%contig_orf);
 store (\%contig_orf, "temp/storage/contig.$$") or die "could not store";
 print $$;

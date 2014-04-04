@@ -1,15 +1,15 @@
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, PageNotAnInteger
+from django.core.files import File
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.template import RequestContext
 from django.core.urlresolvers import reverse_lazy
-from operator import attrgetter
-import operator
-from django.core.paginator import Paginator, PageNotAnInteger
-from django.core.files import File
+from django.db.models import Q
+
 from mainsite.models import *
 from mainsite.forms import *
 
@@ -26,7 +26,8 @@ import os
 from os import system, listdir
 import pdb
 import base64
-from django.db.models import Q
+from operator import attrgetter
+import operator
 import re
 import base64 #used to convert pngs to base64 for database storage
 from itertools import chain
@@ -76,6 +77,10 @@ def UserDoc(request):
 
 @login_required
 def AnnotationTool(request):
+    
+    #track errors with dict
+    form_errors = {}
+    
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
     testpicture = ''
@@ -84,7 +89,7 @@ def AnnotationTool(request):
             email = request.POST['email']
             con_name = request.POST.getlist('contig')
             contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
-            
+
             orf_data(contigs)
             system("tsp perl annotation_tool/annotation_pipeline.pl -annotate")
             save_images("tool")
@@ -98,23 +103,37 @@ def AnnotationTool(request):
                     else:
                         new_orf = ORF.objects.create(orf_sequence = row[2], annotation = row[5])
                     
-                #Contig_ORF_Join.objects.create(
-                #    contig = contig
-                #    orf = new_orf
-                #    start = row[6]
-                #    stop = row[7]
-                #    complement = 1 if row[8] < 0 else 0
-                #    orf_accession = None
-                #    predicted = 1
-                #    prediction_score = row[9]
-                #    )
+                Contig_ORF_Join.objects.create(
+                    contig = contig
+                    orf = new_orf
+                    start = row[6]
+                    stop = row[7]
+                    complement = 1 if row[8] < 0 else 0
+                    orf_accession = None
+                    predicted = 1
+                    prediction_score = row[9]
+                    )
                 
             message = """Your job has finished running on metagenomics.uwaterloo.ca.
                         The following contigs now have annotations
                         
             """
             system("(echo message;) | mail -s '[Metagenomics]Annotation Tool Processing Complete' " + email)
+
             
+            #check the number of contigs selected
+            length = len(con_name)
+            max_length = 20 #set arbitrary number for now since we are not sure of what sharcnet is capcable of 
+            if length > max_length:
+                form_errors['error'] = "Error: " + str(length) + " contigs chosen. Please select " + str(max_length) + " or fewer."
+            
+            #process if number of contigs chosen is less than the max allowed
+            else:
+                contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
+    
+                orf_data(contigs)
+                read_csv("annotations_tool/tool/out/annotations")
+                
     return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
     
 
