@@ -1,15 +1,15 @@
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, PageNotAnInteger
+from django.core.files import File
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.template import RequestContext
 from django.core.urlresolvers import reverse_lazy
-from operator import attrgetter
-import operator
-from django.core.paginator import Paginator, PageNotAnInteger
-from django.core.files import File
+from django.db.models import Q
+
 from mainsite.models import *
 from mainsite.forms import *
 
@@ -26,7 +26,8 @@ import os
 from os import system, listdir
 import pdb
 import base64
-from django.db.models import Q
+from operator import attrgetter
+import operator
 import re
 import base64 #used to convert pngs to base64 for database storage
 from itertools import chain
@@ -84,7 +85,8 @@ def AnnotationTool(request):
             email = request.POST['email']
             con_name = request.POST.getlist('contig')
             contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
-
+            
+            
             orf_data(contigs)
             read_csv("annotations_tool/tool/out/annotations")
             
