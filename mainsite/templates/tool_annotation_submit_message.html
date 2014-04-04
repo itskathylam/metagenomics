@@ -15,11 +15,14 @@
 {% block content %}
     
 <p>Thank you for your submission. You will be notified by e-mail about the success of your job;
-the e-mail will be sent in less than twenty four hours to the following address: {{ email }}
+the e-mail will be sent in less than twenty four hours to the following address: {{ email }}</p>
 
-<p>The Contigs are currently being processed are:
+<p>Please do not run the ORF Finding and Annotation tool on any more Contigs until
+you have recieved notification that your job is complete.</p>
+
+<p>The Contigs currently being processed are:
 <ul>
-{% for contig in contigs %}
+{% for cosmid in contigs %}
     <li>{{ contig.contig_name }}
 {% endfor %}
 </ul>

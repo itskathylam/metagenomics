@@ -34,7 +34,8 @@ data independently, and upload the contigs into the database through the <a href
 <p>This tool allows the user to select cosmids from a sequencing pool, on which to execute contig retrieval.
 The tool takes each cosmid's end-tags and uses BLAST to retrieve matching contigs. It indicates whether the two retrieved
 contigs are matched or unmatched, or indicates an ambiguous result in the case that one end-tag retrieves more than one contig.
-Users must validate the contig retrieval results before they are committed to the database.</p>
+Users must validate the contig retrieval results before they are committed to the database. Note that the tool only operates on cosmids that
+have two end-tags; if a cosmid has one or zero end-tags, it is simply ignored.</p>
 <p>Please select a pool:</p>
 
 <section id="tool1">

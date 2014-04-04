@@ -28,6 +28,13 @@ ORFs/annotations; these genes can be used as a point reference, and can be compa
 <p>Please provide an e-mail to which notification will be sent when the jobs are completed:</p>
 <table>{{ email_form }}</table>
 <p>All Contigs are shown below, with their associated Cosmids. Please select up to 20 Contigs for annotation:</p>
+
+{% block errors %}
+    {% for key,value in form_errors.items %}
+        <p><font color="red">{{ value }}</font></p>
+    {% endfor %}
+{% endblock %}
+
 <table class="tool">
     <tr><th>Contig Name</th><th>Associated Cosmids</th></tr>
     {% for contig in all_contigs %}

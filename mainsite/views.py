@@ -77,51 +77,69 @@ def UserDoc(request):
 
 @login_required
 def AnnotationTool(request):
+    
+    #track errors with dict
+    form_errors = {}
+    
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
     testpicture = ''
     if request.method == "POST":
         if 'submit' in request.POST:
             email = request.POST['email']
+<<<<<<< HEAD
             con_name = request.POST.getlist('contig')
             contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
             
             
             orf_data(contigs)
             read_csv("annotations_tool/tool/out/annotations")
+=======
+            con_name = request.POST.getlist('contig')
+>>>>>>> fc8b033fef75f46983aa0b29b465de873bc856f2
             
-            #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
-            re_contigname = re.compile('^(.+)-(ALIGN|CONTIG|GLIM|GENBANK|MANUAL)\.png$')
-            for file in listdir('annotation_tool/tmp/img/'):
-                with open("annotation_tool/tmp/img/" + file, "rb") as img:
-                    imgbinary = base64.b64encode(img.read())
+            #check the number of contigs selected
+            length = len(con_name)
+            max_length = 20 #set arbitrary number for now since we are not sure of what sharcnet is capcable of 
+            if length > max_length:
+                form_errors['error'] = "Error: " + str(length) + " contigs chosen. Please select " + str(max_length) + " or fewer."
+            
+            #process if number of contigs chosen is less than the max allowed
+            else:
+                contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
+    
+                orf_data(contigs)
+                read_csv("annotations_tool/tool/out/annotations")
                 
-                filename = re_contigname.match(file)
-                
-                imgcontigname = filename.group(1)
-                contig = Contig.objects.get(contig_name=imgcontigname)
-                  
-                if filename.group(2) == 'ALIGN':
-                    contig.image_align = imgbinary
-                elif filename.group(2) == 'CONTIG':
-                    contig.image_contig = imgbinary
-                elif filename.group(2) == 'GLIM':
-                    contig.image_predicted = imgbinary
-                elif filename.group(2) == 'GENBANK':
-                    contig.image_genbank = imgbinary
-                elif filename.group(2) =='MANUAL':
-                    contig.image_manual = imgbinary
-                else:
-                    #ERROR CATCHING THERE IS A PNG WITH NO MATCH???
-                    pass
-                contig.save()
+    return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
 
-            #read csv and store in db orf-contigs(also images)
 
-            #return render_to_response('tool_contig_submit.html', var)
-            #sends the user an email
-            #system("(echo 'this is a test email. see attachment'; uuencode mainsite/static/scaffold109_1-ALIGN.png mainsite/static/scaffold109_1-ALIGN.png) | mail -s 'Test System Email' " + email)
-    return render_to_response('tool_annotation.html', {'image': testpicture, 'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
+#gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
+def save_images(folder):
+    re_contigname = re.compile('^(.+)-(ALIGN|CONTIG|GLIM|GENBANK|MANUAL)\.png$')
+    for file in listdir('annotation_tool/%s/img/' %folder):
+        with open("annotation_tool/%s/img/" %folder + file,  "rb") as img:
+            imgbinary = base64.b64encode(img.read())
+        
+        filename = re_contigname.match(file)
+        
+        imgcontigname = filename.group(1)
+        contig = Contig.objects.get(contig_name=imgcontigname)
+          
+        if filename.group(2) == 'ALIGN':
+            contig.image_align = imgbinary
+        elif filename.group(2) == 'CONTIG':
+            contig.image_contig = imgbinary
+        elif filename.group(2) == 'GLIM':
+            contig.image_predicted = imgbinary
+        elif filename.group(2) == 'GENBANK':
+            contig.image_genbank = imgbinary
+        elif filename.group(2) =='MANUAL':
+            contig.image_manual = imgbinary
+        else:
+            #ERROR CATCHING THERE IS A PNG WITH NO MATCH???
+            pass
+        contig.save()
 
 @login_required
 def AnnotationToolResults(request):
@@ -256,7 +274,7 @@ def write_fasta(contigs):
         fasta.closed
         f.closed
 
-#@login_required
+#retieve data to write to library file for annotations tool to run 
 def orf_data(contig_list):
     contig_id = Contig.objects.filter(contig_name__in = contig_list).values('id')
     contigs = Contig.objects.filter(contig_name__in = contig_list).values_list('id','contig_name', 'contig_sequence', 'blast_hit_accession')
@@ -992,8 +1010,6 @@ def CosmidDetail(request, cosmid_name):
         orfids.append(o.orf_id)
     #returns all the sequences for all the associated orfs
     seq = ORF.objects.filter(id__in=orfids)
-    
-             
             
     def get_context_data(self, **kwargs):
         context = super(CosmidEditView, self).get_context_data(**kwargs)
@@ -1040,6 +1056,7 @@ def ContigDetail(request, contig_name):
     blankimg = GenerateImage(contig)
             
     return render_to_response('contig_detail.html', {'blank': blankimg, 'orfresults': orfresults, 'orfids': orfids, 'orfseq': orfseq, 'cosmids': cosmids, 'sequence': seq, 'accession': accession, 'pool': pool, 'name': name, 'key': key}, context_instance=RequestContext(request))
+
 
 @login_required
 def OrfDetail(request, pk):
@@ -1127,9 +1144,21 @@ class SubcloneAssayEditView(UpdateView):
 class ORFEditView(UpdateView):
     model = ORF
     fields = ['orf_sequence', 'annotation']
-    #exclude = ['contig']
     template_name = 'orf_edit.html'
     success_url = reverse_lazy('orf-list')
+   
+    #def get_object(self, queryset=None):
+    #    orf_object = ORF.objects.get(id=self.kwargs['id'])
+    #    return orf_object
+    #
+    #def get_success_url(self):
+    #    contig = self.get_object().contig
+    #    pdb.set_trace()
+    #
+   
+   
+        #orf_data()
+        #save_images("tmp")
 
 class ContigEditView(UpdateView):
     model = Contig
@@ -1142,6 +1171,12 @@ class ContigORFDeleteView(DeleteView):
     model=Contig_ORF_Join
     template_name = 'contig_orf_delete.html'
     success_url = reverse_lazy('contig-list')
+    
+
+def update_annotations(response):
+    qs = Contig_ORF_Join.objects.all()
+    pdb.set_trace()
+    
     
 class ORFContigListView(ListView):
     model = Contig_ORF_Join
@@ -1334,7 +1369,7 @@ def ORFContigCreate(request):
     
     #update images in database with the new contig_orf  
     orf_data(new_contig_orf)
-    
+    save_images("tmp")
     
     return render_to_response('orf_contig_add.html', {'contig_orf_form': contig_orf_form, 'orf_form': orf_form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
@@ -1761,5 +1796,3 @@ def cosmid_endtag_queryset(response):
                          cosmid.screen.screen_name, cosmid.host.host_name, cosmid.ec_collection, pool, endtag1, endtag2,
                          contig1, contig2, cosmid.cosmid_comments])
     return response
-
-
