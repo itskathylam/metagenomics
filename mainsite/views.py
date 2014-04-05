@@ -332,7 +332,7 @@ def orf_data(contig_list):
 
 #this function is only called by other views, not directly associated with a URL
 def write_lib(contigs, orfs, anno):
-    with open("data.lib", 'w') as f:
+    with open("annotation_tool/data.lib", 'w') as f:
         data = File(f)
         data.write('#!/usr/bin/perl \n sub data{\n')
         for c_id, name, seq, access in contigs:
