@@ -86,10 +86,16 @@ def AnnotationTool(request):
     #after submit collect email and contig selection
     if request.method == "POST":
         if 'submit' in request.POST:
+
             email = request.POST['email']
+
             con_name = request.POST.getlist('contig')
             contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
-
+            
+            
+            orf_data(contigs)
+            read_csv("annotations_tool/tool/out/annotations")
+            
             #check the number of contigs selected
             length = len(con_name)
             max_length = 20 #set arbitrary number for now since we are not sure of what sharcnet is capcable of 
