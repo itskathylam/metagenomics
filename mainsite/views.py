@@ -101,7 +101,7 @@ def AnnotationTool(request):
             else:
                 #retrieve data and write the library file for selected contigs 
                 orf_data(contigs)
-                
+                contigs = Contig.objects.filter(contig_name__in = con_name)
                 #redirect to success page 
                 return render_to_response('tool_annotation_submit_message.html', {'contigs':contigs, 'email':email})         
                 
@@ -152,7 +152,6 @@ def AnnotationToolResults(request):
     #call mail function and send message to input email
     system("(echo message;) | mail -s '[Metagenomics]Annotation Tool Processing Complete' " + email)
         
-    return render_to_response('tool_annotation_submit_message.html', {'contigs':contigs, 'email':email})
 
 #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
 def save_images(folder):
