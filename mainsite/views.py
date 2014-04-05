@@ -103,15 +103,14 @@ def AnnotationTool(request):
                 orf_data(contigs)
                 contigs = Contig.objects.filter(contig_name__in = con_name)
                 #redirect to success page 
-                return render_to_response('tool_annotation_submit_message.html', {'contigs':contigs, 'email':email})         
+                AnnotationToolResults(contigs, email)         
                 
     return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
     
 #annotation tool success page, displays the contigs selected and the email the results will send to
-@login_required
-def AnnotationToolResults(request):
+def AnnotationToolResults(contigs, email):
     #call the annotations Perl script, will utilize the library file created on annotation tool page
-    system("tsp perl annotation_tool/annotation_pipeline.pl -annotate")
+    system("touch kathy")
     #save the annotation images for each contig, created by the script
     save_images("tool")
     
@@ -151,7 +150,8 @@ def AnnotationToolResults(request):
     
     #call mail function and send message to input email
     system("(echo message;) | mail -s '[Metagenomics]Annotation Tool Processing Complete' " + email)
-        
+    
+    return render_to_response('tool_annotation_submit_message.html', {'contigs': contigs, 'email':email})
 
 #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
 def save_images(folder):
@@ -235,25 +235,26 @@ def ContigTool(request):
 #displays results of contig retrieval for selection into the database
 @login_required
 def ContigToolResults(request):
+    joins = {}
     if request.method == 'POST':
         if 'submit' in request.POST:
             cosmidcontigs = request.POST.getlist('select')
     
-        pattern = re.compile(r'^(.+)<\$\$>(.+)$')
-
-        joins = {}
-        for pair in cosmidcontigs:
-            match = pattern.match(pair)
-            joins[match.group(1)] = match.group(2)
-        
-        cosmids = []
-        for join in joins:
-            cosmid = Cosmid.objects.get(cosmid_name=join)
-            contig = Contig.objects.get(contig_name=joins[join])
-            contig.cosmid.add(cosmid)
-            cosmids.append(join)
-        pdb.set_trace()
-        return HttpResponseRedirect('/results/basic/cosmid?query=' + ' '.join(cosmids))
+            pattern = re.compile(r'^(.+)<\$\$>(.+)$')
+    
+            for pair in cosmidcontigs:
+                match = pattern.match(pair)
+                joins[match.group(1)] = match.group(2)
+            
+            cosmids = []
+            for cos, con in joins.items():
+                cosmid = Cosmid.objects.get(cosmid_name=cos)
+                contig = Contig.objects.get(contig_name=con.lstrip())
+                
+                contig.cosmid.add(cosmid)
+                cosmids.append(cos)
+            
+            return HttpResponseRedirect('/results/basic/cosmid?query=' + ' '.join(cosmids))
     
     return render_to_response('tool_contig_submit.html', {'results': joins}, context_instance=RequestContext(request))
 
