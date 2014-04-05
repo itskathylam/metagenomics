@@ -247,6 +247,7 @@ def ContigToolResults(request):
             contig = Contig.objects.get(contig_name=joins[join])
             contig.cosmid.add(cosmid)
             cosmids.append(join)
+        pdb.set_trace()
         return HttpResponseRedirect('/results/basic/cosmid?query=' + ' '.join(cosmids))
     
     return render_to_response('tool_contig_submit.html', {'results': joins}, context_instance=RequestContext(request))
