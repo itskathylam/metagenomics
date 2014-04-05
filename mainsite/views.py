@@ -214,7 +214,7 @@ def ContigTool(request):
                 entry = row[0:3]
                 entry.append(row[5])
                 entry.append(row[7])
-                entry.append(row[8])
+                entry.append(row[11])
                 entry.append(row[12])
                 entries.append(entry)
             var = RequestContext(request, {'results': entries})
