@@ -31,6 +31,7 @@
         <td>{{iden|floatformat}}</td>
         <td>{{endlen}}</td>
         <td>{{conlen}}</td>
+<<<<<<< HEAD
         <td {% if "1" in match %}
                 style="background-color:#339933">Match
             {% endif %}
@@ -40,6 +41,13 @@
             {% if "3" in match %}
                 style="background-color:#FF9933">Ambiguous
             {% endif %}</td>
+=======
+
+        <td {% if "1" in match %} style="background-color:#339933">Match {% endif %}
+            {% if "2" in match %} style="background-color:#990033">Mismatch {% endif %}
+            {% if "3" in match %} style="background-color:#FF9933">Ambiguous {% endif %}</td>
+            
+>>>>>>> 4ba9903d0ac10c009526907e82dcfd07af10f784
 </tr> 
     {% endfor %}
 
