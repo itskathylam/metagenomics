@@ -1,33 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-        <p>Seneca College. Kathy Lam. Rene Q. Phil R. Nina N. Katelyn D.</p>
-        <p>What we used:
-        <ul>
-                <li>Website design: <a href="http://www.w3.org/TR/html5/">HTML5 & CSS3</a></li>
-                <li>Website structure: <a href="https://www.djangoproject.com/">Django web framework</a></li>
-                        <a href="https://github.com/etianen/django-reversion">Django Reversion Package for reverting back to old changes</a>
-                <li>Database: <a href="http://www.mysql.com/">MySQL</a></li>
-                <li>Scripting: <a href="http://www.perl.org/">Perl</a></li>
-                <li>Graphics: <a href="http://www.bioperl.org/">BioPerl Library</a></li>
-                <li>Determining ORFs: <a href="http://omics.informatics.indiana.edu/FragGeneScan/">FragGeneScan</a></li>
-                <li>Cluster Computing: <a href="https://www.sharcnet.ca">Sharcnet</a></li>
-
+        <p>This website and set of tools was created as a project within the Bioinformatics program at Seneca College.</p>
+        <p>The primary contributors to this project were Katelyn Davis, Kathy Lam, Nina Nissan, Rene Quevedo & Philip Rees.</p>
+        <p>Several different programming languages and existing tools were used in order to create this project. Here is a brief summary of the languages and packages used:
+        <ul class="about">
+                <li>The main architecture for of project was done using <a href="https://www.djangoproject.com/">Django web framework</a></li>
+                <li>The database management system used was <a href="http://www.mysql.com/">MySQL</a></li>
+                <li>Website design was done following <a href="http://www.w3.org/TR/html5/">HTML5 & CSS3</a> standards</li> 
+                <li>The Contig Retreival and Gene Annotation tools were written in <a href="http://www.perl.org/">Perl</a> and the open reading frame graphics that are generated was created with the <a href="http://www.bioperl.org/">BioPerl Library</a></li>
+                <li>The local BLAST search funciontality uses <a href="http://biopython.org/">BioPython</a></li>
+                <li>The <a href="http://omics.informatics.indiana.edu/FragGeneScan/">FragGeneScan</a> software was used to generate predictions of the ORFs</li>
+                <li>The tools created are can be computationally intensive and to make runtimes manageable we use the <a href="https://www.sharcnet.ca">Sharcnet</a> cluster of computers to carry out the computations.</li>
         </ul>
         </p>
-        <p>
-        Thanks to:
-                <ul>
-                <li><a href="https://uwaterloo.ca/science-computing/" alt>U waterloo for hosting</a></li>
-                <li>Trevor and lab</li>
-                </ul>
-        </p>
-        <p>
-                <a href="http://jigsaw.w3.org/css-validator/check/referer">
-                    <img style="border:0;width:88px;height:31px" src="http://jigsaw.w3.org/css-validator/images/vcss-blue" alt="Valid CSS!" />
-                </a>
-                <a href="http://www.w3.org/html/logo/">
-                    <img src="http://www.w3.org/html/logo/badge/html5-badge-h-solo.png" width="63" height="64" alt="HTML5 Powered" title="HTML5 Powered">
-                </a> 
+        <p>The website is best viewed in either <a href="www.google.com/chrome">Chrome</a> or <a href="http://www.mozilla.org/">Firefox</a>.</p>
+        <p>It is best to use a screen resolution of 1024x768 or greater.</p>
+        <p>We would like to thank Trevor Charles and all lab members for helping to oversee this project and all of his reccommendations. Additionally, thank you to the <a href="https://uwaterloo.ca/science-computing/" alt>Science Computing</a> group here at the University of Waterloo for hosting the site.
+        </p><a href="http://jigsaw.w3.org/css-validator/check/referer"><img style="border:0;width:88px;height:31px" src="http://jigsaw.w3.org/css-validator/images/vcss-blue" alt="Valid CSS!"></a>
+        <a href="http://www.w3.org/html/logo/"><img src="http://www.w3.org/html/logo/badge/html5-badge-h-solo.png" width="63" height="64" alt="HTML5 Powered" title="HTML5 Powered"></a> 
         </p>
 {% endblock %}

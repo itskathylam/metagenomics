@@ -88,13 +88,8 @@ def AnnotationTool(request):
         if 'submit' in request.POST:
 
             email = request.POST['email']
-
             con_name = request.POST.getlist('contig')
             contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
-            
-            
-            orf_data(contigs)
-            read_csv("annotations_tool/tool/out/annotations")
             
             #check the number of contigs selected
             length = len(con_name)
@@ -106,7 +101,7 @@ def AnnotationTool(request):
             else:
                 #retrieve data and write the library file for selected contigs 
                 orf_data(contigs)
-                
+                contigs = Contig.objects.filter(contig_name__in = con_name)
                 #redirect to success page 
                 return render_to_response('tool_annotation_submit_message.html', {'contigs':contigs, 'email':email})         
                 
@@ -130,7 +125,8 @@ def AnnotationToolResults(request):
             if row[2] == obj.orf_sequence:
                 new_orf = obj
             else:
-                new_orf = ORF.objects.create(orf_sequence = row[2], annotation = row[5]) 
+                new_orf = ORF.objects.create(orf_sequence = row[2], annotation = row[5])
+                
         Contig_ORF_Join.objects.create(
                                     contig = contig,
                                     orf = new_orf,
@@ -156,7 +152,6 @@ def AnnotationToolResults(request):
     #call mail function and send message to input email
     system("(echo message;) | mail -s '[Metagenomics]Annotation Tool Processing Complete' " + email)
         
-    return render_to_response('tool_annotation_submit_message.html', {'results': results })
 
 #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
 def save_images(folder):
@@ -209,7 +204,9 @@ def ContigTool(request):
                 else:
                     notjoined.append(cosmid)
             context = {'poolselect': int(pool_id), 'pool': pool, 'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
-            
+        
+        #contigs selected are sent through the pipeline to call perl script
+        #returns list of list of the results of the script for display 
         if 'submit' in request.POST:
             pool = request.POST['poolhidden']
             cos = request.POST.getlist('cos')
@@ -223,12 +220,14 @@ def ContigTool(request):
                 entry.append(row[11])
                 entry.append(row[12])
                 entries.append(entry)
+            #send to submit page for contig selection 
             var = RequestContext(request, {'results': entries})
             return render_to_response('tool_contig_submit.html', var)
                 
     variables = RequestContext(request, context)
     return render_to_response('tool_contig.html', variables)
 
+#displays results of contig retrieval for selection into the database
 @login_required
 def ContigToolResults(request):
     if request.method == 'POST':
@@ -248,12 +247,13 @@ def ContigToolResults(request):
             contig = Contig.objects.get(contig_name=joins[join])
             contig.cosmid.add(cosmid)
             cosmids.append(join)
+        pdb.set_trace()
         return HttpResponseRedirect('/results/basic/cosmid?query=' + ' '.join(cosmids))
     
     return render_to_response('tool_contig_submit.html', {'results': joins}, context_instance=RequestContext(request))
 
 #this function is only called by other views, not directly associated with a URL
-#read csv file into array
+#read csv file into array of arrays
 def read_csv(file_location):
     import csv
     with open(file_location, 'rb') as csvfile:
@@ -262,9 +262,12 @@ def read_csv(file_location):
         for row in reader:
             rows.append(row)
     csvfile.closed
+    #system("rm %s" %file_location)
     return rows
 
 #this function is only called by other views, not directly associated with a URL
+#creates fasta and csv files for the contig retrieval perl script to run
+#returns the results of the script in array
 def contig_pipeline(pool, cos_selected):
     contigs = Contig.objects.filter(pool = pool).values_list('contig_name', 'contig_sequence')
     c_id =  Cosmid.objects.filter(cosmid_name__in = cos_selected).values('id')
@@ -276,6 +279,7 @@ def contig_pipeline(pool, cos_selected):
     return read_csv("contig_retrieval_tool/tmp/out/retrieval.csv")
 
 #this function is only called by other views, not directly associated with a URL
+#writes a csv file for the input sequences 
 def write_csv(seqs):
     with open("contig_retrieval_tool/primers_1.csv" , 'w') as f1:
         csv1 = File(f1)
@@ -1191,6 +1195,7 @@ class ORFEditView(UpdateView):
         orf_object = ORF.objects.get(id=self.kwargs['pk'])
         return orf_object
     
+    #run annotation tool to update the stored images
     def get_success_url(self):
         orf = self.get_object().id
         contig_id = ORF.objects.filter(id = orf).values("contig")
@@ -1211,6 +1216,7 @@ class ContigEditView(UpdateView):
         contig_object = Contig.objects.get(id=self.kwargs['pk'])
         return contig_object
     
+    #run annotation tool to update the stored images
     def get_success_url(self):
         contig = self.get_object().contig_name
         orf_data(contig)
@@ -1229,6 +1235,7 @@ class ContigORFDeleteView(DeleteView):
         con_orf_object = Contig_ORF_Join.objects.get(id=self.kwargs['pk'])
         return con_orf_object
     
+    #run annotation tool to update the stored images
     def get_success_url(self):
         contig_obj = self.get_object().contig
         contig = Contig.objects.filter(contig_name = contig_obj).values("contig_name")

@@ -205,3 +205,78 @@ Execution of Contig Retrieval Pipeline
 Executing Endtag Setup
 Matching the contigs to the cosmids
 Contigs Retrieval Complete
+********************************
+Execution of Contig Retrieval Pipeline
+********************************
+Executing Endtag Setup
+Matching the contigs to the cosmids
+Contigs Retrieval Complete
+********************************
+Execution of Contig Retrieval Pipeline
+********************************
+Executing Endtag Setup
+Matching the contigs to the cosmids
+Contigs Retrieval Complete
+********************************
+Execution of Contig Retrieval Pipeline
+********************************
+Executing Endtag Setup
+Matching the contigs to the cosmids
+Contigs Retrieval Complete
+********************************
+Execution of Contig Retrieval Pipeline
+********************************
+Executing Endtag Setup
+Matching the contigs to the cosmids
+Contigs Retrieval Complete
+********************************
+Execution of Contig Retrieval Pipeline
+********************************
+Executing Endtag Setup
+Matching the contigs to the cosmids
+Contigs Retrieval Complete
+********************************
+Execution of Contig Retrieval Pipeline
+********************************
+Executing Endtag Setup
+Matching the contigs to the cosmids
+Contigs Retrieval Complete
+********************************
+Execution of Contig Retrieval Pipeline
+********************************
+Executing Endtag Setup
+Matching the contigs to the cosmids
+Contigs Retrieval Complete
+********************************
+Execution of Contig Retrieval Pipeline
+********************************
+Executing Endtag Setup
+Matching the contigs to the cosmids
+Contigs Retrieval Complete
+********************************
+Execution of Contig Retrieval Pipeline
+********************************
+Executing Endtag Setup
+Matching the contigs to the cosmids
+Contigs Retrieval Complete
+********************************
+Execution of Contig Retrieval Pipeline
+********************************
+Executing Endtag Setup
+Matching the contigs to the cosmids
+Contigs Retrieval Complete
+********************************
+Execution of Contig Retrieval Pipeline
+********************************
+Executing Endtag Setup
+Matching the contigs to the cosmids
+Contigs Retrieval Complete
+<<<<<<< HEAD
+=======
+********************************
+Execution of Contig Retrieval Pipeline
+********************************
+Executing Endtag Setup
+Matching the contigs to the cosmids
+Contigs Retrieval Complete
+>>>>>>> 4ba9903d0ac10c009526907e82dcfd07af10f784
