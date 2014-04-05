@@ -261,6 +261,7 @@ def read_csv(file_location):
         for row in reader:
             rows.append(row)
     csvfile.closed
+    #system("rm %s" %file_location)
     return rows
 
 #this function is only called by other views, not directly associated with a URL
@@ -274,7 +275,7 @@ def contig_pipeline(pool, cos_selected):
     write_fasta(contigs)
     write_csv(seqs)
     system("perl contig_retrieval_tool/retrieval_pipeline.pl primers_1.csv primers_2.csv contigs.fa")
-    read_csv("contig_retrieval_tool/tmp/out/retrieval.csv")
+    return read_csv("contig_retrieval_tool/tmp/out/retrieval.csv")
 
 #this function is only called by other views, not directly associated with a URL
 #writes a csv file for the input sequences 
