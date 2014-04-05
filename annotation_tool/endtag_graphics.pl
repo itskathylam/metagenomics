@@ -1,9 +1,8 @@
 #!/usr/bin/perl
 use warnings;
-
+use strict;
 use lib '/usr/lib/cpan/custom/GD';
 use lib '/usr/share/perl5';
-#use lib '/usr/bin/emboss/emboss';
 use lib '/usr/lib/cpan/custom/BioGraphics/lib';
 use lib '/usr/lib/cpan/custom/BioGraphics2/lib';
 use lib '/usr/lib/cpan/custom/BioPerl-SABP/lib/';
@@ -24,6 +23,8 @@ use Data::Dumper;
 use Storable;
 use Cwd;
 
+open(my $outt, ">>", "outhere.txt") or die "Could not make test file\n";
+print $outt "HERE @ARGV\n";
 
 
 my $bgcolor = "blue";
@@ -33,14 +34,17 @@ my %contig_orf;
 my %genbank;
 my %_contig_retrieval;
 my $_pad_right = 400;
-
-if (scalar(@ARGV) == 2) {
+open(my $outt2, ">>", "outhere2.txt") or die "Could not make test file\n";
+print $outt2 "HERE2 @ARGV\n";
+if ((scalar(@ARGV)) == 3) {
+    
     my ($parentid2, $cwd, $dir) = @ARGV;
     chdir("$cwd");
+    print $outt "($parentid2, $cwd, $dir)\n";   
 
     my $_contig_orf = retrieve("temp/storage/contig.$parentid2") or die "Could not retrieve Contig orf $!\n";
     %contig_orf = %{$_contig_orf};
-    outputAnnoCSV(\%contig_orf);
+    outputAnnoCSV(\%contig_orf, $dir);
 
 
 
@@ -51,7 +55,7 @@ if (scalar(@ARGV) == 2) {
         my $width;
         ($contig_len > 6000) ? ($width = $contig_len / 7.5) : ($width = 800);
         my $contig_desc = $scaffold;
-
+        my $feature;
         if ($contig_len > 1) {
  
                 
@@ -115,9 +119,9 @@ if (scalar(@ARGV) == 2) {
                             -font2color =>  'black',  #color for description
                             -bump   =>  2,
                             -description    =>  sub{
-                                my $feature = shift;
-                                my $anno = $feature->annotation;
-                                my $st = $feature->start;
+                                my $feat = shift;
+                                my $anno = $feat->annotation;
+                                my $st = $feat->start;
                                 return "$anno, Start=$st";
                             },
                         );
@@ -138,7 +142,7 @@ if (scalar(@ARGV) == 2) {
                     $_strand = 0;
                 }
                 
-                my $feature = Bio::SeqFeature::Generic->new(
+                $feature = Bio::SeqFeature::Generic->new(
                                                 #-display_name   =>  $name[$i],
                                                 -strand => $_strand,
                                                 -score  =>  $contig_orf{$scaffold}->[1]{'genbank'}{$retrieve}{'score'},
@@ -178,10 +182,10 @@ if (scalar(@ARGV) == 2) {
                 -font2color =>  'black',  #color for description
                 -bump   =>  2,
                 -description    =>  sub{
-                    my $feature = shift;
-                    my $anno = $feature->annotation;
-                    my $score = $feature->score;
-                    my $st = $feature->start;
+                    my $feat = shift;
+                    my $anno = $feat->annotation;
+                    my $score = $feat->score;
+                    my $st = $feat->start;
                     return "$anno, Score=$score || Start=$st";
                 },
             );
@@ -199,7 +203,7 @@ if (scalar(@ARGV) == 2) {
                         $_strand = 0;
                     }
                     
-                    my $feature = Bio::SeqFeature::Generic->new(
+                    $feature = Bio::SeqFeature::Generic->new(
                                                     #-display_name   =>  $name[$i],
                                                     -strand => $_strand,
                                                     -score  =>  $contig_orf{$scaffold}->[1]{'glimmer'}{$retrieve}{'score'},
@@ -242,21 +246,21 @@ if (scalar(@ARGV) == 2) {
                                     -font   =>  'gdLargeFont',
                                     -font2color =>  'black',  #color for description
                                     -description    =>  sub{
-                                        my $feature = shift;
-                                        return unless $feature->has_tag('description');
-                                        my ($description) = $feature->each_tag_value('description');
-                                        my $score = $feature->score;
+                                        my $feat = shift;
+                                        return unless $feat->has_tag('description');
+                                        my ($description) = $feat->each_tag_value('description');
+                                        my $score = $feat->score;
                                         "$description, Score=$score";
                                     },
                                 );
                     
-                    my $feature_o = Bio::SeqFeature::Generic->new(-score    => $hit_o->raw_score(),
+                    $feature = Bio::SeqFeature::Generic->new(-score    => $hit_o->raw_score(),
                                                                   -display_name => $hit_o->name(),
                                                                   -tag  => {description => $hit_o->description()});
                     while (my $hsp_o = $hit_o->next_hsp()) {
-                        $feature_o->add_sub_SeqFeature($hsp_o, 'EXPAND');
+                        $feature->add_sub_SeqFeature($hsp_o, 'EXPAND');
                     }
-                    $align_track->add_feature($feature_o);
+                    $align_track->add_feature($feature);
                     
                     open(my $output_align, ">", "$dir/img/$contig_desc" . "-ALIGN.png") or die ("could not create, $!\n");
                     print $output_align $panel_align->png;
@@ -289,9 +293,9 @@ if (scalar(@ARGV) == 2) {
                             -font2color =>  'black',  #color for description
                             -bump   =>  2,
                             -description    =>  sub{
-                                my $feature = shift;
-                                my $anno = $feature->annotation;
-                                my $st = $feature->start;
+                                my $feat = shift;
+                                my $anno = $feat->annotation;
+                                my $st = $feat->start;
                                 return "$anno, Start=$st";
                             },
                         );
@@ -307,7 +311,7 @@ if (scalar(@ARGV) == 2) {
                     $_strand = 0;
                 }
                 
-                my $feature = Bio::SeqFeature::Generic->new(
+                $feature = Bio::SeqFeature::Generic->new(
                                                 #-display_name   =>  $name[$i],
                                                 -strand => $_strand,
                                                 -score  =>  $contig_orf{$scaffold}->[1]{'manual'}{$retrieve}{'score'},
@@ -326,7 +330,7 @@ if (scalar(@ARGV) == 2) {
 }
 
 sub outputAnnoCSV{
-    my ($contig_r) = @_;
+    my ($contig_r, $dir) = @_;
     my %contig_orf = %{$contig_r};
     open(my $outcsv, ">>", "$dir/out/annotations.csv") or die "Could not create the annotation csv: $!\n";
     foreach my $scaf(keys(%contig_orf)){

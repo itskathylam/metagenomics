@@ -25,6 +25,7 @@ if (scalar(@ARGV == 1)) {
         # be changed to support Glimmer, or MetaGeneMark)
         
         if (($status eq '-annotate') && (-s 'data.lib')) {
+            my $dir = "tool";
             print $log "********************************\nExecution of Contig Annotation Pipeline\n********************************\n";
             print $log "Retrieving contig information...";
             my $pid = `perl endtag_retrieve.pl $cwd`;
@@ -78,7 +79,7 @@ if (scalar(@ARGV == 1)) {
                         
                         #Generates the graphics based on all the cumulative data.
                         print $log "Generating graphics...\n";
-                        $pid = `perl endtag_graphics.pl $pid $cwd tmp`;
+                        $pid = `perl endtag_graphics.pl $pid $cwd $dir`;
                         print $log "Images have been generated!\n Annotation complete\n";
                     }
                 }
@@ -90,6 +91,7 @@ if (scalar(@ARGV == 1)) {
         # generated.  However, it will regenerate the genbank annotations in order to make
         # them more recent.
         } elsif(($status eq '-update') && (-s 'data.lib')){
+            my $dir = 'tmp';
             print $log "********************************\nUpdating Contig Annotations\n********************************\n";
             my $pid = `perl endtag_retrieve.pl $cwd`;
             print $log "ParentID: $pid\n";
@@ -101,7 +103,7 @@ if (scalar(@ARGV == 1)) {
             
             #Generates the graphics based on all the cumulative data.
             print $log "Generating graphics...\n";
-            $pid = `perl endtag_graphics.pl $pid $cwd tool`;
+            $pid = `perl endtag_graphics.pl $pid $cwd $dir`;
             print $log "Images have been generated!\n Annotation update complete\n";          
         }
         #cleanUp();   
