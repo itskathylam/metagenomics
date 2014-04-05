@@ -35,7 +35,7 @@ my %_contig_retrieval;
 my $_pad_right = 400;
 
 if (scalar(@ARGV) == 2) {
-    my ($parentid2, $cwd) = @ARGV;
+    my ($parentid2, $cwd, $dir) = @ARGV;
     chdir("$cwd");
 
     my $_contig_orf = retrieve("temp/storage/contig.$parentid2") or die "Could not retrieve Contig orf $!\n";
@@ -88,7 +88,7 @@ if (scalar(@ARGV) == 2) {
                               -height   =>  20
                              );
             
-            open(my $output_contig, ">", "tmp/img/$contig_desc" . "-CONTIG.png") or die ("could not create, $!\n");
+            open(my $output_contig, ">", "$dir/img/$contig_desc" . "-CONTIG.png") or die ("could not create, $!\n");
             print $output_contig $panel_contig->png;
             close($output_contig);
     
@@ -149,7 +149,7 @@ if (scalar(@ARGV) == 2) {
                 $genbank_track->add_feature($feature);
             }
             
-            open(my $output_gen, ">", "tmp/img/$contig_desc" . "-GENBANK.png") or die ("could not create, $!\n");
+            open(my $output_gen, ">", "$dir/img/$contig_desc" . "-GENBANK.png") or die ("could not create, $!\n");
             print $output_gen $panel_gen->png;
             close($output_gen);
     
@@ -212,7 +212,7 @@ if (scalar(@ARGV) == 2) {
             }
             
             
-            open(my $output_glim, ">", "tmp/img/$contig_desc" . "-GLIM.png") or die ("could not create, $!\n");
+            open(my $output_glim, ">", "$dir/img/$contig_desc" . "-GLIM.png") or die ("could not create, $!\n");
             print $output_glim $panel_glim->png;
             close($output_glim);
     #-------------------------------------------------------------------------------------------
@@ -258,7 +258,7 @@ if (scalar(@ARGV) == 2) {
                     }
                     $align_track->add_feature($feature_o);
                     
-                    open(my $output_align, ">", "tmp/img/$contig_desc" . "-ALIGN.png") or die ("could not create, $!\n");
+                    open(my $output_align, ">", "$dir/img/$contig_desc" . "-ALIGN.png") or die ("could not create, $!\n");
                     print $output_align $panel_align->png;
                     close($output_align);
                 }
@@ -318,7 +318,7 @@ if (scalar(@ARGV) == 2) {
                 $manual_track->add_feature($feature);
             }
             
-            open(my $output_manual, ">", "tmp/img/$contig_desc" . "-MANUAL.png") or die ("could not create, $!\n");
+            open(my $output_manual, ">", "$dir/img/$contig_desc" . "-MANUAL.png") or die ("could not create, $!\n");
             print $output_manual $panel_manual->png;
             close($output_manual);
         }
@@ -328,7 +328,7 @@ if (scalar(@ARGV) == 2) {
 sub outputAnnoCSV{
     my ($contig_r) = @_;
     my %contig_orf = %{$contig_r};
-    open(my $outcsv, ">>", "tmp/out/annotations.csv") or die "Could not create the annotation csv: $!\n";
+    open(my $outcsv, ">>", "$dir/out/annotations.csv") or die "Could not create the annotation csv: $!\n";
     foreach my $scaf(keys(%contig_orf)){
         my $seq = $contig_orf{$scaf}->[0];
         $seq =~ s/(\n)|(\r)//g;
