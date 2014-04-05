@@ -30,7 +30,6 @@ from operator import attrgetter
 import operator
 import re
 import base64 #used to convert pngs to base64 for database storage
-from itertools import chain
 from re import match
 import csv
 
@@ -74,7 +73,7 @@ def Faq(request):
 def UserDoc(request):
     return (render(request, 'userdoc.html'))
 
-
+#annotation form for contig-orf retrieval
 @login_required
 def AnnotationTool(request):
     
@@ -84,58 +83,74 @@ def AnnotationTool(request):
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
     testpicture = ''
+    #after submit collect email and contig selection
     if request.method == "POST":
         if 'submit' in request.POST:
             email = request.POST['email']
             con_name = request.POST.getlist('contig')
             contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
 
-            orf_data(contigs)
-            system("tsp perl annotation_tool/annotation_pipeline.pl -annotate")
-            save_images("tool")
-            results = read_csv("annotation_tool/tool/out/annotations.csv")
-            
-            for row in results:
-                contig = Contig.objects.filter(contig_name = row[0])
-                for obj in ORF.objects.all():
-                    if row[2] == obj.orf_sequence:
-                        new_orf = obj
-                    else:
-                        new_orf = ORF.objects.create(orf_sequence = row[2], annotation = row[5])
-                    
-                Contig_ORF_Join.objects.create(
-                    contig = contig
-                    orf = new_orf
-                    start = row[6]
-                    stop = row[7]
-                    complement = 1 if row[8] < 0 else 0
-                    orf_accession = None
-                    predicted = 1
-                    prediction_score = row[9]
-                    )
-                
-            message = """Your job has finished running on metagenomics.uwaterloo.ca.
-                        The following contigs now have annotations
-                        
-            """
-            system("(echo message;) | mail -s '[Metagenomics]Annotation Tool Processing Complete' " + email)
-
-            
             #check the number of contigs selected
             length = len(con_name)
             max_length = 20 #set arbitrary number for now since we are not sure of what sharcnet is capcable of 
             if length > max_length:
                 form_errors['error'] = "Error: " + str(length) + " contigs chosen. Please select " + str(max_length) + " or fewer."
             
-            #process if number of contigs chosen is less than the max allowed
+            #process if number of contigs chosen is less than the max allowed 
             else:
-                contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
-    
+                #retrieve data and write the library file for selected contigs 
                 orf_data(contigs)
-                read_csv("annotations_tool/tool/out/annotations")
+                
+                #redirect to success page 
+                return render_to_response('tool_annotation_submit_message.html', {'contigs':contigs, 'email':email})         
                 
     return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
     
+#annotation tool success page, displays the contigs selected and the email the results will send to
+@login_required
+def AnnotationToolResults(request):
+    #call the annotations Perl script, will utilize the library file created on annotation tool page
+    system("tsp perl annotation_tool/annotation_pipeline.pl -annotate")
+    #save the annotation images for each contig, created by the script
+    save_images("tool")
+    
+    #read the results from the Perl script to add/update new contig-orf joins into the database
+    results = read_csv("annotation_tool/tool/out/annotations.csv")
+    new_contigs
+    for row in results:
+        contig = Contig.objects.filter(contig_name = row[0])
+        new_contigs.append(row[0])
+        for obj in ORF.objects.all():
+            if row[2] == obj.orf_sequence:
+                new_orf = obj
+            else:
+                new_orf = ORF.objects.create(orf_sequence = row[2], annotation = row[5]) 
+        Contig_ORF_Join.objects.create(
+                                    contig = contig,
+                                    orf = new_orf,
+                                    start = row[6],
+                                    stop = row[7],
+                                    complement =  1 if row[8] < 0 else 0,
+                                    orf_accession = None,
+                                    predicted = 1,
+                                    prediction_score = row[9],
+                                )
+    
+    #message containing success or failure message
+    message = ""
+    if new_contigs == None:
+        message = """Your job has finished running on metagenomics.uwaterloo.ca.
+                        The job was unsuccessful."""
+    else:      
+        message = """Your job has finished running on metagenomics.uwaterloo.ca.
+                        The following contigs now have annotations:
+                            %s
+                    """ %(new_contigs)
+    
+    #call mail function and send message to input email
+    system("(echo message;) | mail -s '[Metagenomics]Annotation Tool Processing Complete' " + email)
+        
+    return render_to_response('tool_annotation_submit_message.html', {'results': results })
 
 #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
 def save_images(folder):
@@ -164,17 +179,11 @@ def save_images(folder):
             pass
         contig.save()
 
-@login_required
-def AnnotationToolResults(request):
-    if request.method == "POST":
-        results = request.POST
-
-        
-    return render_to_response('tool_annotation_results.html', {'results': results })
-
+#contig tool, retrieves new contigs for cosmids in the pool
 @login_required
 def ContigTool(request):
     context = {'pool':Pooled_Sequencing.objects.all()}
+    #display details for the selected pool 
     if request.method == "POST":
         if 'detail' in request.POST:
             pool_id =  request.POST['pool']            
@@ -235,7 +244,7 @@ def ContigToolResults(request):
             cosmids.append(join)
         return HttpResponseRedirect('/results/basic/cosmid?query=' + ' '.join(cosmids))
     
-    return render_to_response('tool_contig_result.html', {'results': joins}, context_instance=RequestContext(request))
+    return render_to_response('tool_contig_submit.html', {'results': joins}, context_instance=RequestContext(request))
 
 #this function is only called by other views, not directly associated with a URL
 #read csv file into array
