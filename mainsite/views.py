@@ -214,11 +214,16 @@ def ContigTool(request):
             results = contig_pipeline(pool, cos_selected)
             entries = []
             for row in results:
+                #cosmid name, strand location, contig name
                 entry = row[0:3]
+                #percent identity
                 entry.append(row[5])
+                #end tag length
                 entry.append(row[7])
-                entry.append(row[11])
+                #contig length
                 entry.append(row[12])
+                #match type
+                entry.append(row[13])
                 entries.append(entry)
             #send to submit page for contig selection 
             var = RequestContext(request, {'results': entries})
@@ -261,7 +266,7 @@ def read_csv(file_location):
         for row in reader:
             rows.append(row)
     csvfile.closed
-    #system("rm %s" %file_location)
+    system("rm %s" %file_location)
     return rows
 
 #this function is only called by other views, not directly associated with a URL
