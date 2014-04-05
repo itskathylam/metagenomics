@@ -31,15 +31,13 @@
         <td>{{iden|floatformat}}</td>
         <td>{{endlen}}</td>
         <td>{{conlen}}</td>
-        <td {% ifequal "1" match %}
+        <td {% if match == "1" %}
                 style="background-color:#339933">Match
-            {% endifequal %}
-            {% ifequal "2" match %}
-                style="background-color:#990033">Mismatch
-            {% endifequal %}
-            {% ifequal "3" match %}
+            {% elif match == "2" %}
+                    style="background-color:#990033">Mismatch
+            {% else match == "3" %}
                 style="background-color:#FF9933">Ambiguous
-            {% endifequal %}</td>
+            {% endif %}</td>
 </tr> 
     {% endfor %}
 
