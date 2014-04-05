@@ -226,7 +226,7 @@ if (scalar(@ARGV) == 2) {
                     if ($_contig_retrieval{$temp_query}{$temp_rf}->[1] =~ /^(?:lcl\|)?(.+)$/) {
                          $stripped_name = $1;
                     }
-                    print $_outcsv "$temp_query, $temp_rf, $stripped_name, $_contig_retrieval{$temp_query}{$temp_rf}->[2], $_contig_retrieval{$temp_query}{$temp_rf}->[3], $_contig_retrieval{$temp_query}{$temp_rf}->[4], $_contig_retrieval{$temp_query}{$temp_rf}->[5], $_contig_retrieval{$temp_query}{$temp_rf}->[6], $_contig_retrieval{$temp_query}{$temp_rf}->[7], $_contig_retrieval{$temp_query}{$temp_rf}->[8], $_contig_retrieval{$temp_query}{$temp_rf}->[10], $_contig_retrieval{$temp_query}{$temp_rf}->[11], $_contig_retrieval{$temp_query}{$temp_rf}->[15]\n";
+                    print $_outcsv "$temp_query, $temp_rf, $stripped_name, $_contig_retrieval{$temp_query}{$temp_rf}->[2], $_contig_retrieval{$temp_query}{$temp_rf}->[3], $_contig_retrieval{$temp_query}{$temp_rf}->[4], $_contig_retrieval{$temp_query}{$temp_rf}->[5], $_contig_retrieval{$temp_query}{$temp_rf}->[6], $_contig_retrieval{$temp_query}{$temp_rf}->[7], $_contig_retrieval{$temp_query}{$temp_rf}->[8], $_contig_retrieval{$temp_query}{$temp_rf}->[10], $_contig_retrieval{$temp_query}{$temp_rf}->[11], length($_contig_retrieval{$temp_query}{$temp_rf}->[11]), $_contig_retrieval{$temp_query}{$temp_rf}->[15]\n";
                 } else {
                     foreach my $retrieved_element(@{$_contig_retrieval{$temp_query}{$temp_rf}}){
                         $_f1_rank_flag = -1;
@@ -241,7 +241,7 @@ if (scalar(@ARGV) == 2) {
                     if ($_contig_retrieval{$temp_query}{$temp_rf}->[1] =~ /^(?:lcl\|)?(.+)$/) {
                          $stripped_name = $1;
                     }
-                    print $_outcsv "$temp_query, $temp_rf, $stripped_name, $_contig_retrieval{$temp_query}{$temp_rf}->[2], $_contig_retrieval{$temp_query}{$temp_rf}->[3], $_contig_retrieval{$temp_query}{$temp_rf}->[4], $_contig_retrieval{$temp_query}{$temp_rf}->[5], $_contig_retrieval{$temp_query}{$temp_rf}->[6], $_contig_retrieval{$temp_query}{$temp_rf}->[7], $_contig_retrieval{$temp_query}{$temp_rf}->[8], $_contig_retrieval{$temp_query}{$temp_rf}->[10], $_contig_retrieval{$temp_query}{$temp_rf}->[11], $_contig_retrieval{$temp_query}{$temp_rf}->[15]\n";
+                    print $_outcsv "$temp_query, $temp_rf, $stripped_name, $_contig_retrieval{$temp_query}{$temp_rf}->[2], $_contig_retrieval{$temp_query}{$temp_rf}->[3], $_contig_retrieval{$temp_query}{$temp_rf}->[4], $_contig_retrieval{$temp_query}{$temp_rf}->[5], $_contig_retrieval{$temp_query}{$temp_rf}->[6], $_contig_retrieval{$temp_query}{$temp_rf}->[7], $_contig_retrieval{$temp_query}{$temp_rf}->[8], $_contig_retrieval{$temp_query}{$temp_rf}->[10], $_contig_retrieval{$temp_query}{$temp_rf}->[11], length($_contig_retrieval{$temp_query}{$temp_rf}->[11]), $_contig_retrieval{$temp_query}{$temp_rf}->[15]\n";
                 } else {
                     foreach my $retrieved_element(@{$_contig_retrieval{$temp_query}{$temp_rf}}){
                         $_r1_rank_flag = -1;

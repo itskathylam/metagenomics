@@ -30,7 +30,6 @@ from operator import attrgetter
 import operator
 import re
 import base64 #used to convert pngs to base64 for database storage
-from itertools import chain
 from re import match
 import csv
 
@@ -74,7 +73,7 @@ def Faq(request):
 def UserDoc(request):
     return (render(request, 'userdoc.html'))
 
-
+#annotation form for contig-orf retrieval
 @login_required
 def AnnotationTool(request):
     
@@ -84,8 +83,10 @@ def AnnotationTool(request):
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
     testpicture = ''
+    #after submit collect email and contig selection
     if request.method == "POST":
         if 'submit' in request.POST:
+
             email = request.POST['email']
 
             con_name = request.POST.getlist('contig')
@@ -94,22 +95,68 @@ def AnnotationTool(request):
             
             orf_data(contigs)
             read_csv("annotations_tool/tool/out/annotations")
-
+            
             #check the number of contigs selected
             length = len(con_name)
             max_length = 20 #set arbitrary number for now since we are not sure of what sharcnet is capcable of 
             if length > max_length:
                 form_errors['error'] = "Error: " + str(length) + " contigs chosen. Please select " + str(max_length) + " or fewer."
             
-            #process if number of contigs chosen is less than the max allowed
+            #process if number of contigs chosen is less than the max allowed 
             else:
-                contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
-    
+                #retrieve data and write the library file for selected contigs 
                 orf_data(contigs)
-                read_csv("annotations_tool/tool/out/annotations")
+                
+                #redirect to success page 
+                return render_to_response('tool_annotation_submit_message.html', {'contigs':contigs, 'email':email})         
                 
     return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
-
+    
+#annotation tool success page, displays the contigs selected and the email the results will send to
+@login_required
+def AnnotationToolResults(request):
+    #call the annotations Perl script, will utilize the library file created on annotation tool page
+    system("tsp perl annotation_tool/annotation_pipeline.pl -annotate")
+    #save the annotation images for each contig, created by the script
+    save_images("tool")
+    
+    #read the results from the Perl script to add/update new contig-orf joins into the database
+    results = read_csv("annotation_tool/tool/out/annotations.csv")
+    new_contigs
+    for row in results:
+        contig = Contig.objects.filter(contig_name = row[0])
+        new_contigs.append(row[0])
+        for obj in ORF.objects.all():
+            if row[2] == obj.orf_sequence:
+                new_orf = obj
+            else:
+                new_orf = ORF.objects.create(orf_sequence = row[2], annotation = row[5]) 
+        Contig_ORF_Join.objects.create(
+                                    contig = contig,
+                                    orf = new_orf,
+                                    start = row[6],
+                                    stop = row[7],
+                                    complement =  1 if row[8] < 0 else 0,
+                                    orf_accession = None,
+                                    predicted = 1,
+                                    prediction_score = row[9],
+                                )
+    
+    #message containing success or failure message
+    message = ""
+    if new_contigs == None:
+        message = """Your job has finished running on metagenomics.uwaterloo.ca.
+                        The job was unsuccessful."""
+    else:      
+        message = """Your job has finished running on metagenomics.uwaterloo.ca.
+                        The following contigs now have annotations:
+                            %s
+                    """ %(new_contigs)
+    
+    #call mail function and send message to input email
+    system("(echo message;) | mail -s '[Metagenomics]Annotation Tool Processing Complete' " + email)
+        
+    return render_to_response('tool_annotation_submit_message.html', {'results': results })
 
 #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
 def save_images(folder):
@@ -138,19 +185,11 @@ def save_images(folder):
             pass
         contig.save()
 
-@login_required
-def AnnotationToolResults(request):
-    if request.method == "POST":
-        results = request.POST
-
-        #pdb.set_trace()
-        # (echo "put body content here"; uuencode filename filename) | mail -s "subject here" email_address_here
-        
-    return render_to_response('tool_annotation_results.html', {'results': results })
-
+#contig tool, retrieves new contigs for cosmids in the pool
 @login_required
 def ContigTool(request):
     context = {'pool':Pooled_Sequencing.objects.all()}
+    #display details for the selected pool 
     if request.method == "POST":
         if 'detail' in request.POST:
             pool_id =  request.POST['pool']            
@@ -211,13 +250,13 @@ def ContigToolResults(request):
             cosmids.append(join)
         return HttpResponseRedirect('/results/basic/cosmid?query=' + ' '.join(cosmids))
     
-    return render_to_response('tool_contig_result.html', {'results': joins}, context_instance=RequestContext(request))
+    return render_to_response('tool_contig_submit.html', {'results': joins}, context_instance=RequestContext(request))
 
 #this function is only called by other views, not directly associated with a URL
 #read csv file into array
-def read_csv(filename):
+def read_csv(file_location):
     import csv
-    with open("contig_retrieval_tool/tmp/out/%s" %filename, 'rb') as csvfile:
+    with open(file_location, 'rb') as csvfile:
         reader = csv.reader(csvfile, delimiter = ',')
         rows = []
         for row in reader:
@@ -234,7 +273,7 @@ def contig_pipeline(pool, cos_selected):
     write_fasta(contigs)
     write_csv(seqs)
     system("perl contig_retrieval_tool/retrieval_pipeline.pl primers_1.csv primers_2.csv contigs.fa")
-    return read_csv('retrieval.csv')
+    return read_csv("contig_retrieval_tool/tmp/out/retrieval.csv")
 
 #this function is only called by other views, not directly associated with a URL
 def write_csv(seqs):
@@ -277,7 +316,9 @@ def orf_data(contig_list):
     contigs = Contig.objects.filter(contig_name__in = contig_list).values_list('id','contig_name', 'contig_sequence', 'blast_hit_accession')
     orfs = Contig_ORF_Join.objects.filter(contig__in = contig_id).values_list('contig','orf','start', 'stop', 'complement', 'prediction_score')
     anno = ORF.objects.filter(contig__in = contig_id).values_list('id','annotation', 'orf_sequence')
+    
     write_lib(contigs, orfs, anno)
+
 
 #this function is only called by other views, not directly associated with a URL
 def write_lib(contigs, orfs, anno):
@@ -1141,21 +1182,24 @@ class SubcloneAssayEditView(UpdateView):
 class ORFEditView(UpdateView):
     model = ORF
     fields = ['orf_sequence', 'annotation']
+    slug_field = 'pk'
+    slug_url_kwarg = 'pk'
     template_name = 'orf_edit.html'
     success_url = reverse_lazy('orf-list')
-   
-    #def get_object(self, queryset=None):
-    #    orf_object = ORF.objects.get(id=self.kwargs['id'])
-    #    return orf_object
-    #
-    #def get_success_url(self):
-    #    contig = self.get_object().contig
-    #    pdb.set_trace()
-    #
-   
-   
-        #orf_data()
-        #save_images("tmp")
+
+    def get_object(self, queryset=None):
+        orf_object = ORF.objects.get(id=self.kwargs['pk'])
+        return orf_object
+    
+    def get_success_url(self):
+        orf = self.get_object().id
+        contig_id = ORF.objects.filter(id = orf).values("contig")
+        contig = Contig.objects.filter(id = contig_id).values("contig_name")
+        orf_data(contig)
+        system("perl annotation_tool/annotation_pipeline.pl -update")
+        save_images("tmp")
+        return ('/orf/' + orf)
+    
 
 class ContigEditView(UpdateView):
     model = Contig
@@ -1163,16 +1207,35 @@ class ContigEditView(UpdateView):
     template_name = 'contig_edit.html'
     success_url = reverse_lazy('contig-list')
     
+    def get_object(self, queryset=None):
+        contig_object = Contig.objects.get(id=self.kwargs['pk'])
+        return contig_object
+    
+    def get_success_url(self):
+        contig = self.get_object().contig_name
+        orf_data(contig)
+        system("perl annotation_tool/annotation_pipeline.pl -update")
+        save_images("tmp")
+        return ('/contig/' + contig)
+    
+    
 #Delete views (Katelyn)
 class ContigORFDeleteView(DeleteView):
     model=Contig_ORF_Join
     template_name = 'contig_orf_delete.html'
     success_url = reverse_lazy('contig-list')
     
-
-def update_annotations(response):
-    qs = Contig_ORF_Join.objects.all()
-    pdb.set_trace()
+    def get_object(self, queryset=None):
+        con_orf_object = Contig_ORF_Join.objects.get(id=self.kwargs['pk'])
+        return con_orf_object
+    
+    def get_success_url(self):
+        contig_obj = self.get_object().contig
+        contig = Contig.objects.filter(contig_name = contig_obj).values("contig_name")
+        orf_data(contig)
+        system("perl annotation_tool/annotation_pipeline.pl -update")
+        save_images("tmp")
+        return ('/contig/' + contig_obj.contig_name)
     
     
 class ORFContigListView(ListView):
@@ -1351,6 +1414,11 @@ def ORFContigCreate(request):
                         #save and redirect to contig's detailview
                         new_contig_orf.save()
                         
+                        #update images in database with the new contig_orf  
+                        orf_data(new_contig_orf)
+                        system("perl annotation_tool/annotation_pipeline.pl -update")
+                        save_images("tmp")
+                        
                         #get contig name to use in redirect
                         contig_name = new_contig_orf.contig.contig_name
                         return HttpResponseRedirect('/contig/' + contig_name)   
@@ -1363,10 +1431,6 @@ def ORFContigCreate(request):
     else:
         contig_orf_form = ContigORFJoinForm(instance=Contig_ORF_Join())
         orf_form = ORFForm(instance=ORF())
-    
-    #update images in database with the new contig_orf  
-    orf_data(new_contig_orf)
-    save_images("tmp")
     
     return render_to_response('orf_contig_add.html', {'contig_orf_form': contig_orf_form, 'orf_form': orf_form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
@@ -1442,17 +1506,8 @@ def queryset_export_csv(qs):
                 val = val()
             if type(val) == unicode:
                 val = val.encode("utf-8")
-            #else:
-            #    try:
-            #        val = silent(val)
-            #    except:
-            #        pass
-            #    try:
-            #        val = val.id
-            #    except:
-            #        pass
-            #    else:
-            #        val = val
+            else:
+                val = val
             row.append(val)
         writer.writerow(row)
     return response

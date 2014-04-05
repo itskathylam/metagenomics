@@ -78,7 +78,7 @@ if (scalar(@ARGV == 1)) {
                         
                         #Generates the graphics based on all the cumulative data.
                         print $log "Generating graphics...\n";
-                        $pid = `perl endtag_graphics.pl $pid $cwd`;
+                        $pid = `perl endtag_graphics.pl $pid $cwd tmp`;
                         print $log "Images have been generated!\n Annotation complete\n";
                     }
                 }
@@ -101,7 +101,7 @@ if (scalar(@ARGV == 1)) {
             
             #Generates the graphics based on all the cumulative data.
             print $log "Generating graphics...\n";
-            $pid = `perl endtag_graphics.pl $pid $cwd`;
+            $pid = `perl endtag_graphics.pl $pid $cwd tool`;
             print $log "Images have been generated!\n Annotation update complete\n";          
         }
         #cleanUp();   
