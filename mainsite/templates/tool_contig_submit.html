@@ -32,13 +32,10 @@
         <td>{{endlen}}</td>
         <td>{{conlen}}</td>
 
-        <td {% if match == "1" %}
-                style="background-color:#339933">Match
-            {% elif match == "2" %}
-                style="background-color:#990033">Mismatch
-            {% else match == "3" %}
-                style="background-color:#FF9933">Ambiguous
-            {% endif %}</td>
+        <td {% if "1" in match %} style="background-color:#339933">Match {% endif %}
+            {% if "2" in match %} style="background-color:#990033">Mismatch {% endif %}
+            {% if "3" in match %} style="background-color:#FF9933">Ambiguous {% endif %}</td>
+            
 </tr> 
     {% endfor %}
 
