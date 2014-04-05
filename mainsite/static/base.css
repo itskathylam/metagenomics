@@ -34,41 +34,6 @@ h2.home {
     position: relative;
     top: 0;
 }
-/* shouldnt need any of these. all of them are the same so replaced with generic h2 values. and added home to handle the exception.
-h2.add {
-    margin: 0px 10px 20px 10px;
-    display: inline;
-    position: relative;
-    top: -24px;
-}
-
-h2.search {
-    margin: 0 10px 20px 10px;
-    display: inline;
-    position: relative;
-    top: -24px;
-}
-h2.tools {
-    margin: 0 10px 20px 10px;
-    display: inline;
-    position: relative;
-    top: -24px;
-}
-
-h2.list {
-    margin: 0 10px 20px 10px;
-    display: inline;
-    position: relative;
-    top: -24px;
-}
-
-
-h2.detail {
-    margin: 0 10px 20px 10px;
-    display: inline;
-    position: relative;
-    top: -24px;
-} */
 
 h2 img {
     margin: 30px;
@@ -324,6 +289,11 @@ p {
 p.intable {
     font-size: 10px;
 }
+
+ul.about {
+    font-size: 14px;
+}
+
 /*For all table styles*/
 table {
     font-family: verdana, arial, sans-serif;
