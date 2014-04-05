@@ -23,10 +23,6 @@ use Data::Dumper;
 use Storable;
 use Cwd;
 
-open(my $outt, ">>", "outhere.txt") or die "Could not make test file\n";
-print $outt "HERE @ARGV\n";
-
-
 my $bgcolor = "blue";
 my $_strand;
 
@@ -34,13 +30,10 @@ my %contig_orf;
 my %genbank;
 my %_contig_retrieval;
 my $_pad_right = 400;
-open(my $outt2, ">>", "outhere2.txt") or die "Could not make test file\n";
-print $outt2 "HERE2 @ARGV\n";
 if ((scalar(@ARGV)) == 3) {
     
     my ($parentid2, $cwd, $dir) = @ARGV;
     chdir("$cwd");
-    print $outt "($parentid2, $cwd, $dir)\n";   
 
     my $_contig_orf = retrieve("temp/storage/contig.$parentid2") or die "Could not retrieve Contig orf $!\n";
     %contig_orf = %{$_contig_orf};
