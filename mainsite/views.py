@@ -110,7 +110,7 @@ def AnnotationTool(request):
 #annotation tool success page, displays the contigs selected and the email the results will send to
 def AnnotationToolResults(contigs, email):
     #call the annotations Perl script, will utilize the library file created on annotation tool page
-    system("touch kathy")
+    system("perl annotation_tool/annotation_pipeline.pl -annotate &")
     #save the annotation images for each contig, created by the script
     save_images("tool")
     
@@ -332,7 +332,7 @@ def orf_data(contig_list):
 
 #this function is only called by other views, not directly associated with a URL
 def write_lib(contigs, orfs, anno):
-    with open("data.lib", 'w') as f:
+    with open("annotation_tool/data.lib", 'w') as f:
         data = File(f)
         data.write('#!/usr/bin/perl \n sub data{\n')
         for c_id, name, seq, access in contigs:
