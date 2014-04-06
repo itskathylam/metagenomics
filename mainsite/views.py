@@ -110,7 +110,7 @@ def AnnotationTool(request):
 #annotation tool success page, displays the contigs selected and the email the results will send to
 def AnnotationToolResults(contigs, email):
     #call the annotations Perl script, will utilize the library file created on annotation tool page
-    system("perl annotation_tool/annotation_pipeline.pl -annotate &")
+    system("tsp perl annotation_tool/annotation_pipeline.pl -annotate &")
     #save the annotation images for each contig, created by the script
     save_images("tool")
     

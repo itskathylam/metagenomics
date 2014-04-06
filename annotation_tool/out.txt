@@ -1,0 +1,160 @@
+####################################################
+Looking at genbank file: spool1_scaffold248_1.gbk
+$VAR1 = [
+          753653,
+          787393
+        ];
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+Successfully entered into the IF with: 753653  and 787393
+####################################################
+Looking at genbank file: spool1_scaffold155_1.gbk
+$VAR1 = [
+          -6248,
+          26365
+        ];
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+Successfully entered into the IF with: -6248  and 26365
+####################################################
+Looking at genbank file: spool1_scaffold190_1.gbk
+$VAR1 = [
+          3254760,
+          3256414
+        ];
+Successfully entered into the IF with: 3254760  and 3256414
+Successfully entered into the IF with: 3254760  and 3256414
+####################################################
+Looking at genbank file: spool1_scaffold42_1.gbk
+$VAR1 = [
+          1326987,
+          1359499
+        ];
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+####################################################
+Looking at genbank file: spool1_scaffold242_1.gbk
+$VAR1 = [
+          2527208,
+          2564258
+        ];
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258
+Successfully entered into the IF with: 2527208  and 2564258

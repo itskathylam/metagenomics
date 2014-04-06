@@ -1,32 +1,26 @@
-Thu Apr  3 13:06:48 2014: ---------------------------------------------------
+Sat Apr  5 16:13:13 2014: ---------------------------------------------------
  Executing contig BLASTs....
-Thu Apr  3 13:06:48 2014: Contig - Queueing scaffold77_1 || Queue: 84m - Memory: 2G
-Thu Apr  3 13:06:48 2014: Contig - Queueing scaffold58_1 || Queue: 82m - Memory: 2G
-Thu Apr  3 13:08:16 2014: ---------------------------------------------------
- Executing contig BLASTs....
-Thu Apr  3 13:08:16 2014: Contig - Queueing scaffold77_1 || Queue: 84m - Memory: 2G
-Thu Apr  3 13:08:16 2014: Contig - Queueing scaffold58_1 || Queue: 82m - Memory: 2G
-Thu Apr  3 13:30:17 2014: Contig - scaffold77_1.blast created.
-Thu Apr  3 13:31:17 2014: Contig - scaffold58_1.blast created.
-Thu Apr  3 13:31:17 2014: ---------------------------------------------------
+Sat Apr  5 16:13:13 2014: Contig - Queueing pool1_scaffold155_1 || Queue: 80m - Memory: 2G
+Sat Apr  5 16:13:14 2014: Contig - Queueing pool1_scaffold248_1 || Queue: 82m - Memory: 2G
+Sat Apr  5 16:13:14 2014: Contig - Queueing pool1_scaffold242_1 || Queue: 85m - Memory: 2G
+Sat Apr  5 16:13:14 2014: Contig - Queueing pool1_scaffold190_1 || Queue: 47m - Memory: 2G
+Sat Apr  5 16:13:15 2014: Contig - Queueing pool1_scaffold42_1 || Queue: 80m - Memory: 2G
+Sat Apr  5 16:34:16 2014: Contig - pool1_scaffold190_1.blast created.
+Sat Apr  5 16:35:16 2014: Contig - pool1_scaffold248_1.blast created.
+Sat Apr  5 16:35:16 2014: Contig - pool1_scaffold42_1.blast created.
+Sat Apr  5 16:36:16 2014: Contig - pool1_scaffold242_1.blast created.
+Sat Apr  5 16:37:16 2014: Contig - pool1_scaffold155_1.blast created.
+Sat Apr  5 16:37:16 2014: ---------------------------------------------------
  Executing orf prediction BLASTs....
-Thu Apr  3 13:31:17 2014: Predictions - Queueing pool1_scaffold258_1 || Queue: 162m - Memory: 3G
-Thu Apr  3 13:31:17 2014: Predictions - Queueing scaffold58_1 || Queue: 148m - Memory: 3G
-Thu Apr  3 13:31:17 2014: Predictions - Queueing scaffold77_1 || Queue: 154m - Memory: 3G
-Thu Apr  3 13:30:48 2014: Contig - scaffold77_1.blast created.
-Thu Apr  3 13:31:48 2014: Contig - scaffold58_1.blast created.
-Thu Apr  3 13:31:48 2014: ---------------------------------------------------
- Executing orf prediction BLASTs....
-Thu Apr  3 13:31:48 2014: Predictions - Queueing pool1_scaffold258_1 || Queue: 162m - Memory: 3G
-Thu Apr  3 13:31:49 2014: Predictions - Queueing scaffold58_1 || Queue: 148m - Memory: 3G
-Thu Apr  3 13:31:50 2014: Predictions - Queueing scaffold77_1 || Queue: 154m - Memory: 3G
-Thu Apr  3 14:23:20 2014: Predictions - pool1_scaffold258_1.blast created 
-Thu Apr  3 14:23:20 2014: Predictions - scaffold77_1.blast created 
-Thu Apr  3 14:27:20 2014: Predictions - scaffold58_1.blast created 
----------------------------------------------------
- All files were created successfully.
-Thu Apr  3 14:23:50 2014: Predictions - pool1_scaffold258_1.blast created 
-Thu Apr  3 14:23:50 2014: Predictions - scaffold77_1.blast created 
-Thu Apr  3 14:27:50 2014: Predictions - scaffold58_1.blast created 
+Sat Apr  5 16:37:16 2014: Predictions - Queueing pool1_scaffold248_1 || Queue: 145m - Memory: 3G
+Sat Apr  5 16:37:16 2014: Predictions - Queueing pool1_scaffold242_1 || Queue: 156m - Memory: 3G
+Sat Apr  5 16:37:16 2014: Predictions - Queueing pool1_scaffold42_1 || Queue: 141m - Memory: 3G
+Sat Apr  5 16:37:17 2014: Predictions - Queueing pool1_scaffold190_1 || Queue: 51m - Memory: 3G
+Sat Apr  5 16:37:18 2014: Predictions - Queueing pool1_scaffold155_1 || Queue: 143m - Memory: 3G
+Sat Apr  5 16:50:18 2014: Predictions - pool1_scaffold190_1.blast created 
+Sat Apr  5 17:29:19 2014: Predictions - pool1_scaffold155_1.blast created 
+Sat Apr  5 17:33:19 2014: Predictions - pool1_scaffold242_1.blast created 
+Sat Apr  5 17:35:19 2014: Predictions - pool1_scaffold248_1.blast created 
+Sat Apr  5 17:38:19 2014: Predictions - pool1_scaffold42_1.blast created 
 ---------------------------------------------------
  All files were created successfully.
