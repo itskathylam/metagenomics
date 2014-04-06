@@ -33,8 +33,19 @@ import base64 #used to convert pngs to base64 for database storage
 from re import match
 import csv
 
-#Main, About etc
+from django.utils import daemonize
 
+#Main, About etc
+class DaemonAnnotation(daemonize):
+    def __init__(self):
+        self.pidfile = "/daemon/out/pid"
+        self.stdin = "/daemon/out/in"
+        self.stdout = "/daemon/out/out"
+        self.stderr = "/daemon/out/err"
+    
+    def run(self):
+        system("ls")
+    
 @login_required
 def MainPage(request):
     template_name = 'index.html'
@@ -187,6 +198,7 @@ def ContigTool(request):
     #display details for the selected pool 
     if request.method == "POST":
         if 'detail' in request.POST:
+            daemon = DaemonAnnotation()
             pool_id =  request.POST['pool']            
             pool = Pooled_Sequencing.objects.all()
             details = Pooled_Sequencing.objects.filter(id = pool_id)
