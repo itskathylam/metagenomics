@@ -113,56 +113,18 @@ def AnnotationTool(request):
                 #retrieve data and write the library file for selected contigs 
                 orf_data(contigs)
                 contigs = Contig.objects.filter(contig_name__in = con_name)
-                #redirect to success page 
-                return render_to_response('tool_annotation_submit_message.html', {'contigs':contigs, 'email':email})         
                 
+                ##call the annotations Perl script, will utilize the library file created on annotation tool page
+                #system("perl annotation_tool/annotation_pipeline.pl -annotate &")
+                
+                #call the processor python script in the bg
+                system("python manage.py runscript annotation_processor &")
+                
+                #give the user a success page
+                return render_to_response('tool_annotation_submit_message.html', {'contigs': contigs, 'email':email})
+                            
     return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
-    
-#annotation tool success page, displays the contigs selected and the email the results will send to
-@login_required
-def AnnotationToolResults(request):
-    #call the annotations Perl script, will utilize the library file created on annotation tool page
-    system("tsp perl annotation_tool/annotation_pipeline.pl -annotate")
-    #save the annotation images for each contig, created by the script
-    save_images("tool")
-    
-    #read the results from the Perl script to add/update new contig-orf joins into the database
-    results = read_csv("annotation_tool/tool/out/annotations.csv")
-    new_contigs
-    for row in results:
-        contig = Contig.objects.filter(contig_name = row[0])
-        new_contigs.append(row[0])
-        for obj in ORF.objects.all():
-            if row[2] == obj.orf_sequence:
-                new_orf = obj
-            else:
-                new_orf = ORF.objects.create(orf_sequence = row[2], annotation = row[5])
-                
-        Contig_ORF_Join.objects.create(
-                                    contig = contig,
-                                    orf = new_orf,
-                                    start = row[6],
-                                    stop = row[7],
-                                    complement =  1 if row[8] < 0 else 0,
-                                    orf_accession = None,
-                                    predicted = 1,
-                                    prediction_score = row[9],
-                                )
-    
-    #message containing success or failure message
-    message = ""
-    if new_contigs == None:
-        message = """Your job has finished running on metagenomics.uwaterloo.ca.
-                        The job was unsuccessful."""
-    else:      
-        message = """Your job has finished running on metagenomics.uwaterloo.ca.
-                        The following contigs now have annotations:
-                            %s
-                    """ %(new_contigs)
-    
-    #call mail function and send message to input email
-    system("(echo message;) | mail -s '[Metagenomics]Annotation Tool Processing Complete' " + email)
-        
+
 
 #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
 def save_images(folder):
@@ -226,11 +188,16 @@ def ContigTool(request):
             results = contig_pipeline(pool, cos_selected)
             entries = []
             for row in results:
+                #cosmid name, strand location, contig name
                 entry = row[0:3]
+                #percent identity
                 entry.append(row[5])
+                #end tag length
                 entry.append(row[7])
-                entry.append(row[11])
+                #contig length
                 entry.append(row[12])
+                #match type
+                entry.append(row[13])
                 entries.append(entry)
             #send to submit page for contig selection 
             var = RequestContext(request, {'results': entries})
@@ -242,25 +209,26 @@ def ContigTool(request):
 #displays results of contig retrieval for selection into the database
 @login_required
 def ContigToolResults(request):
+    joins = {}
     if request.method == 'POST':
         if 'submit' in request.POST:
             cosmidcontigs = request.POST.getlist('select')
     
-        pattern = re.compile(r'^(.+)<\$\$>(.+)$')
-
-        joins = {}
-        for pair in cosmidcontigs:
-            match = pattern.match(pair)
-            joins[match.group(1)] = match.group(2)
-        
-        cosmids = []
-        for join in joins:
-            cosmid = Cosmid.objects.get(cosmid_name=join)
-            contig = Contig.objects.get(contig_name=joins[join])
-            contig.cosmid.add(cosmid)
-            cosmids.append(join)
-        pdb.set_trace()
-        return HttpResponseRedirect('/results/basic/cosmid?query=' + ' '.join(cosmids))
+            pattern = re.compile(r'^(.+)<\$\$>(.+)$')
+    
+            for pair in cosmidcontigs:
+                match = pattern.match(pair)
+                joins[match.group(1)] = match.group(2)
+            
+            cosmids = []
+            for cos, con in joins.items():
+                cosmid = Cosmid.objects.get(cosmid_name=cos)
+                contig = Contig.objects.get(contig_name=con.lstrip())
+                
+                contig.cosmid.add(cosmid)
+                cosmids.append(cos)
+            
+            return HttpResponseRedirect('/results/basic/cosmid?query=' + ' '.join(cosmids))
     
     return render_to_response('tool_contig_submit.html', {'results': joins}, context_instance=RequestContext(request))
 
@@ -274,7 +242,7 @@ def read_csv(file_location):
         for row in reader:
             rows.append(row)
     csvfile.closed
-    #system("rm %s" %file_location)
+    system("rm %s" %file_location)
     return rows
 
 #this function is only called by other views, not directly associated with a URL
@@ -338,7 +306,7 @@ def orf_data(contig_list):
 
 #this function is only called by other views, not directly associated with a URL
 def write_lib(contigs, orfs, anno):
-    with open("data.lib", 'w') as f:
+    with open("annotation_tool/data.lib", 'w') as f:
         data = File(f)
         data.write('#!/usr/bin/perl \n sub data{\n')
         for c_id, name, seq, access in contigs:

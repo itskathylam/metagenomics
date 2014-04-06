@@ -24,7 +24,6 @@ urlpatterns = patterns('',
     #Tools Views
     url(r'^tools/contig/$', ContigTool, name='contig'),
     url(r'^tools/annotation/$', AnnotationTool, name='annotation'),
-    url(r'^tools/annotation/results/$', AnnotationToolResults, name='annotation-results'),
     url(r'^tools/contig/results/$', ContigToolResults, name='contig-tool-results'),
 
     
