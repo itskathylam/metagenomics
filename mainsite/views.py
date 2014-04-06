@@ -100,12 +100,23 @@ def AnnotationTool(request):
             else:
                 #retrieve data and write the library file for selected contigs 
                 orf_data(contigs)
+                c_names = []
+                for con in con_name:
+                    c_names.append(str(con))
                 
+                #email message of contigs selected for annotation
+                message = "You have selected the following contigs to be annotated: %s." %(c_names) + "    You will recieve an email once the process has complete indictating which contigs were successful."
+           
+                #call mail function and send message to input email
+                system("(echo %s" %message + ";) | mail -s '[Metagenomics]Annotation Tool Processing Complete' " + email)
+                
+                #call the perl annotations script in the background
                 system("tsp perl annotation_tool/annotation_pipeline.pl -annotate &")
-                #call the processor python script in the bg
-                system("python manage.py runscript annotation_processor email &")
                 
-                return render_to_response('tool_annotation_submit_message.html', {'contigs': contigs, 'email':email})
+                #call the processor python script in the background
+                system("python manage.py runscript annotation_processor %s &" %email)
+                
+                return render_to_response('tool_annotation_submit_message.html', {'contigs': contigs, 'email':email}, context_instance=RequestContext(request))
                 
     return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
     
