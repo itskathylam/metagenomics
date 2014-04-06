@@ -132,7 +132,7 @@ class ORF(models.Model):
     contig = models.ManyToManyField(Contig, through='Contig_ORF_Join')
 
     def __unicode__(self):
-        return self.id
+        return unicode(self.id)
     
     class Meta:
         verbose_name_plural = 'ORFs'   

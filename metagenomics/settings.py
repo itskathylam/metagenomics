@@ -57,6 +57,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django_extensions',
     'mainsite',
     'django.contrib.staticfiles', # added by Kathy for css
     'reversion',  #app that allows tracking of database changes
