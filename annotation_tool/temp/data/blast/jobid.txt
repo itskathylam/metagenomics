@@ -1,8 +1,10 @@
-scaffold77_1, 2805698
+pool1_scaffold155_1, 2812481
 
-scaffold58_1, 2805699
+pool1_scaffold248_1, 2812482
 
-scaffold77_1, 2805700
+pool1_scaffold242_1, 2812483
 
-scaffold58_1, 2805701
+pool1_scaffold190_1, 2812484
+
+pool1_scaffold42_1, 2812485
 

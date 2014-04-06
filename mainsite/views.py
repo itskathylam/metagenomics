@@ -100,6 +100,7 @@ def AnnotationTool(request):
             else:
                 #retrieve data and write the library file for selected contigs 
                 orf_data(contigs)
+                
                 system("tsp perl annotation_tool/annotation_pipeline.pl -annotate &")
                 #call the processor python script in the bg
                 system("python manage.py runscript annotation_processor email &")
@@ -107,7 +108,8 @@ def AnnotationTool(request):
                 return render_to_response('tool_annotation_submit_message.html', {'contigs': contigs, 'email':email})
                 
     return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
-
+    
+    
 #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
 def save_images(folder):
     re_contigname = re.compile('^(.+)-(ALIGN|CONTIG|GLIM|GENBANK|MANUAL)\.png$')
