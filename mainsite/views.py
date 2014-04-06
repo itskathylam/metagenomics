@@ -33,8 +33,19 @@ import base64 #used to convert pngs to base64 for database storage
 from re import match
 import csv
 
-#Main, About etc
+from django.utils import daemonize
 
+#Main, About etc
+class DaemonAnnotation(daemonize):
+    def __init__(self):
+        self.pidfile = "/daemon/out/pid"
+        self.stdin = "/daemon/out/in"
+        self.stdout = "/daemon/out/out"
+        self.stderr = "/daemon/out/err"
+    
+    def run(self):
+        system("ls")
+    
 @login_required
 def MainPage(request):
     template_name = 'index.html'
@@ -102,8 +113,6 @@ def AnnotationTool(request):
                 #retrieve data and write the library file for selected contigs 
                 orf_data(contigs)
                 contigs = Contig.objects.filter(contig_name__in = con_name)
-                #redirect to success page 
-                AnnotationToolResults(contigs, email)         
                 
     return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
     
@@ -125,33 +134,18 @@ def AnnotationToolResults(contigs, email):
                 new_orf = obj
             else:
                 new_orf = ORF.objects.create(orf_sequence = row[2], annotation = row[5])
+                ##call the annotations Perl script, will utilize the library file created on annotation tool page
+                #system("perl annotation_tool/annotation_pipeline.pl -annotate &")
                 
-        Contig_ORF_Join.objects.create(
-                                    contig = contig,
-                                    orf = new_orf,
-                                    start = row[6],
-                                    stop = row[7],
-                                    complement =  1 if row[8] < 0 else 0,
-                                    orf_accession = None,
-                                    predicted = 1,
-                                    prediction_score = row[9],
-                                )
-    
-    #message containing success or failure message
-    message = ""
-    if new_contigs == None:
-        message = """Your job has finished running on metagenomics.uwaterloo.ca.
-                        The job was unsuccessful."""
-    else:      
-        message = """Your job has finished running on metagenomics.uwaterloo.ca.
-                        The following contigs now have annotations:
-                            %s
-                    """ %(new_contigs)
-    
-    #call mail function and send message to input email
-    system("(echo message;) | mail -s '[Metagenomics]Annotation Tool Processing Complete' " + email)
-    
-    return render_to_response('tool_annotation_submit_message.html', {'contigs': contigs, 'email':email})
+                #call the processor python script in the bg
+                system("python manage.py runscript annotation_processor &")
+
+                
+                #give the user a success page
+                return render_to_response('tool_annotation_submit_message.html', {'contigs': contigs, 'email':email})
+                            
+    return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
+
 
 #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
 def save_images(folder):
@@ -187,7 +181,8 @@ def ContigTool(request):
     #display details for the selected pool 
     if request.method == "POST":
         if 'detail' in request.POST:
-            system("python manage.py my_command")
+
+            daemon = DaemonAnnotation()
             pool_id =  request.POST['pool']            
             pool = Pooled_Sequencing.objects.all()
             details = Pooled_Sequencing.objects.filter(id = pool_id)
