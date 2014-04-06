@@ -86,7 +86,7 @@ def AnnotationTool(request):
     #after submit collect email and contig selection
     if request.method == "POST":
         if 'submit' in request.POST:
-
+            
             email = request.POST['email']
             con_name = request.POST.getlist('contig')
             contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
@@ -110,7 +110,7 @@ def AnnotationTool(request):
 #annotation tool success page, displays the contigs selected and the email the results will send to
 def AnnotationToolResults(contigs, email):
     #call the annotations Perl script, will utilize the library file created on annotation tool page
-    system("perl annotation_tool/annotation_pipeline.pl -annotate &")
+    system("tsp perl annotation_tool/annotation_pipeline.pl -annotate &")
     #save the annotation images for each contig, created by the script
     save_images("tool")
     
@@ -187,6 +187,7 @@ def ContigTool(request):
     #display details for the selected pool 
     if request.method == "POST":
         if 'detail' in request.POST:
+            system("python manage.py my_command")
             pool_id =  request.POST['pool']            
             pool = Pooled_Sequencing.objects.all()
             details = Pooled_Sequencing.objects.filter(id = pool_id)
