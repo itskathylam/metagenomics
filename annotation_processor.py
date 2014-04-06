@@ -19,7 +19,34 @@ def read_csv(file_location):
             rows.append(row)
     csvfile.closed
     system("rm %s" %file_location)
-    return rows          
+    return rows
+
+#gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
+def save_images(folder):
+    re_contigname = re.compile('^(.+)-(ALIGN|CONTIG|GLIM|GENBANK|MANUAL)\.png$')
+    for file in listdir('annotation_tool/%s/img/' %folder):
+        with open("annotation_tool/%s/img/" %folder + file,  "rb") as img:
+            imgbinary = base64.b64encode(img.read())
+        
+        filename = re_contigname.match(file)
+        
+        imgcontigname = filename.group(1)
+        contig = Contig.objects.get(contig_name=imgcontigname)
+          
+        if filename.group(2) == 'ALIGN':
+            contig.image_align = imgbinary
+        elif filename.group(2) == 'CONTIG':
+            contig.image_contig = imgbinary
+        elif filename.group(2) == 'GLIM':
+            contig.image_predicted = imgbinary
+        elif filename.group(2) == 'GENBANK':
+            contig.image_genbank = imgbinary
+        elif filename.group(2) =='MANUAL':
+            contig.image_manual = imgbinary
+        else:
+            #ERROR CATCHING THERE IS A PNG WITH NO MATCH???
+            pass
+        contig.save()
 
 
 def AnnotationProcessor():
@@ -33,32 +60,32 @@ def AnnotationProcessor():
             
             #remove the logging file
             system("rm test.txt")
-            
-            ##save the annotation images for each contig, created by the script
-            #save_images("tool")
-            
+              
+            #save the annotation images for each contig, created by the script
+            save_images("tool")
             #read the results from the Perl script to add/update new contig-orf joins into the database
             results = read_csv("annotations.csv")
             new_contigs = []
             for row in results:
-                contig = Contig.objects.filter(contig_name = row[0])
-                new_contigs.append(row[0])
-                for obj in ORF.objects.all():
-                    if row[2] == obj.orf_sequence:
-                        new_orf = obj
-                    else:
-                        new_orf = ORF.objects.create(orf_sequence = row[2], annotation = row[5])
-                        
-                Contig_ORF_Join.objects.create(
-                                            contig = contig,
-                                            orf = new_orf,
-                                            start = row[6],
-                                            stop = row[7],
-                                            complement =  1 if row[8] < 0 else 0,
-                                            orf_accession = None,
-                                            predicted = 1,
-                                            prediction_score = row[9],
-                                        )
+            contig = Contig.objects.filter(contig_name = con_name)
+            
+            new_contigs.append(con_name)
+            for obj in ORF.objects.all():
+                if row[2] == obj.orf_sequence:
+                    new_orf = obj
+                else:
+                    new_orf = ORF.objects.create(orf_sequence = row[2], annotation = row[5])
+                    
+            Contig_ORF_Join.objects.create(
+                                        contig = contig,
+                                        orf = new_orf,
+                                        start = row[6],
+                                        stop = row[7],
+                                        complement =  1 if row[8] < 0 else 0,
+                                        orf_accession = None,
+                                        predicted = 1,
+                                        prediction_score = row[9],
+                                    )
             
             #message containing success or failure message
             message = ""

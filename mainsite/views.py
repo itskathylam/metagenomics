@@ -33,18 +33,6 @@ import base64 #used to convert pngs to base64 for database storage
 from re import match
 import csv
 
-from django.utils import daemonize
-
-#Main, About etc
-class DaemonAnnotation(daemonize):
-    def __init__(self):
-        self.pidfile = "/daemon/out/pid"
-        self.stdin = "/daemon/out/in"
-        self.stdout = "/daemon/out/out"
-        self.stderr = "/daemon/out/err"
-    
-    def run(self):
-        system("ls")
     
 @login_required
 def MainPage(request):
@@ -112,40 +100,13 @@ def AnnotationTool(request):
             else:
                 #retrieve data and write the library file for selected contigs 
                 orf_data(contigs)
-                contigs = Contig.objects.filter(contig_name__in = con_name)
-                
-    return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
-    
-#annotation tool success page, displays the contigs selected and the email the results will send to
-def AnnotationToolResults(contigs, email):
-    #call the annotations Perl script, will utilize the library file created on annotation tool page
-    system("tsp perl annotation_tool/annotation_pipeline.pl -annotate &")
-    #save the annotation images for each contig, created by the script
-    save_images("tool")
-    
-    #read the results from the Perl script to add/update new contig-orf joins into the database
-    results = read_csv("annotation_tool/tool/out/annotations.csv")
-    new_contigs
-    for row in results:
-        contig = Contig.objects.filter(contig_name = row[0])
-        new_contigs.append(row[0])
-        for obj in ORF.objects.all():
-            if row[2] == obj.orf_sequence:
-                new_orf = obj
-            else:
-                new_orf = ORF.objects.create(orf_sequence = row[2], annotation = row[5])
-                ##call the annotations Perl script, will utilize the library file created on annotation tool page
-                #system("perl annotation_tool/annotation_pipeline.pl -annotate &")
-                
+                system("tsp perl annotation_tool/annotation_pipeline.pl -annotate &")
                 #call the processor python script in the bg
-                system("python manage.py runscript annotation_processor &")
-
+                system("python manage.py runscript annotation_processor email &")
                 
-                #give the user a success page
                 return render_to_response('tool_annotation_submit_message.html', {'contigs': contigs, 'email':email})
-                            
+                
     return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
-
 
 #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
 def save_images(folder):
@@ -182,7 +143,6 @@ def ContigTool(request):
     if request.method == "POST":
         if 'detail' in request.POST:
 
-            daemon = DaemonAnnotation()
             pool_id =  request.POST['pool']            
             pool = Pooled_Sequencing.objects.all()
             details = Pooled_Sequencing.objects.filter(id = pool_id)
