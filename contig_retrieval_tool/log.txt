@@ -1,0 +1,6 @@
+********************************
+Execution of Contig Retrieval Pipeline
+********************************
+Executing Endtag Setup
+Matching the contigs to the cosmids
+Contigs Retrieval Complete

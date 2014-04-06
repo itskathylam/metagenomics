@@ -11,33 +11,6 @@ from os import system, listdir
 from re import match
 from mainsite.models import Contig, ORF, Contig_ORF_Join
 
-#gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
-def save_images(folder):
-    re_contigname = re.compile('^(.+)-(ALIGN|CONTIG|GLIM|GENBANK|MANUAL)\.png$')
-    for file in listdir('annotation_tool/%s/img/' %folder):
-        with open("annotation_tool/%s/img/" %folder + file,  "rb") as img:
-            imgbinary = base64.b64encode(img.read())
-        
-        filename = re_contigname.match(file)
-        
-        imgcontigname = filename.group(1)
-        contig = Contig.objects.get(contig_name=imgcontigname)
-          
-        if filename.group(2) == 'ALIGN':
-            contig.image_align = imgbinary
-        elif filename.group(2) == 'CONTIG':
-            contig.image_contig = imgbinary
-        elif filename.group(2) == 'GLIM':
-            contig.image_predicted = imgbinary
-        elif filename.group(2) == 'GENBANK':
-            contig.image_genbank = imgbinary
-        elif filename.group(2) =='MANUAL':
-            contig.image_manual = imgbinary
-        else:
-            #ERROR CATCHING THERE IS A PNG WITH NO MATCH???
-            pass
-        contig.save()
-
 
 def run():
     
@@ -61,7 +34,30 @@ def run():
             
             
             #save the annotation images for each contig, created by the script
-            save_images("tool")
+            re_contigname = re.compile('^(.+)-(ALIGN|CONTIG|GLIM|GENBANK|MANUAL)\.png$')
+            for file in listdir('annotation_tool/tool/img/'):
+                with open("annotation_tool/tool/img/"  + file,  "rb") as img:
+                    imgbinary = base64.b64encode(img.read())
+        
+                filename = re_contigname.match(file)
+                
+                imgcontigname = filename.group(1)
+                contig = Contig.objects.get(contig_name=imgcontigname)
+                  
+                if filename.group(2) == 'ALIGN':
+                    contig.image_align = imgbinary
+                elif filename.group(2) == 'CONTIG':
+                    contig.image_contig = imgbinary
+                elif filename.group(2) == 'GLIM':
+                    contig.image_predicted = imgbinary
+                elif filename.group(2) == 'GENBANK':
+                    contig.image_genbank = imgbinary
+                elif filename.group(2) =='MANUAL':
+                    contig.image_manual = imgbinary
+                else:
+                    #ERROR CATCHING THERE IS A PNG WITH NO MATCH???
+                    pass
+                contig.save()
             
             new_contigs = []
             for row in results:

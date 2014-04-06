@@ -77,27 +77,27 @@
                 <textarea rows="15" cols="70" readonly=true>{{ list.contig_sequence }}</textarea></label><br><br>
                     {% if 'contig' not in blank %}
                         <div class="link" style="max-height:100px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
-                        <img src="{{ STATIC_URL }}tempdisplay/{{ name }}contig.png">
+                        <img src="{{ STATIC_URL }}tempdisplay/{{ list.contig_name }}contig.png">
                         </div>
                     {% endif %}
                     {% if 'align' not in blank %}
                         <div class="link" style="max-height:100px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
-                        <img src="{{ STATIC_URL }}tempdisplay/{{ name }}align.png">
+                        <img src="{{ STATIC_URL }}tempdisplay/{{ list.contig_name }}align.png">
                         </div>
                     {% endif %}
                     {% if 'genbank' not in blank %}
                         <div class="link" style="max-height:150px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
-                        <img src="{{ STATIC_URL }}tempdisplay/{{ name }}genbank.png">
+                        <img src="{{ STATIC_URL }}tempdisplay/{{ list.contig_name }}genbank.png">
                         </div>
                     {% endif %}
                     {% if 'predicted' not in blank %}
                         <div class="link" style="max-height:150px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
-                        <img src="{{ STATIC_URL }}tempdisplay/{{ name }}predicted.png">
+                        <img src="{{ STATIC_URL }}tempdisplay/{{ list.contig_name }}predicted.png">
                         </div>
                     {% endif %}
                     {% if 'manual' not in blank %}
                         <div class="link" style="max-height:150px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
-                        <img src="{{ STATIC_URL }}tempdisplay/{{ name }}manual.png">
+                        <img src="{{ STATIC_URL }}tempdisplay/{{ list.contig_name }}manual.png">
                         </div>
                     {% endif %}
                 <br>

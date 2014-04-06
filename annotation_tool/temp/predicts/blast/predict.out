@@ -1,0 +1,47 @@
+              job id: 2812660
+         exit status: 0
+            cpu time: 452s / 3.4h (3 %)
+        elapsed time: 734s / 3060s (23 %)
+      virtual memory: 2.3G / 3.0G (76 %)
+
+Job completed successfully
+WARNING: Job only used 23% of its requested walltime.
+WARNING: Job only used 3% of its requested cpu time.
+WARNING: Job only used 76% of its requested memory.
+Selenocysteine (U) at position 109 replaced by X
+              job id: 2812661
+         exit status: 0
+            cpu time: 1.2h / 9.5h (13 %)
+        elapsed time: 3075s / 2.4h (35 %)
+      virtual memory: 2.6G / 3.0G (85 %)
+
+Job completed successfully
+WARNING: Job only used 35% of its requested walltime.
+WARNING: Job only used 13% of its requested cpu time.
+              job id: 2812657
+         exit status: 0
+            cpu time: 1.4h / 9.7h (14 %)
+        elapsed time: 1.1h / 2.4h (46 %)
+      virtual memory: 2.5G / 3.0G (81 %)
+
+Job completed successfully
+WARNING: Job only used 46% of its requested walltime.
+WARNING: Job only used 14% of its requested cpu time.
+              job id: 2812658
+         exit status: 0
+            cpu time: 1.3h / 10.4h (12 %)
+        elapsed time: 1.2h / 2.6h (45 %)
+      virtual memory: 2.5G / 3.0G (83 %)
+
+Job completed successfully
+WARNING: Job only used 45% of its requested walltime.
+WARNING: Job only used 12% of its requested cpu time.
+              job id: 2812659
+         exit status: 0
+            cpu time: 1.2h / 9.4h (13 %)
+        elapsed time: 1.2h / 2.4h (49 %)
+      virtual memory: 2.6G / 3.0G (85 %)
+
+Job completed successfully
+WARNING: Job only used 49% of its requested walltime.
+WARNING: Job only used 13% of its requested cpu time.

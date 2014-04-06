@@ -203,14 +203,10 @@ nav ul ul ul {
 }
 
 #tool1 {
-    border: solid;
     display: inline-block;
     float: left;
     margin: 0 20px 20px 0;
     padding: 20px;
-    border-width: thin;
-    border-radius: 4px;
-    box-shadow: 3px 3px 5px #888;
 }
 #tool2 {
     
@@ -220,10 +216,6 @@ nav ul ul ul {
     display: inline-block;
     margin: 0 20px 20px 20px;
     padding: 20px;
-    border: solid;
-    border-width: thin;
-    border-radius: 4px;
-    box-shadow: 3px 3px 5px #888;
 }
 
 .joinedtable {

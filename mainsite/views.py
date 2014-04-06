@@ -105,7 +105,7 @@ def AnnotationTool(request):
                     c_names.append(str(con))
                 
                 #email message of contigs selected for annotation
-                message = "You have selected the following contigs to be annotated: %s." %(c_names) + "    You will recieve an email once the process has complete indictating which contigs were successful."
+                message = "You have selected the following contigs to be annotated: %s." %(c_names) + "    You will recieve an email once the process is complete, indictating which contigs were successful."
            
                 #call mail function and send message to input email
                 system("(echo %s" %message + ";) | mail -s '[Metagenomics]Annotation Tool Processing Complete' " + email)

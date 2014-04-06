@@ -1,0 +1,105 @@
+####################################################
+Looking at genbank file: spool1_scaffold42_1.gbk
+$VAR1 = [
+          1326987,
+          1359499
+        ];
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+####################################################
+Looking at genbank file: spool1_scaffold42_1.gbk
+$VAR1 = [
+          1326987,
+          1359499
+        ];
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+####################################################
+Looking at genbank file: spool1_scaffold42_1.gbk
+$VAR1 = [
+          1326987,
+          1359499
+        ];
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
+Successfully entered into the IF with: 1326987  and 1359499
