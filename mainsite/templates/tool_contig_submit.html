@@ -14,7 +14,7 @@
 <form action="{% url 'contig-tool-results' %}" method='POST'>
 {% csrf_token %}
 <table style="border-collapse: separate; border-spacing: 1px">
-<tr><th>Cosmid Name</th><th>Select Contig</th><th>Strand</th><th>Contig Name</th><th>Percent Identity</th><th>End Tag Length</th><th>Contig Length</th><th>Match Type</th></tr>
+<tr><th>Cosmid Name</th><th>Select Contig</th><th>End Tag</th><th>Contig Name</th><th>Percent Identity</th><th>End Tag Length</th><th>Contig Length</th><th>Match Type</th></tr>
 
     {% for cos, strand, con, iden, endlen, conlen, match in results %}
 <tr>

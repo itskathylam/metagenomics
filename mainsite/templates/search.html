@@ -1,7 +1,4 @@
 {% extends "base.html" %}
-
-{# i dont think this page is currently in use - phil #}
-
 {% block head %}
     <title>
         {% block pagetitle%}
@@ -23,7 +20,8 @@
 
 {% block second %}
     <section id="second">
-        <h3>Quick Links</h3>
+        <h3>Links</h3>
+        <a href="/help/userdoc#Detail"><img src="{{ STATIC_URL }}icons/helpblack32.png" >Help</a>
         {% block link %}
         {% endblock %}
     </section>

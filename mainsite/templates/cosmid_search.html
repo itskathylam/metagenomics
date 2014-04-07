@@ -47,35 +47,8 @@
 
 {% block second %}
     <section id="second">
-        <h3>Quick Links</h3>
+        <h3>Links</h3>
         <a href="{% url 'cosmid-end-tag-list' %}"><img class="viewall" src="{{ STATIC_URL }}icons/allblack.png" alt="all">View All</a><br>
+        <a href="/help/userdoc#Detail"><img src="{{ STATIC_URL }}icons/helpblack32.png" >Help</a><br>
     </section>
 {% endblock %}
-
-{# 
-<!--add tag extends "search.html" add tag
-
-{% block pagetitle%}
-    Search Cosmids
-{% endblock %}
-
-{% block title %}
-    <img src="{{ STATIC_URL }}icons/search64.png"><h2 class="search">Search Cosmids</h2>
-{% endblock %}
-
-{% block urlform %}
-    {% url 'cosmid-results' %}
-{% endblock %}
-    
-{% block methodform %}
-    get
-{% endblock %}
-
-{% block form %}
-    {{ form }}
-{% endblock %}
-
-{% block link %}
-<a href="{% url 'cosmid-end-tag-list' %}"><img class="viewall" src="{{ STATIC_URL }}icons/allblack.png" alt="all">View All</a><br>
-{% endblock %}-->
-#}

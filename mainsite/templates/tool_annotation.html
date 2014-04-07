@@ -15,7 +15,7 @@
 
 {% block content %}
     
-<p>This custom tool assists with annotating contig sequences to facilitate the identification of genes responsible for functions of interest.
+<p>This <a href='{{ STATIC_URL }}annotation-flow.png'>custom tool</a> assists with annotating contig sequences to facilitate the identification of genes responsible for functions of interest.
 Note that this tool only operates on Contigs that have been associated with Cosmid clones through use of the
 <a href='{% url 'contig' %}'>Contig Retrieval</a> tool. This tool performs two kinds of ORF annotations.
 <ul>
@@ -24,30 +24,34 @@ ORFs are used to BLAST against the RefSeq Protein database to retrieve the top s
 <li><b><p>Genbank</b>: The entire Contig sequence is used to BLAST against the Genbank nt database. The top significant hit is parsed for its
 ORFs/annotations; these genes can be used as a point reference, and can be compared to the FGS prediction/RefSeq annotation results.</p>
 </ul>
-<form action = "{% url "annotation" %}" method="post">{% csrf_token %}
-<p>Please provide an e-mail to which notification will be sent when the jobs are completed:</p>
-<table>{{ email_form }}</table>
-<p>All Contigs are shown below, with their associated Cosmids. Please select up to 20 Contigs for annotation:</p>
 
-{% block errors %}
-    {% for key,value in form_errors.items %}
-        <p><font color="red">{{ value }}</font></p>
-    {% endfor %}
-{% endblock %}
-
-<table class="tool">
-    <tr><th>Contig Name</th><th>Associated Cosmids</th></tr>
-    {% for contig in all_contigs %}
-        {% if contig.cosmid.all %}
-        <tr><td><input type="checkbox" name="contig" value={{contig.contig_name}}> <a href="{% url 'contig-list' %}{{ contig.contig_name }}">{{ contig.contig_name }}</a></td><td>
-        {% endif %}
-        {% for cosmid in contig.cosmid.all %}
-            <a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.cosmid_name }}</a>, 
+{% if all_contigs %}
+    <form action = "{% url "annotation" %}" method="post">
+    {% csrf_token %}
+    <p>Please provide an e-mail to which notification will be sent when the jobs are completed:</p>
+    <table>{{ email_form }}</table>
+    <p>All Contigs are shown below, with their associated Cosmids. Please select up to 20 Contigs for annotation:</p>
+    
+    {% block errors %}
+        {% for key,value in form_errors.items %}
+            <p><font color="red">{{ value }}</font></p>
         {% endfor %}
-        </td></tr>
-    {% endfor %}    
-</table>
-<input type="submit" name ="submit"  value="Run">
-</form>
+    {% endblock %}
+    
+    <table class="tool">
+        <tr><th>Contig Name</th><th>Associated Cosmids</th></tr>
+        {% for contig in all_contigs %}
+            {% if contig.cosmid.all %}
+            <tr><td><input type="checkbox" name="contig" value={{contig.contig_name}}> <a href="{% url 'contig-list' %}{{ contig.contig_name }}">{{ contig.contig_name }}</a></td><td>
+            {% endif %}
+            {% for cosmid in contig.cosmid.all %}
+                <a href="{% url 'cosmid-end-tag-list' %}{{ cosmid.cosmid_name }}">{{ cosmid.cosmid_name }}</a>, 
+            {% endfor %}
+            </td></tr>
+        {% endfor %}    
+    </table>
+    <input type="submit" name ="submit"  value="Run">
+    </form>
+{% endif %}
 
 {% endblock %}
