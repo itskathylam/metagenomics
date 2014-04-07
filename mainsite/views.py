@@ -108,7 +108,7 @@ def AnnotationTool(request):
                 message = "You have selected the following contigs to be annotated: %s." %(c_names) + "    You will recieve an email once the process is complete, indictating which contigs were successful."
            
                 #call mail function and send message to input email
-                system("(echo %s" %message + ";) | mail -s '[Metagenomics]Annotation Tool Processing Complete' " + email)
+                system("(echo %s" %message + ";) | mail -s '[Metagenomics]Annotation Tool Processing' " + email)
                 
                 #call the perl annotations script in the background
                 system("tsp perl annotation_tool/annotation_pipeline.pl -annotate &")
@@ -172,7 +172,10 @@ def ContigTool(request):
                     joined.append(cosmid)
                 else:
                     notjoined.append(cosmid)
-            context = {'poolselect': int(pool_id), 'pool': pool, 'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
+            
+            space_left = int(Pooled_Sequencing.objects.get(id = pool_id).max_number) - len(joined)
+          
+            context = {'poolselect': int(pool_id), 'pool': pool,'space':space_left, 'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
         
         #contigs selected are sent through the pipeline to call perl script
         #returns list of list of the results of the script for display 

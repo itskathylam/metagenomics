@@ -56,9 +56,10 @@ have two end-tags; if a cosmid has one or zero end-tags, it is simply ignored.</
         {% for selected in detail %}
             <tr><th>Selected Pool</th><td>{{selected.id}}</td></tr>
             <tr><th>Service Provider</th><td>{{selected.service_provider}}</td></tr>
-            <tr><th>Max Clones for Pool</th><td>{{selected.max_number}}</td></tr>
+            <tr><th>Max Cosmids for Pool</th><td>{{selected.max_number}}</td></tr>
             <tr><th>NCBI SRA Accession</th><td>{{selected.ncbi_sra_accession}}</td></tr>
             <tr><th>Comments</th><td>{{selected.pool_comments}}</td></tr>
+            <tr><th>Spaces left in Pool</th><td>{{ space }}</td></tr>
         {% endfor %}    
     </table>
 
@@ -84,7 +85,7 @@ have two end-tags; if a cosmid has one or zero end-tags, it is simply ignored.</
 {% if joined %}
 <div class="joinedtable">
     <table>
-        <tr><th>Cosmids in Pool that are already associated with contigs</th></tr>
+        <tr><th>Cosmids in Pool that have associated Contigs</th></tr>
         {% for j in joined %}
             <tr><td>{{ j }}</td></tr>
         {% endfor %}
