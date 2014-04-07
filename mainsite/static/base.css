@@ -7,7 +7,10 @@
 */
 /*@import url("reset.css");*/
 
-
+/* add something like this to stop the menu from wrapping. Not sure how to do that yet.
+.bodywrap{
+    min-width: 1200px;
+}*/
 
 /* images */
 img.download {
@@ -48,7 +51,7 @@ header {
     top: 0;
     left: 0;
     right: 0;
-    height: 100px;
+    height: 142px;
     background-color: #FCD450;
     font-family: verdana, arial, sans-serif;
     box-shadow: 0px 8px 6px -6px #888888;
