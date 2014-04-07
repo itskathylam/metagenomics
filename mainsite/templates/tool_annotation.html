@@ -15,7 +15,7 @@
 
 {% block content %}
     
-<p>This custom tool assists with annotating contig sequences to facilitate the identification of genes responsible for functions of interest.
+<p>This <a href='{{ STATIC_URL }}annotation-flow.png'>custom tool</a> assists with annotating contig sequences to facilitate the identification of genes responsible for functions of interest.
 Note that this tool only operates on Contigs that have been associated with Cosmid clones through use of the
 <a href='{% url 'contig' %}'>Contig Retrieval</a> tool. This tool performs two kinds of ORF annotations.
 <ul>

@@ -404,11 +404,11 @@ input[type=submit] {
     color: #000;
 }
 .tabs .tabContent table td {
-    background-color: #888;
-    color: #fff;
+    background-color: #FBFBFB;
+    color: #000;
     text-align: center;
 }
 
 .tabs .tabContent table a {
-    color: #fff;
+    color: #000;
 }
