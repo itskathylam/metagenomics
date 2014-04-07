@@ -83,7 +83,7 @@
                 {% else %}
                         <td>&nbsp;</td>
                 {% endif %}
-                <td>{{ cosmid.cosmid_comments }}</td>
+                <td>{% if cosmid.cosmid_comments != None %}{{ cosmid.cosmid_comments }}{% endif %}</td>
             </tr>
         {% endfor %}
     </table>
