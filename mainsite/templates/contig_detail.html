@@ -39,6 +39,7 @@
 {% endblock %}
 
 {% block orfimg %}
+<div style="clear:both;">
     {% if 'contig' not in blank %}
         <div class="link" style="max-height:100px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
         <img src="{{ STATIC_URL }}tempdisplay/{{ name }}contig.png">
@@ -65,6 +66,7 @@
         </div>
     {% endif %}
     
+    {% if orfresults %}
     <p>Open reading frames in {{ name }}</p>
     <p><a href="{% url 'orf-contig-add' %}">Add new ORF</a></p>
     <table>
@@ -101,6 +103,8 @@
         </tr>
     {% endfor %}
     </table>
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block link %}
