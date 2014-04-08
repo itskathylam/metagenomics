@@ -81,7 +81,11 @@ def AnnotationTool(request):
     
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
-    testpicture = ''
+    #for contig in Contig.objects.all():
+    #    for join in Contig_ORF_Join.objects.all():
+    #        if not contig == join.contig:
+    #            all_contigs.append(contig)
+
     #after submit collect email and contig selection
     if request.method == "POST":
         if 'submit' in request.POST:
@@ -105,7 +109,7 @@ def AnnotationTool(request):
                     c_names.append(str(con))
                 
                 #email message of contigs selected for annotation
-                message = "You have selected the following contigs to be annotated: %s." %(c_names) + "    You will recieve an email once the process is complete, indictating which contigs were successful."
+                message = "You have selected the following contigs to be annotated: %s." %(c_names) + "    You will recieve an email once the process is complete, indicating which contigs were successful."
            
                 #call mail function and send message to input email
                 system("(echo %s" %message + ";) | mail -s '[Metagenomics]Annotation Tool Processing' " + email)
@@ -173,9 +177,8 @@ def ContigTool(request):
                 else:
                     notjoined.append(cosmid)
             
-            space_left = int(Pooled_Sequencing.objects.get(id = pool_id).max_number) - len(joined)
           
-            context = {'poolselect': int(pool_id), 'pool': pool,'space':space_left, 'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
+            context = {'poolselect': int(pool_id), 'pool': pool,'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
         
         #contigs selected are sent through the pipeline to call perl script
         #returns list of list of the results of the script for display 
@@ -1071,6 +1074,8 @@ def ContigDetail(request, contig_name):
     for o in orfresults:
         orfids.append(o.orf_id)
     orfseq = ORF.objects.filter(id__in=orfids)
+    orfids = set(orfids)
+    orfids =list(orfids)
     
     #get the picture and make a file.
     blankimg = GenerateImage(contig)

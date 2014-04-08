@@ -17,7 +17,7 @@
     
 <p>This <a href='{{ STATIC_URL }}annotation-flow.png'>custom tool</a> assists with annotating contig sequences to facilitate the identification of genes responsible for functions of interest.
 Note that this tool only operates on Contigs that have been associated with Cosmid clones through use of the
-<a href='{% url 'contig' %}'>Contig Retrieval</a> tool. This tool performs two kinds of ORF annotations.
+<a href='{% url 'contig' %}'>Contig Retrieval</a> tool, and with Contigs that have not yet been annotated. This tool performs two kinds of ORF annotations.
 <ul>
 <li><b><p>FragGeneScan</b>: Open Reading Frames are identified using FragGeneScan. Using the FGS translated sequences,
 ORFs are used to BLAST against the RefSeq Protein database to retrieve the top significant hit annotation.</p>
