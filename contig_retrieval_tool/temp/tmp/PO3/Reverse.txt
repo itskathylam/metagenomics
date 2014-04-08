@@ -394,7 +394,11 @@ Effective search space used: 2622696825
 
 
   Database: testdb
+<<<<<<< HEAD
+    Posted date:  Apr 7, 2014  3:13 AM
+=======
     Posted date:  Apr 7, 2014  2:07 AM
+>>>>>>> 407ff78882f761d5949550b0c09b047d676fcf68
   Number of letters in database: 6,585,561
   Number of sequences in database:  563
 

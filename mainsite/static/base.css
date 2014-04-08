@@ -208,7 +208,7 @@ nav ul ul ul {
 #tool1 {
     display: inline-block;
     float: left;
-    margin: 0 20px 20px 0;
+  /*  margin: 0 20px 20px 0;*/
     padding: 20px;
 }
 #tool2 {
@@ -217,8 +217,8 @@ nav ul ul ul {
     margin-bottom: 20px;*/
     float:left;
     display: inline-block;
-    margin: 0 20px 20px 20px;
-    padding: 20px;
+    /*margin: 0 20px 20px 20px;
+    padding: 20px;*/
 }
 
 .joinedtable {
