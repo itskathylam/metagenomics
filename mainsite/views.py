@@ -81,10 +81,11 @@ def AnnotationTool(request):
     
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
-    #for contig in Contig.objects.all():
-    #    for join in Contig_ORF_Join.objects.all():
-    #        if not contig == join.contig:
-    #            all_contigs.append(contig)
+    annotated_contigs = Contig_ORF_Join.objects.values('contig')
+    contigs = []
+    for con in all_contigs:
+        if not con in annotated_contigs:
+            contigs.append(con)
 
     #after submit collect email and contig selection
     if request.method == "POST":
@@ -131,7 +132,7 @@ def AnnotationTool(request):
                 
                 return render_to_response('tool_annotation_submit_message.html', {'contigs': contigs, 'email':email}, context_instance=RequestContext(request))
                 
-    return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs, 'form_errors': form_errors}, context_instance=RequestContext(request))
+    return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': contigs, 'form_errors': form_errors}, context_instance=RequestContext(request))
     
     
 #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
