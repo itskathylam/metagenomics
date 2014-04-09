@@ -46,21 +46,18 @@ if (scalar(@ARGV == 1)) {
                 print $log "Pinging $server.sharcnet.ca...\n";
                 print $log "Ping $ping\n";
                 system("echo \"$cwd\" > .message");
+                `tar -cvf $filename.tar temp/ tmp/ .message`;
                 
+                # Transfer of temp/ folder to sharcnet: /scratch/quever/metagenomics
+                print $log "Transfering contig information to Sharcnet...\n";
+                `scp $filename.tar quever\@$server.sharcnet.ca:/scratch/quever/metagenomics/`;
                 
-                #`tar -cvf $filename.tar temp/ tmp/ .message`;
-                #
-                ## Transfer of temp/ folder to sharcnet: /scratch/quever/metagenomics
-                #print $log "Transfering contig information to Sharcnet...\n";
-                #`scp $filename.tar quever\@$server.sharcnet.ca:/scratch/quever/metagenomics/`;
-                #
-                ## Running of the sharcnet pipeline to obtain the annotations by blasting each
-                ## contig and predicted ORF
-                #print $log "Transfer Complete.\n Executing sharcnet BLAST pipeline...\n";
-                #my $return = `ssh quever\@$server.sharcnet.ca perl /scratch/quever/metagenomics/sharc_mg_pipe.pl`;
-                #
+                # Running of the sharcnet pipeline to obtain the annotations by blasting each
+                # contig and predicted ORF
+                print $log "Transfer Complete.\n Executing sharcnet BLAST pipeline...\n";
+                my $return = `ssh quever\@$server.sharcnet.ca perl /scratch/quever/metagenomics/sharc_mg_pipe.pl`;
+                
                 #my $return = listenSN();
-                my $return = "Valid";
                 print "Sharcnet pipeline status: $return \n";
                 
                 if ($return) {

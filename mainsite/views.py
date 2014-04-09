@@ -81,12 +81,22 @@ def AnnotationTool(request):
     
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
-    testpicture = ''
+    annotated_contigs = Contig_ORF_Join.objects.values('contig')
+    contigs = []
+    for con in all_contigs:
+        if not con in annotated_contigs:
+            contigs.append(con)
+
     #after submit collect email and contig selection
     if request.method == "POST":
         if 'submit' in request.POST:
-            
             email = request.POST['email']
+            
+            #email must be entered
+            email = ''.join(email.split())
+            if email == "":
+                form_errors['error_email'] = "Error: e-mail address is required for job success notification."
+            
             con_name = request.POST.getlist('contig')
             contigs = Contig.objects.filter(contig_name__in = con_name).values('contig_name')
             
@@ -94,7 +104,11 @@ def AnnotationTool(request):
             length = len(con_name)
             max_length = 20 #set arbitrary number for now since we are not sure of what sharcnet is capcable of 
             if length > max_length:
-                form_errors['error'] = "Error: " + str(length) + " contigs chosen. Please select " + str(max_length) + " or fewer."
+                form_errors['error_contig_high'] = "Error: " + str(length) + " contigs chosen. Please select " + str(max_length) + " or fewer."
+            
+            #must have selected at least one contig to process
+            if length == 0:
+                form_errors['error_contig_zero'] = "Error: please select a contig to process."
             
             #process if number of contigs chosen is less than the max allowed 
             else:
@@ -105,10 +119,10 @@ def AnnotationTool(request):
                     c_names.append(str(con))
                 
                 #email message of contigs selected for annotation
-                message = "You have selected the following contigs to be annotated: %s." %(c_names) + "    You will recieve an email once the process is complete, indictating which contigs were successful."
+                message = "You have selected the following contigs to be annotated: %s." %(c_names) + "    You will recieve an email once the process is complete, indicating which contigs were successful."
            
                 #call mail function and send message to input email
-                system("(echo %s" %message + ";) | mail -s '[Metagenomics]Annotation Tool Processing Complete' " + email)
+                system("(echo %s" %message + ";) | mail -s '[Metagenomics]Annotation Tool Processing' " + email)
                 
                 #call the perl annotations script in the background
                 system("tsp perl annotation_tool/annotation_pipeline.pl -annotate &")
@@ -118,7 +132,7 @@ def AnnotationTool(request):
                 
                 return render_to_response('tool_annotation_submit_message.html', {'contigs': contigs, 'email':email}, context_instance=RequestContext(request))
                 
-    return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs}, context_instance=RequestContext(request))
+    return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': contigs, 'form_errors': form_errors}, context_instance=RequestContext(request))
     
     
 #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
@@ -172,7 +186,9 @@ def ContigTool(request):
                     joined.append(cosmid)
                 else:
                     notjoined.append(cosmid)
-            context = {'poolselect': int(pool_id), 'pool': pool, 'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
+            
+          
+            context = {'poolselect': int(pool_id), 'pool': pool,'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
         
         #contigs selected are sent through the pipeline to call perl script
         #returns list of list of the results of the script for display 
@@ -1068,6 +1084,8 @@ def ContigDetail(request, contig_name):
     for o in orfresults:
         orfids.append(o.orf_id)
     orfseq = ORF.objects.filter(id__in=orfids)
+    orfids = set(orfids)
+    orfids =list(orfids)
     
     #get the picture and make a file.
     blankimg = GenerateImage(contig)
@@ -1312,7 +1330,7 @@ def ORFContigCreate(request):
             
             #check that sequence input is not blank
             if orf_seq == "":
-                form_errors['error'] = 'Error: sequence cannot be blank'
+                form_errors['error_blank_seq'] = 'Error: sequence cannot be blank'
             
             #if not blank, continue to process
             else:
@@ -1388,7 +1406,7 @@ def ORFContigCreate(request):
                             contig_orf_db_check = 1
                     
                     if contig_orf_db_check == 1:
-                        form_errors['error'] = 'Error: attempt to add duplicate entry'
+                        form_errors['error_duplicate'] = 'Error: attempt to add duplicate entry'
                     
                     #if it doesn't exist, save it
                     else:
@@ -1409,7 +1427,7 @@ def ORFContigCreate(request):
                 else:
                     form_errors['ORF_not_in_contig'] = u'Error: The specified ORF is not found in selected Contig.'
         else:
-            form_errors['error'] = 'Error: required field(s) blank'
+            form_errors['error_blank_fields'] = 'Error: required field(s) blank'
     else:
         contig_orf_form = ContigORFJoinForm(instance=Contig_ORF_Join())
         orf_form = ORFForm(instance=ORF())
@@ -1456,7 +1474,7 @@ def ContigPoolCreate(request):
                 return HttpResponseRedirect('/results/contig/?pool=' + pool + "&contig_name=&contig_accession=")
                 
         else:
-            form_errors['error'] = 'Error: required field(s) blank'
+            form_errors['error_blank_fields'] = 'Error: required field(s) blank'
     else:
         contig_form = ContigForm(instance=Contig())
         contig_upload_form = UploadContigsForm()      

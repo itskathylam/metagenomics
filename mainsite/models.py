@@ -1,5 +1,6 @@
 from django.db import models
 import watson
+from  django.core.validators import RegexValidator
 
 class Host(models.Model):
     host_name = models.CharField("Host Name", max_length=150, unique=True)
@@ -84,9 +85,13 @@ class Cosmid(models.Model):
         unique_together = ("cosmid_name", "researcher")
 
 class Primer(models.Model):
+    
+    #validation for primer direction
+    allowed_direction = RegexValidator(r'^[FR]$', 'Error: only F or R allowed for direction')
+    
     primer_name = models.CharField("Primer Name", max_length=50, unique=True)
     primer_pair = models.PositiveIntegerField("Primer Pair ID")
-    direction = models.CharField("Direction", max_length=1)
+    direction = models.CharField("Direction", max_length=1, validators=[allowed_direction])
     primer_sequence = models.CharField("Primer Sequence", max_length=200)
     cosmid = models.ManyToManyField(Cosmid, through='End_Tag')
     
@@ -149,6 +154,10 @@ class Contig_ORF_Join(models.Model):
 
     class Meta:
         verbose_name_plural = 'Contig & ORF Relationships'
+        
+    class Meta:
+        unique_together = ("contig", "orf", "start", "stop")
+
 
 
 class Subclone(models.Model):
