@@ -56,7 +56,8 @@ if (scalar(@ARGV == 1)) {
                 # contig and predicted ORF
                 print $log "Transfer Complete.\n Executing sharcnet BLAST pipeline...\n";
                 my $return = `ssh quever\@$server.sharcnet.ca perl /scratch/quever/metagenomics/sharc_mg_pipe.pl`;
-
+                
+                #my $return = listenSN();
                 print "Sharcnet pipeline status: $return \n";
                 
                 if ($return) {

@@ -48,9 +48,11 @@ if (scalar(@ARGV) == 2) {
                                     #print "Start: " . $s . " " . $contig_orf{$scaffold}->[1]{'glimmer'}{$id}{'start'}, "\n";
                                     #print "End: " . $e . " " . $contig_orf{$scaffold}->[1]{'glimmer'}{$id}{'end'}, "\n";
                                     my $anno = $hit_o->description();
+                                    
                                     if ($anno =~ /(^.+?\[.+?\])/) {
                                         $anno = $1;
                                     }
+                                    $anno =~ s/,/-/g;
                                     
                                     $contig_orf{$scaffold}->[1]{'glimmer'}{$id}{'annotation'} = $anno;
                                 }

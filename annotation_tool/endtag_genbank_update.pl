@@ -93,6 +93,7 @@ if (scalar(@ARGV) == 2) {
                     } else {
                         $end = ($end_f - $start_contig);
                     }
+                    $annotation =~ s/,/-/g;
                     
                     my $seq = $tag_values[1];
                     $contig_orf{$scaffold}->[1]{'genbank'}{$orf_id} = {
