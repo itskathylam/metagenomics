@@ -330,7 +330,7 @@ sub outputAnnoCSV{
         my $acc = $contig_orf{$scaf}->[2];
         print "HERE: $scaf and $acc\n";
         foreach my $orf(sort(keys(%{$contig_orf{$scaf}->[1]{'glimmer'}}))){
-            print $outcsv "$scaf, $orf, $acc, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'sequence'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'annotation'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'start'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'end'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'reading_frame'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'score'}\n";
+            print $outcsv "$scaf, $orf, $acc, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'sequence'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'annotation'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'start'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'end'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'reading_frame'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'score'}, $contig_orf{$scaf}->[2]\n";
         }
     }
 }

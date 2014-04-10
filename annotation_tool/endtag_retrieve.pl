@@ -26,7 +26,5 @@ foreach my $scaf(keys(%contig_orf)){
                                    -format => 'fasta');
     $outseq_o->write_seq($seq_o);
 }
-open(my $outt, ">>", "Test.txt")or die "Da fuck? $!\n";
-print $outt Dumper(%contig_orf);
 store (\%contig_orf, "temp/storage/contig.$$") or die "could not store";
 print $$;
