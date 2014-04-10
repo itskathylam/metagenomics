@@ -202,6 +202,7 @@ if ((scalar(@ARGV)) == 3) {
                                                     -start  =>  $contig_orf{$scaffold}->[1]{'glimmer'}{$retrieve}{'start'},     # Start of range
                                                     -end    =>  $contig_orf{$scaffold}->[1]{'glimmer'}{$retrieve}{'end'},        # End of range
                                                     );
+                    print "HERE: $scaffold -- $retrieve -- $contig_orf{$scaffold}->[1]{'glimmer'}{$retrieve}{'start'}\n";
                     $glimmer_track->add_feature($feature);
                 }
             }
