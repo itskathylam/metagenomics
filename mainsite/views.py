@@ -1320,21 +1320,43 @@ class CosmidAssayCreateView(CreateView):
     
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        pdb.set_trace()
+        data = form.cleaned_data
         try:
-            self.object.full_clean()
-        except ValidationError:
-            form._errors["email"] = ErrorList([u"You already have an email with that name man."])
+            Cosmid_Assay.objects.get(cosmid=data['cosmid'],host=data['host'],substrate=data['substrate'],antibiotic=data['antibiotic'])
+        except:
+            pass
+        else:
+            form.errors['__all__'] = form.error_class(['Error: Combination of cosmid/host/substrate/antiobiotic is a duplicate.'])
             return super(CosmidAssayCreateView, self).form_invalid(form)
-    
         return super(CosmidAssayCreateView, self).form_valid(form) 
         
-    
+        #Phil - im not sure what this is for so ive commented it. Email in cosmid assay??
+        #try:
+        #    self.object.full_clean()
+        #    
+        #except ValidationError:
+        #    form._errors["email"] = ErrorList([u"You already have an email with that name man."])
+        #    return super(CosmidAssayCreateView, self).form_invalid(form)
+        #
+        #return super(CosmidAssayCreateView, self).form_valid(form) 
+
 class SubcloneAssayCreateView(CreateView):
     model = Subclone_Assay
     template_name = 'subclone_assay_add.html'
     success_url = reverse_lazy('subclone-assay-list')
     
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        data = form.cleaned_data
+        try:
+            Subclone_Assay.objects.get(subclone=data['subclone'],host=data['host'],substrate=data['substrate'],antibiotic=data['antibiotic'])
+        except:
+            pass
+        else:
+            form.errors['__all__'] = form.error_class(['Error: Combination of subclone/host/substrate/antiobiotic is a duplicate.'])
+            return super(CosmidAssayCreateView, self).form_invalid(form)
+        return super(CosmidAssayCreateView, self).form_valid(form)
+
 # Create views for adding data to multiple models with the same template
 
 # Add to Cosmid and End_Tag tables (Kathy)
