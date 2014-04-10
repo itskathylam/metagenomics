@@ -10,3 +10,9 @@ Thu Apr 10 13:50:12 2014: ---------------------------------------------------
  Executing orf prediction BLASTs....
 ---------------------------------------------------
  All files were created successfully.
+Thu Apr 10 14:23:32 2014: ---------------------------------------------------
+ Executing contig BLASTs....
+Thu Apr 10 14:23:32 2014: ---------------------------------------------------
+ Executing orf prediction BLASTs....
+---------------------------------------------------
+ All files were created successfully.

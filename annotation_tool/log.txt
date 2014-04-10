@@ -9,7 +9,7 @@ Ping PING saw.sharcnet.ca (199.241.163.197) 56(84) bytes of data.
 
 --- saw.sharcnet.ca ping statistics ---
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 3.791/3.791/3.791/0.000 ms
+rtt min/avg/max/mdev = 3.790/3.790/3.790/0.000 ms
 
 Transfering contig information to Sharcnet...
 Transfer Complete.

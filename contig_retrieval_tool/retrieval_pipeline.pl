@@ -32,7 +32,7 @@ if (scalar(@ARGV) == 3) {
         print $log "Contigs Retrieval Complete\n";     
 
         system('rm -rf testdb*');
-        cleanUp();
+        #cleanUp();
     }
 
 } else {
