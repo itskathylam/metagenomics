@@ -263,7 +263,7 @@ def read_csv(file_location):
         for row in reader:
             rows.append(row)
     csvfile.closed
-    system("rm %s" %file_location)
+    #system("rm %s" %file_location)
     return rows
 
 #this function is only called by other views, not directly associated with a URL
