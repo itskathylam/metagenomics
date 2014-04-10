@@ -35,7 +35,7 @@
 <tr><th>Researcher: </th><td>{{ researcher }}</td></tr>  
 <tr><th>Library: </th><td>{{ library }}</td> </tr> 
 <tr><th>Screen: </th><td>{{ screen }}</td> </tr> 
-<tr><th>Ec Collection: </th><td>{{ ec_collection }}</td> </tr> 
+<tr><th>E. coli Stock Collection: </th><td>{{ ec_collection }}</td> </tr> 
 <tr><th>Original Media: </th><td>{{ media }}</td> </tr> 
 <tr><th>Pool: </th><td>{{ pool }}</td> </tr> 
 <tr><th>Lab Book Reference: </th><td>{{ lab_book }}</td> </tr> 
@@ -101,6 +101,8 @@
                         </div>
                     {% endif %}
                 <br>
+                    
+            {% if orfresults %}
                 <h3>Open reading frames in {{ list.contig_name }}</h3>
                 <p><a href="{% url 'orf-contig-add' %}">Add new ORF</a></p>
                 <table>
@@ -136,6 +138,7 @@
                         </tr>
                     {% endif %}
                 {% endfor %}
+            {% endif %}
                 </table>
         </div>
     {% endfor %}

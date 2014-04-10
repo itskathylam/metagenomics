@@ -9,16 +9,20 @@ Add Subclone
 {% endblock %}
 
 
-
-
-
 {% block urlform %}
 {% url "subclone-add" %}
 {% endblock %}
 
+
 {% block form %}
+        
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <p><font color="red">{{ error }}</font></p>
+            {% endfor %}
+        {% endif %}
     
-    {% for field in form %}
+        {% for field in form %}
             <tr>
                 <th>
                 {% if field.field.required %}

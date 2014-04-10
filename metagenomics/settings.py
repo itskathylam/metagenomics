@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+ADMINS = (
+    ('admin', 'itskathylam@gmail.com'),
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -45,7 +48,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.request",
 )
 
-ALLOWED_HOSTS = []
+# Hosts/domain names that are valid for this site; required if DEBUG is False
+ALLOWED_HOSTS = ['*']
 
 LOGIN_URL = '/login/'
 

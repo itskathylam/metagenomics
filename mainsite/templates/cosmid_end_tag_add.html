@@ -8,9 +8,14 @@
 
 
 
-
-
 {% block form %}
+    
+    {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <p><font color="red">{{ error }}</font></p>
+            {% endfor %}
+    {% endif %}
+    
     {% for field in cosmid_form %}
         <tr>
             <th>

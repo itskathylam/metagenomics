@@ -9,6 +9,9 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.template import RequestContext
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
+from django.forms.util import ErrorList
+from django.db import IntegrityError
+from django.forms.util import ErrorList
 
 from mainsite.models import *
 from mainsite.forms import *
@@ -1311,9 +1314,22 @@ class SubcloneCreateView(CreateView):
 
 class CosmidAssayCreateView(CreateView):
     model = Cosmid_Assay
+    form = CosmidAssayForm
     template_name = 'cosmid_assay_add.html'
     success_url = reverse_lazy('cosmid-assay-list')
-
+    
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        pdb.set_trace()
+        try:
+            self.object.full_clean()
+        except ValidationError:
+            form._errors["email"] = ErrorList([u"You already have an email with that name man."])
+            return super(CosmidAssayCreateView, self).form_invalid(form)
+    
+        return super(CosmidAssayCreateView, self).form_valid(form) 
+        
+    
 class SubcloneAssayCreateView(CreateView):
     model = Subclone_Assay
     template_name = 'subclone_assay_add.html'
