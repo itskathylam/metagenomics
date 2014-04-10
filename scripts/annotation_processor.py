@@ -65,7 +65,8 @@ def run():
                 new_contigs.append(str(contig.contig_name))
                 #check if orf_seq already present in orf table
                 orf_db_check = 0
-                orf_to_use = None 
+                orf_to_use = None
+                new_orf = None
                 orfs = ORF.objects.all()
                 for orf_object in orfs:
                     if orf_object.orf_sequence == row[3].strip():
@@ -81,10 +82,7 @@ def run():
                     #new_orf.orf_sequence = orf_seq
                     new_orf = ORF.objects.create(orf_sequence = row[3].strip(), annotation = row[4].strip())
                 
-                try:
-                    con_orf = Contig_ORF_Join.objects.get('contig'= contig, 'orf'= new_orf)
-                    
-                except:
+                if(Contig_ORF_Join.objects.filter('contig'= contig, 'orf'= new_orf) == None):
                     Contig_ORF_Join.objects.create(
                                                 contig = contig,
                                                 orf = new_orf,

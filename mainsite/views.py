@@ -189,39 +189,37 @@ def ContigTool(request):
                 else:
                     notjoined.append(cosmid)
           
-            context = {'poolselect': int(pool_id), 'pool': pool,'detail': details, 'joined': joined, 'notjoined': notjoined, 'errors':form_errors}
-            
-            #contigs selected are sent through the pipeline to call perl script
-            #returns list of list of the results of the script for display 
-            if 'submit' in request.POST:
-                cos = request.POST.getlist('cos')
-                #check the number of cosmids selected must have at least one to continue
-                length = len(cos)
-                if length == 0:
-                    form_errors['error_cosmid_zero'] = "Error: please select at least one cosmid to process."
-                    context = {'poolselect': int(pool_id), 'pool': pool,'detail': details, 'joined': joined, 'notjoined': notjoined, 'errors':form_errors}
-                    variables = RequestContext(request, context)
-                    return render_to_response('tool_contig.html', variables)
-                else:    
-                    pool = request.POST['poolhidden']
-                    cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values("cosmid_name")
-                    results = contig_pipeline(pool, cos_selected)
-                    entries = []
-                    for row in results:
-                        #cosmid name, strand location, contig name
-                        entry = row[0:3]
-                        #percent identity
-                        entry.append(row[5])
-                        #end tag length
-                        entry.append(row[7])
-                        #contig length
-                        entry.append(row[12])
-                        #match type
-                        entry.append(row[13])
-                        entries.append(entry)
-                    #send to submit page for contig selection 
-                    var = RequestContext(request, {'results': entries})
-                    return render_to_response('tool_contig_submit.html', var)
+            context = {'poolselect': int(pool_id), 'pool': pool,'detail': details, 'joined': joined, 'notjoined': notjoined}
+        
+        #contigs selected are sent through the pipeline to call perl script
+        #returns list of list of the results of the script for display 
+        if 'submit' in request.POST:
+            cos = request.POST.getlist('cos')
+            #check the number of cosmids selected must have at least one to continue
+            length = len(cos)
+            if length == 0:
+                form_errors['error_cosmid_zero'] = "Error: please select at least one cosmid to process."
+                context = {'poolselect': int(pool_id),'detail': details, 'joined': joined, 'notjoined': notjoined, 'errors':form_errors}
+            else:    
+                pool = request.POST['poolhidden']
+                cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values("cosmid_name")
+                results = contig_pipeline(pool, cos_selected)
+                entries = []
+                for row in results:
+                    #cosmid name, strand location, contig name
+                    entry = row[0:3]
+                    #percent identity
+                    entry.append(row[5])
+                    #end tag length
+                    entry.append(row[7])
+                    #contig length
+                    entry.append(row[12])
+                    #match type
+                    entry.append(row[13])
+                    entries.append(entry)
+                #send to submit page for contig selection 
+                var = RequestContext(request, {'results': entries})
+                return render_to_response('tool_contig_submit.html', var)
 
     variables = RequestContext(request, context)
     return render_to_response('tool_contig.html', variables)
@@ -323,7 +321,15 @@ def orf_data(contig_list):
     
     write_lib(contigs, orfs, anno)
 
-
+#retieve data to write to library file for annotations update when contig/orf updates or deletes
+def orf_data_update(contig_list):
+    contig_id = Contig.objects.filter(contig_name__in = contig_list).values('id')
+    contigs = Contig.objects.filter(contig_name__in = contig_list).values_list('id','contig_name', 'contig_sequence', 'blast_hit_accession')
+    orfs = Contig_ORF_Join.objects.filter(contig__in = contig_id).values_list('contig','orf','start', 'stop', 'complement', 'predicted','prediction_score')
+    anno = ORF.objects.filter(contig__in = contig_id).values_list('id','annotation', 'orf_sequence')
+    
+    write_lib_update(contigs, orfs, anno)
+    
 #this function is only called by other views, not directly associated with a URL
 def write_lib(contigs, orfs, anno):
     with open("annotation_tool/data.lib", 'w') as f:
@@ -348,6 +354,45 @@ def write_lib(contigs, orfs, anno):
                         annotation = ann if ann != None else ''
                         data.write('annotation=>\'' + annotation + '\',\n sequence =>\'' + seqs + '\'\n},')
             data.write('}},\'' + accession + '\'];\n')
+        data.write('return(\%contig_orf);} \n1;')
+        data.closed
+    f.closed
+    
+#this function is only called by other views, not directly associated with a URL
+def write_lib_update(contigs, orfs, anno):
+    with open("annotation_tool/data.lib", 'w') as f:
+        data = File(f)
+        data.write('#!/usr/bin/perl \n sub data{\n')
+        for c_id, name, seq, access in contigs:
+            contig = name
+            sequence = seq
+            accession = access if access != None else ''
+            data.write('$contig_orf{' + contig + '}\n = [\'' + sequence + '\',\n')
+            data.write('{\'glimmer\' => {},\n')
+            count = 0
+            for con_id, orf_id, start, stop, comp, predic, score in orfs:
+                if predic == 1:
+                    for o_id, ann, seqs in anno:
+                        if c_id == con_id and o_id == orf_id:
+                            count += 1
+                            comp = -1 if comp == 1 else 1
+                            data.write('\'' + contig + '-' + str(count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
+                            data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
+                            annotation = ann if ann != None else ''
+                            data.write('annotation=>\'' + annotation + '\',\n sequence =>\'' + seqs + '\'\n},')
+                if predic == 0:
+                    data.write('}},\'' + accession + '\'];\n')
+                    data.write('\'genbank\' => {},\n')
+                    data.write('\'manual\' =>{')
+                    for o_id, ann, seqs in anno:
+                        if c_id == con_id and o_id == orf_id:
+                            count += 1
+                            comp = -1 if comp == 1 else 1
+                            data.write('\'' + contig + '-' + str(count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
+                            data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
+                            annotation = ann if ann != None else ''
+                            data.write('annotation=>\'' + annotation + '\',\n sequence =>\'' + seqs + '\'\n},')
+        data.write('}},\'' + accession + '\'];\n')
         data.write('return(\%contig_orf);} \n1;')
         data.closed
     f.closed
@@ -1202,7 +1247,7 @@ class ORFEditView(UpdateView):
         orf = self.get_object().id
         contig_id = ORF.objects.filter(id = orf).values("contig")
         contig = Contig.objects.filter(id = contig_id).values("contig_name")
-        orf_data(contig)
+        orf_data_update(contig)
         system("perl annotation_tool/annotation_pipeline.pl -update")
         save_images("tmp")
         return ('/orf/' + orf)
@@ -1221,7 +1266,7 @@ class ContigEditView(UpdateView):
     #run annotation tool to update the stored images
     def get_success_url(self):
         contig = self.get_object().contig_name
-        orf_data(contig)
+        orf_data_update(contig)
         system("perl annotation_tool/annotation_pipeline.pl -update")
         save_images("tmp")
         return ('/contig/' + contig)
@@ -1241,7 +1286,7 @@ class ContigORFDeleteView(DeleteView):
     def get_success_url(self):
         contig_obj = self.get_object().contig
         contig = Contig.objects.filter(contig_name = contig_obj).values("contig_name")
-        orf_data(contig)
+        orf_data_update(contig)
         system("perl annotation_tool/annotation_pipeline.pl -update")
         save_images("tmp")
         return ('/contig/' + contig_obj.contig_name)
@@ -1424,7 +1469,7 @@ def ORFContigCreate(request):
                         new_contig_orf.save()
                         
                         #update images in database with the new contig_orf  
-                        orf_data(new_contig_orf)
+                        orf_data_update(new_contig_orf)
                         system("perl annotation_tool/annotation_pipeline.pl -update")
                         save_images("tmp")
                         

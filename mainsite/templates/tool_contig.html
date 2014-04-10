@@ -54,7 +54,7 @@ have two end-tags; if a cosmid has one or zero end-tags, it is simply ignored.</
     <input type="submit" name="detail" value="Display Pool" />
     </form>
     
-    {% for key,value in errors.items %}
+    {% for key,value in errors %}
         <p><font color="red">{{ value }}</font></p>
     {% endfor %}
     
@@ -77,7 +77,7 @@ have two end-tags; if a cosmid has one or zero end-tags, it is simply ignored.</
         <table>
             <tr><th>Retrieve Contigs for the selected Cosmids</th></tr>
                 {% for c in notjoined %}
-                <tr><td><input type="checkbox" name="cos" value="{{ c }}" />{{ c }}</td></tr>
+                <tr><td><input type="checkbox" name="cos" value="{{ c }}" checked/>{{ c }}</td></tr>
                 {% endfor %}
         </table>
         <input type="hidden" name="poolhidden" value="{{ poolselect }}"/>
