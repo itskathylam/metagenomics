@@ -1,0 +1,43 @@
+Wed Apr  9 16:48:25 2014: ---------------------------------------------------
+ Executing contig BLASTs....
+Wed Apr  9 16:48:25 2014: Contig - Queueing pool1_scaffold248_1 || Queue: 82m - Memory: 2G
+Wed Apr  9 16:48:26 2014: Contig - Queueing pool1_scaffold242_1 || Queue: 85m - Memory: 2G
+Wed Apr  9 16:48:26 2014: Contig - Queueing pool1_scaffold258_1 || Queue: 87m - Memory: 2G
+Wed Apr  9 16:48:27 2014: Contig - Queueing pool1_scaffold190_1 || Queue: 47m - Memory: 2G
+Wed Apr  9 16:48:27 2014: Contig - Queueing pool1_scaffold42_1 || Queue: 80m - Memory: 2G
+Wed Apr  9 17:08:28 2014: Contig - pool1_scaffold190_1.blast created.
+Wed Apr  9 17:08:28 2014: pool1_scaffold248_1 pool1_scaffold242_1 pool1_scaffold258_1 pool1_scaffold42_1 files remaining
+Wed Apr  9 17:10:28 2014: Contig - pool1_scaffold248_1.blast created.
+Wed Apr  9 17:10:28 2014: pool1_scaffold242_1 pool1_scaffold258_1 pool1_scaffold42_1 files remaining
+Wed Apr  9 17:10:29 2014: Contig - pool1_scaffold42_1.blast created.
+Wed Apr  9 17:10:29 2014: pool1_scaffold242_1 pool1_scaffold258_1 files remaining
+Wed Apr  9 17:11:29 2014: Contig - pool1_scaffold242_1.blast created.
+Wed Apr  9 17:11:29 2014: pool1_scaffold258_1 files remaining
+Wed Apr  9 17:13:29 2014: Contig - pool1_scaffold258_1.blast created.
+Wed Apr  9 17:13:29 2014:  files remaining
+Wed Apr  9 17:13:29 2014: ---------------------------------------------------
+ Executing orf prediction BLASTs....
+Wed Apr  9 17:13:29 2014: Predictions - Queueing pool1_scaffold248_1 || Queue: 145m - Memory: 3G
+Wed Apr  9 17:13:30 2014: Predictions - Queueing pool1_scaffold258_1 || Queue: 162m - Memory: 3G
+Wed Apr  9 17:13:30 2014: Predictions - Queueing pool1_scaffold242_1 || Queue: 156m - Memory: 3G
+Wed Apr  9 17:13:31 2014: Predictions - Queueing pool1_scaffold42_1 || Queue: 141m - Memory: 3G
+Wed Apr  9 17:13:31 2014: Predictions - Queueing pool1_scaffold190_1 || Queue: 51m - Memory: 3G
+Wed Apr  9 17:24:32 2014: Predictions - pool1_scaffold190_1.blast created 
+Wed Apr  9 18:20:41 2014: Predictions - pool1_scaffold248_1.blast created 
+Wed Apr  9 18:24:43 2014: Predictions - pool1_scaffold258_1.blast created 
+Wed Apr  9 18:25:44 2014: Predictions - pool1_scaffold242_1.blast created 
+Wed Apr  9 18:26:44 2014: Predictions - pool1_scaffold42_1.blast created 
+---------------------------------------------------
+ All files were created successfully.
+Wed Apr  9 20:32:52 2014: ---------------------------------------------------
+ Executing contig BLASTs....
+Wed Apr  9 20:32:53 2014: ---------------------------------------------------
+ Executing orf prediction BLASTs....
+---------------------------------------------------
+ All files were created successfully.
+Wed Apr  9 20:47:08 2014: ---------------------------------------------------
+ Executing contig BLASTs....
+Wed Apr  9 20:47:08 2014: ---------------------------------------------------
+ Executing orf prediction BLASTs....
+---------------------------------------------------
+ All files were created successfully.
