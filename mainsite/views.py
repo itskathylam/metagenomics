@@ -371,7 +371,7 @@ def write_lib_update(contigs, orfs, anno):
             sequence = seq
             accession = access if access != None else ''
             data.write('$contig_orf{' + contig + '}\n = [\'' + sequence + '\',\n')
-            data.write('{\'glimmer\' => {},\n')
+            data.write('{\'glimmer\' => {')
             count = 0
             for con_id, orf_id, start, stop, comp, predic, score in orfs:
                 if predic == 1:
