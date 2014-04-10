@@ -32,7 +32,7 @@ if (scalar(@ARGV) == 3) {
         print $log "Contigs Retrieval Complete\n";     
 
         system('rm -rf testdb*');
-        #cleanUp();
+        cleanUp();
     }
 
 } else {
@@ -42,9 +42,12 @@ if (scalar(@ARGV) == 3) {
 
 sub cleanUp{
     system('rm data.lib');
+    system('rm contigs.fa');
+    system('rm primers_*');
     system('rm -rf temp/');
+    #system('rm -rf tmp/');
     system('rm .message');
-    system('rm .pid');
+    #system('rm .pid');
 }
 
 sub setup{

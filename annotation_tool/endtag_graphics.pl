@@ -161,8 +161,6 @@ if ((scalar(@ARGV)) == 3) {
                                                 -pad_right  =>  $_pad_right,
                                             );
             
-            #print "Glimmer RF: $contig_orf{$scaffold}->[1]{'glimmer'}{$retrieve}{'reading_frame'}\n"; 
-            #($contig_orf{$scaffold}->[1]{'glimmer'}{$retrieve}{'reading_frame'} > 0 ) ? ($_strand = 1) : ($_strand = -1);
             my $glimmer_track = $panel_glim->add_track(
                 $feature,
                 -glyph  =>  'transcript2',
@@ -327,12 +325,12 @@ sub outputAnnoCSV{
     my %contig_orf = %{$contig_r};
     open(my $outcsv, ">>", "$dir/out/annotations.csv") or die "Could not create the annotation csv: $!\n";
     foreach my $scaf(keys(%contig_orf)){
-        my $seq = $contig_orf{$scaf}->[0];
-        $seq =~ s/(\n)|(\r)//g;
+        #my $seq = $contig_orf{$scaf}->[0];
+        #$seq =~ s/(\n)|(\r)//g;
         my $acc = $contig_orf{$scaf}->[2];
         print "HERE: $scaf and $acc\n";
         foreach my $orf(sort(keys(%{$contig_orf{$scaf}->[1]{'glimmer'}}))){
-            print $outcsv "$scaf, $orf, $seq, $acc, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'sequence'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'annotation'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'start'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'end'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'reading_frame'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'score'}\n";
+            print $outcsv "$scaf, $orf, $acc, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'sequence'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'annotation'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'start'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'end'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'reading_frame'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'score'}, $contig_orf{$scaf}->[2]\n";
         }
     }
 }
