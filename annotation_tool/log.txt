@@ -5,11 +5,11 @@ Retrieving contig information...Predicting ORFs on Contigs using FragGeneScan v.
 Building predicted genes...
 Pinging saw.sharcnet.ca...
 Ping PING saw.sharcnet.ca (199.241.163.197) 56(84) bytes of data.
-64 bytes from saw.sharcnet.ca (199.241.163.197): icmp_req=1 ttl=56 time=3.78 ms
+64 bytes from saw.sharcnet.ca (199.241.163.197): icmp_req=1 ttl=56 time=3.79 ms
 
 --- saw.sharcnet.ca ping statistics ---
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 3.782/3.782/3.782/0.000 ms
+rtt min/avg/max/mdev = 3.791/3.791/3.791/0.000 ms
 
 Transfering contig information to Sharcnet...
 Transfer Complete.
