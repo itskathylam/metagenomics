@@ -54,7 +54,7 @@ have two end-tags; if a cosmid has one or zero end-tags, it is simply ignored.</
     <input type="submit" name="detail" value="Display Pool" />
     </form>
     
-    {% for key,value in errors %}
+    {% for key,value in errors.items %}
         <p><font color="red">{{ value }}</font></p>
     {% endfor %}
     
