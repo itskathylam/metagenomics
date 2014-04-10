@@ -202,7 +202,7 @@ def ContigTool(request):
             length = len(cos)
             if length == 0:
                 form_errors['error_cosmid_zero'] = "Error: please select at least one cosmid to process."
-                context = {'poolselect': int(pool_id),'detail': details, 'joined': joined, 'notjoined': notjoined, 'errors':form_errors}
+                context = {'pool':Pooled_Sequencing.objects.all(),'errors':form_errors}
             else:    
                 pool = request.POST['poolhidden']
                 cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values("cosmid_name")
