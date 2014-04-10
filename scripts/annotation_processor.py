@@ -28,10 +28,9 @@ def run():
                 rows = []
                 for row in reader:
                     rows.append(row)
-            csvfile.closed
-            #system("rm annotation_tool/tool/out/annotations.csv")
             results = rows
-            
+            csvfile.closed
+            system("rm annotation_tool/tool/out/annotations.csv")
             
             #save the annotation images for each contig, created by the script
             re_contigname = re.compile('^(.+)-(ALIGN|CONTIG|GLIM|GENBANK|MANUAL)\.png$')
@@ -69,7 +68,7 @@ def run():
                 orf_to_use = None 
                 orfs = ORF.objects.all()
                 for orf_object in orfs:
-                    if orf_object.orf_sequence == row[4].strip():
+                    if orf_object.orf_sequence == row[3].strip():
                         orf_db_check = 1
                         orf_to_use = orf_object
                         
@@ -80,18 +79,18 @@ def run():
                 #otherwise, make a new orf instance to use
                 else:
                     #new_orf.orf_sequence = orf_seq
-                    new_orf = ORF.objects.create(orf_sequence = row[4].strip(), annotation = row[5].strip())
+                    new_orf = ORF.objects.create(orf_sequence = row[3].strip(), annotation = row[4].strip())
                 
                 try:
                     Contig_ORF_Join.objects.create(
                                                 contig = contig,
                                                 orf = new_orf,
-                                                start = int(row[6]),
-                                                stop = int(row[7]),
-                                                complement =  1 if int(row[8]) < 0 else 0,
+                                                start = int(row[5]),
+                                                stop = int(row[6]),
+                                                complement =  1 if int(row[7]) < 0 else 0,
                                                 orf_accession = None,
                                                 predicted = 1,
-                                                prediction_score = float(row[9]),            
+                                                prediction_score = float(row[8]),            
                                                 )
                 except:
                     pass

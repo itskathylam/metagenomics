@@ -165,6 +165,8 @@ def save_images(folder):
 #contig tool, retrieves new contigs for cosmids in the pool
 @login_required
 def ContigTool(request):
+    #track errors with dict
+    form_errors = {}
     context = {'pool':Pooled_Sequencing.objects.all()}
     #display details for the selected pool 
     if request.method == "POST":
@@ -186,34 +188,41 @@ def ContigTool(request):
                     joined.append(cosmid)
                 else:
                     notjoined.append(cosmid)
-            
           
-            context = {'poolselect': int(pool_id), 'pool': pool,'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
-        
-        #contigs selected are sent through the pipeline to call perl script
-        #returns list of list of the results of the script for display 
-        if 'submit' in request.POST:
-            pool = request.POST['poolhidden']
-            cos = request.POST.getlist('cos')
-            cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values("cosmid_name")
-            results = contig_pipeline(pool, cos_selected)
-            entries = []
-            for row in results:
-                #cosmid name, strand location, contig name
-                entry = row[0:3]
-                #percent identity
-                entry.append(row[5])
-                #end tag length
-                entry.append(row[7])
-                #contig length
-                entry.append(row[12])
-                #match type
-                entry.append(row[13])
-                entries.append(entry)
-            #send to submit page for contig selection 
-            var = RequestContext(request, {'results': entries})
-            return render_to_response('tool_contig_submit.html', var)
-                
+            context = {'poolselect': int(pool_id), 'pool': pool,'detail': details, 'joined': joined, 'notjoined': notjoined, 'errors':form_errors}
+            
+            #contigs selected are sent through the pipeline to call perl script
+            #returns list of list of the results of the script for display 
+            if 'submit' in request.POST:
+                cos = request.POST.getlist('cos')
+                #check the number of cosmids selected must have at least one to continue
+                length = len(cos)
+                if length == 0:
+                    form_errors['error_cosmid_zero'] = "Error: please select at least one cosmid to process."
+                    context = {'poolselect': int(pool_id), 'pool': pool,'detail': details, 'joined': joined, 'notjoined': notjoined, 'errors':form_errors}
+                    variables = RequestContext(request, context)
+                    return render_to_response('tool_contig.html', variables)
+                else:    
+                    pool = request.POST['poolhidden']
+                    cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values("cosmid_name")
+                    results = contig_pipeline(pool, cos_selected)
+                    entries = []
+                    for row in results:
+                        #cosmid name, strand location, contig name
+                        entry = row[0:3]
+                        #percent identity
+                        entry.append(row[5])
+                        #end tag length
+                        entry.append(row[7])
+                        #contig length
+                        entry.append(row[12])
+                        #match type
+                        entry.append(row[13])
+                        entries.append(entry)
+                    #send to submit page for contig selection 
+                    var = RequestContext(request, {'results': entries})
+                    return render_to_response('tool_contig_submit.html', var)
+
     variables = RequestContext(request, context)
     return render_to_response('tool_contig.html', variables)
 
