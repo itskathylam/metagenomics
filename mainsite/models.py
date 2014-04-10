@@ -201,6 +201,9 @@ class Cosmid_Assay(models.Model):
     cosmid_ph = models.DecimalField("Optimum pH", max_digits=5, decimal_places=2, blank=True, null=True)
     cosmid_comments = models.TextField("Comments", blank=True, null=True)
     
+    def __unicode__(self):
+        return unicode(self.id)
+    
     class Meta:
         unique_together = ("cosmid", "host", "substrate", "antibiotic")
         verbose_name_plural = 'Cosmid Assays'
@@ -222,6 +225,9 @@ class Subclone_Assay(models.Model):
     subclone_temp = models.DecimalField("Optimum Temperature", max_digits=5, decimal_places=2, blank=True, null=True)
     subclone_ph = models.DecimalField("Optimum pH", max_digits=5, decimal_places=2, blank=True, null=True)
     subclone_comments = models.TextField("Comments", blank=True, null=True)
+    
+    def __unicode__(self):
+        return unicode(self.id)
     
     class Meta:
         unique_together = ("subclone", "host", "substrate", "antibiotic")

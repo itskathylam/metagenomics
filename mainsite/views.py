@@ -1208,6 +1208,7 @@ class CosmidEndTagEditView(UpdateView):
     template_name = 'cosmid_only_end_tag_edit.html'
     slug_field = 'cosmid_name' 
     slug_url_kwarg = 'cosmid_name'
+    success_url = reverse_lazy('cosmid-end-tag-list')
     
     def get_object(self, queryset=None):
         cosmid_object = Cosmid.objects.get(cosmid_name=self.kwargs['cosmid_name'])
@@ -1223,15 +1224,42 @@ class SubcloneEditView(UpdateView):
     slug_url_kwarg = 'subclone_name'
     success_url = reverse_lazy('subclone-list')
     
+    def get_object(self, queryset=None):
+        subclone_object = Subclone.objects.get(subclone_name=self.kwargs['subclone_name'])
+        return subclone_object
+    
+    def get_success_url(self):
+        return ('/subclone/' + self.get_object().cosmid_name)
+    
 class CosmidAssayEditView(UpdateView):
     model = Cosmid_Assay
     template_name = 'cosmid_assay_edit.html'
     success_url = reverse_lazy('cosmid-assay-list')
+    slug_field = 'pk'
+    slug_url_kwarg = 'pk'
+    
+    def get_object(self, queryset=None):
+        cosmid_assay_object = Cosmid_Assay.objects.get(id=self.kwargs['pk'])
+        return cosmid_assay_object
+
+    def get_success_url(self):
+        cosmid_assay = self.get_object().id
+        return ('/assay/cosmid/' + str(cosmid_assay))
 
 class SubcloneAssayEditView(UpdateView):
     model = Subclone_Assay
     template_name = 'subclone_assay_edit.html'
     success_url = reverse_lazy('subclone-assay-list')
+    slug_field = 'pk'
+    slur_url_kwarg = 'pk'
+    
+    def get_object(self, queryset=None):
+        subclone_assay_object = Subclone_Assay.objects.get(id=self.kwargs['pk'])
+        return subclone_assay_object
+    
+    def get_success_url(self):
+        subclone_assay = self.get_object().id
+        return ('/assay/subclone/' + str(subclone_assay))
     
 class ORFEditView(UpdateView):
     model = ORF
