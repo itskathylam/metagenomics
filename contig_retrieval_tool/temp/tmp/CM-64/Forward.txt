@@ -1,0 +1,348 @@
+BLASTN 2.2.29+
+
+
+Reference: Zheng Zhang, Scott Schwartz, Lukas Wagner, and Webb
+Miller (2000), "A greedy algorithm for aligning DNA sequences", J
+Comput Biol 2000; 7(1-2):203-14.
+
+
+
+Database: testdb
+           563 sequences; 6,585,561 total letters
+
+
+
+Query= testquery
+
+Length=400
+                                                                      Score     E
+Sequences producing significant alignments:                          (Bits)  Value
+
+lcl|pool1_scaffold231_1                                                 573   5e-164
+lcl|pool1_scaffold246_1                                               56.5    2e-08 
+lcl|pool1_scaffold24_1                                                54.7    9e-08 
+lcl|pool1_scaffold259_1                                               54.7    9e-08 
+lcl|pool1_scaffold190_1                                               54.7    9e-08 
+lcl|pool1_scaffold126_1                                               54.7    9e-08 
+lcl|pool1_scaffold207_1                                               54.7    9e-08 
+lcl|pool1_scaffold22_4                                                54.7    9e-08 
+lcl|pool1_scaffold63_1                                                54.7    9e-08 
+lcl|pool1_scaffold10_1                                                52.8    3e-07 
+lcl|pool1_scaffold243_1                                               52.8    3e-07 
+lcl|pool1_scaffold42_1                                                52.8    3e-07 
+lcl|pool1_scaffold258_1                                               52.8    3e-07 
+lcl|pool1_scaffold9_1                                                 52.8    3e-07 
+lcl|pool1_scaffold242_1                                               52.8    3e-07 
+lcl|pool1_scaffold146_1                                               52.8    3e-07 
+lcl|pool1_scaffold84_2                                                52.8    3e-07 
+lcl|pool1_scaffold241_1                                               52.8    3e-07 
+lcl|pool1_scaffold138_1                                               52.8    3e-07 
+lcl|pool1_scaffold56_1                                                52.8    3e-07 
+lcl|pool1_scaffold58_1                                                51.0    1e-06 
+lcl|pool1_scaffold75_1                                                49.1    4e-06 
+
+
+>lcl|pool1_scaffold231_1 
+Length=19720
+
+ Score =   573 bits (310),  Expect = 5e-164
+ Identities = 326/335 (97%), Gaps = 3/335 (1%)
+ Strand=Plus/Plus
+
+Query  66   TTTGTACAAAAAAGCAGGCTGGATCCACCNANATCTTACGCGNGAGCACNGCGTTAGCGC  125
+            ||||||||||||||||||||||||||||| |  | ||||||| |||||| ||||| ||||
+Sbjct  1    TTTGTACAAAAAAGCAGGCTGGATCCACCGA-CT-TTACGCGCGAGCACGGCGTTTGCGC  58
+
+Query  126  GGATTGCGATCGAGAGCTTGTCACAACACGTCGGAACTGAAGCCGTGCGAAAGCCCACCT  185
+            ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Sbjct  59   GGATTGCGATCGAGAGCTTGTCACAACACGTCGGAACTGAAGCCGTGCGAAAGCCCACCT  118
+
+Query  186  CGGCCGAGGCGCTCGACAAGCTCGGGCGAGTGCGGCTGTCGAAGCACTTCTTTATGCGCG  245
+            ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Sbjct  119  CGGCCGAGGCGCTCGACAAGCTCGGGCGAGTGCGGCTGTCGAAGCACTTCTTTATGCGCG  178
+
+Query  246  ACATGCTCTATTCGGAGATCGCGCAGGTGCACGGACTGCTCAACGCGCCCGACGATCCCG  305
+            ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Sbjct  179  ACATGCTCTATTCGGAGATCGCGCAGGTGCACGGACTGCTCAACGCGCCCGACGATCCCG  238
+
+Query  306  AGCTCGCGATCGAAGCAGGCACGCGGTTGTGCGAGGACCTGCTCGANCCGATCCAGGAGC  365
+            |||||||||||||||||||||||||||||||||||||||||||||| |||||||||||||
+Sbjct  239  AGCTCGCGATCGAAGCAGGCACGCGGTTGTGCGAGGACCTGCTCGAGCCGATCCAGGAGC  298
+
+Query  366  GGTGGGGGCGGATCACGATCCGCAGTCGCCTATCG  400
+            ||||||||||||||||||||||||| |||||||||
+Sbjct  299  GGTGGGGGCGGATCACGATCCGCAG-CGCCTATCG  332
+
+
+>lcl|pool1_scaffold246_1 
+Length=34863
+
+ Score = 56.5 bits (30),  Expect = 2e-08
+ Identities = 30/30 (100%), Gaps = 0/30 (0%)
+ Strand=Plus/Plus
+
+Query  65  CTTTGTACAAAAAAGCAGGCTGGATCCACC  94
+           ||||||||||||||||||||||||||||||
+Sbjct  1   CTTTGTACAAAAAAGCAGGCTGGATCCACC  30
+
+
+>lcl|pool1_scaffold24_1 
+Length=12023
+
+ Score = 54.7 bits (29),  Expect = 9e-08
+ Identities = 29/29 (100%), Gaps = 0/29 (0%)
+ Strand=Plus/Plus
+
+Query  66  TTTGTACAAAAAAGCAGGCTGGATCCACC  94
+           |||||||||||||||||||||||||||||
+Sbjct  1   TTTGTACAAAAAAGCAGGCTGGATCCACC  29
+
+
+>lcl|pool1_scaffold259_1 
+Length=34172
+
+ Score = 54.7 bits (29),  Expect = 9e-08
+ Identities = 29/29 (100%), Gaps = 0/29 (0%)
+ Strand=Plus/Minus
+
+Query  65     CTTTGTACAAAAAAGCAGGCTGGATCCAC  93
+              |||||||||||||||||||||||||||||
+Sbjct  34172  CTTTGTACAAAAAAGCAGGCTGGATCCAC  34144
+
+
+>lcl|pool1_scaffold190_1 
+Length=1654
+
+ Score = 54.7 bits (29),  Expect = 9e-08
+ Identities = 29/29 (100%), Gaps = 0/29 (0%)
+ Strand=Plus/Plus
+
+Query  65  CTTTGTACAAAAAAGCAGGCTGGATCCAC  93
+           |||||||||||||||||||||||||||||
+Sbjct  1   CTTTGTACAAAAAAGCAGGCTGGATCCAC  29
+
+
+>lcl|pool1_scaffold126_1 
+Length=8660
+
+ Score = 54.7 bits (29),  Expect = 9e-08
+ Identities = 29/29 (100%), Gaps = 0/29 (0%)
+ Strand=Plus/Plus
+
+Query  66  TTTGTACAAAAAAGCAGGCTGGATCCACC  94
+           |||||||||||||||||||||||||||||
+Sbjct  1   TTTGTACAAAAAAGCAGGCTGGATCCACC  29
+
+
+>lcl|pool1_scaffold207_1 
+Length=18996
+
+ Score = 54.7 bits (29),  Expect = 9e-08
+ Identities = 29/29 (100%), Gaps = 0/29 (0%)
+ Strand=Plus/Minus
+
+Query  65     CTTTGTACAAAAAAGCAGGCTGGATCCAC  93
+              |||||||||||||||||||||||||||||
+Sbjct  18996  CTTTGTACAAAAAAGCAGGCTGGATCCAC  18968
+
+
+>lcl|pool1_scaffold22_4 
+Length=3977
+
+ Score = 54.7 bits (29),  Expect = 9e-08
+ Identities = 29/29 (100%), Gaps = 0/29 (0%)
+ Strand=Plus/Minus
+
+Query  66    TTTGTACAAAAAAGCAGGCTGGATCCACC  94
+             |||||||||||||||||||||||||||||
+Sbjct  3977  TTTGTACAAAAAAGCAGGCTGGATCCACC  3949
+
+
+>lcl|pool1_scaffold63_1 
+Length=31929
+
+ Score = 54.7 bits (29),  Expect = 9e-08
+ Identities = 29/29 (100%), Gaps = 0/29 (0%)
+ Strand=Plus/Plus
+
+Query  66  TTTGTACAAAAAAGCAGGCTGGATCCACC  94
+           |||||||||||||||||||||||||||||
+Sbjct  1   TTTGTACAAAAAAGCAGGCTGGATCCACC  29
+
+
+>lcl|pool1_scaffold10_1 
+Length=3594
+
+ Score = 52.8 bits (28),  Expect = 3e-07
+ Identities = 28/28 (100%), Gaps = 0/28 (0%)
+ Strand=Plus/Plus
+
+Query  66  TTTGTACAAAAAAGCAGGCTGGATCCAC  93
+           ||||||||||||||||||||||||||||
+Sbjct  1   TTTGTACAAAAAAGCAGGCTGGATCCAC  28
+
+
+>lcl|pool1_scaffold243_1 
+Length=36291
+
+ Score = 52.8 bits (28),  Expect = 3e-07
+ Identities = 28/28 (100%), Gaps = 0/28 (0%)
+ Strand=Plus/Minus
+
+Query  67     TTGTACAAAAAAGCAGGCTGGATCCACC  94
+              ||||||||||||||||||||||||||||
+Sbjct  36291  TTGTACAAAAAAGCAGGCTGGATCCACC  36264
+
+
+>lcl|pool1_scaffold42_1 
+Length=32512
+
+ Score = 52.8 bits (28),  Expect = 3e-07
+ Identities = 28/28 (100%), Gaps = 0/28 (0%)
+ Strand=Plus/Plus
+
+Query  64  ACTTTGTACAAAAAAGCAGGCTGGATCC  91
+           ||||||||||||||||||||||||||||
+Sbjct  1   ACTTTGTACAAAAAAGCAGGCTGGATCC  28
+
+
+>lcl|pool1_scaffold258_1 
+Length=39283
+
+ Score = 52.8 bits (28),  Expect = 3e-07
+ Identities = 28/28 (100%), Gaps = 0/28 (0%)
+ Strand=Plus/Plus
+
+Query  64  ACTTTGTACAAAAAAGCAGGCTGGATCC  91
+           ||||||||||||||||||||||||||||
+Sbjct  1   ACTTTGTACAAAAAAGCAGGCTGGATCC  28
+
+
+>lcl|pool1_scaffold9_1 
+Length=13505
+
+ Score = 52.8 bits (28),  Expect = 3e-07
+ Identities = 28/28 (100%), Gaps = 0/28 (0%)
+ Strand=Plus/Plus
+
+Query  66  TTTGTACAAAAAAGCAGGCTGGATCCAC  93
+           ||||||||||||||||||||||||||||
+Sbjct  1   TTTGTACAAAAAAGCAGGCTGGATCCAC  28
+
+
+>lcl|pool1_scaffold242_1 
+Length=37050
+
+ Score = 52.8 bits (28),  Expect = 3e-07
+ Identities = 28/28 (100%), Gaps = 0/28 (0%)
+ Strand=Plus/Plus
+
+Query  66  TTTGTACAAAAAAGCAGGCTGGATCCAC  93
+           ||||||||||||||||||||||||||||
+Sbjct  1   TTTGTACAAAAAAGCAGGCTGGATCCAC  28
+
+
+>lcl|pool1_scaffold146_1 
+Length=36324
+
+ Score = 52.8 bits (28),  Expect = 3e-07
+ Identities = 28/28 (100%), Gaps = 0/28 (0%)
+ Strand=Plus/Minus
+
+Query  66     TTTGTACAAAAAAGCAGGCTGGATCCAC  93
+              ||||||||||||||||||||||||||||
+Sbjct  36324  TTTGTACAAAAAAGCAGGCTGGATCCAC  36297
+
+
+>lcl|pool1_scaffold84_2 
+Length=32539
+
+ Score = 52.8 bits (28),  Expect = 3e-07
+ Identities = 28/28 (100%), Gaps = 0/28 (0%)
+ Strand=Plus/Minus
+
+Query  67     TTGTACAAAAAAGCAGGCTGGATCCACC  94
+              ||||||||||||||||||||||||||||
+Sbjct  32539  TTGTACAAAAAAGCAGGCTGGATCCACC  32512
+
+
+>lcl|pool1_scaffold241_1 
+Length=959
+
+ Score = 52.8 bits (28),  Expect = 3e-07
+ Identities = 28/28 (100%), Gaps = 0/28 (0%)
+ Strand=Plus/Plus
+
+Query  67  TTGTACAAAAAAGCAGGCTGGATCCACC  94
+           ||||||||||||||||||||||||||||
+Sbjct  1   TTGTACAAAAAAGCAGGCTGGATCCACC  28
+
+
+>lcl|pool1_scaffold138_1 
+Length=11638
+
+ Score = 52.8 bits (28),  Expect = 3e-07
+ Identities = 28/28 (100%), Gaps = 0/28 (0%)
+ Strand=Plus/Plus
+
+Query  66  TTTGTACAAAAAAGCAGGCTGGATCCAC  93
+           ||||||||||||||||||||||||||||
+Sbjct  1   TTTGTACAAAAAAGCAGGCTGGATCCAC  28
+
+
+>lcl|pool1_scaffold56_1 
+Length=32940
+
+ Score = 52.8 bits (28),  Expect = 3e-07
+ Identities = 28/28 (100%), Gaps = 0/28 (0%)
+ Strand=Plus/Minus
+
+Query  66     TTTGTACAAAAAAGCAGGCTGGATCCAC  93
+              ||||||||||||||||||||||||||||
+Sbjct  32940  TTTGTACAAAAAAGCAGGCTGGATCCAC  32913
+
+
+>lcl|pool1_scaffold58_1 
+Length=34351
+
+ Score = 51.0 bits (27),  Expect = 1e-06
+ Identities = 27/27 (100%), Gaps = 0/27 (0%)
+ Strand=Plus/Plus
+
+Query  68  TGTACAAAAAAGCAGGCTGGATCCACC  94
+           |||||||||||||||||||||||||||
+Sbjct  1   TGTACAAAAAAGCAGGCTGGATCCACC  27
+
+
+>lcl|pool1_scaffold75_1 
+Length=14099
+
+ Score = 49.1 bits (26),  Expect = 4e-06
+ Identities = 26/26 (100%), Gaps = 0/26 (0%)
+ Strand=Plus/Minus
+
+Query  69     GTACAAAAAAGCAGGCTGGATCCACC  94
+              ||||||||||||||||||||||||||
+Sbjct  14099  GTACAAAAAAGCAGGCTGGATCCACC  14074
+
+
+
+Lambda      K        H
+    1.33    0.621     1.12 
+
+Gapped
+Lambda      K        H
+    1.28    0.460    0.850 
+
+Effective search space used: 2484660150
+
+
+  Database: testdb
+    Posted date:  Apr 9, 2014  2:50 PM
+  Number of letters in database: 6,585,561
+  Number of sequences in database:  563
+
+
+
+Matrix: blastn matrix 1 -2
+Gap Penalties: Existence: 0, Extension: 2.5

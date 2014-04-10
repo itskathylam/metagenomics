@@ -81,10 +81,11 @@ def AnnotationTool(request):
     
     email_form = EmailForm()
     all_contigs = Contig.objects.all()
-    #for contig in Contig.objects.all():
-    #    for join in Contig_ORF_Join.objects.all():
-    #        if not contig == join.contig:
-    #            all_contigs.append(contig)
+    annotated_contigs = Contig_ORF_Join.objects.values('contig')
+    contigs = []
+    for con in all_contigs:
+        if not con in annotated_contigs:
+            contigs.append(con)
 
     #after submit collect email and contig selection
     if request.method == "POST":
@@ -131,7 +132,7 @@ def AnnotationTool(request):
                 
                 return render_to_response('tool_annotation_submit_message.html', {'contigs': contigs, 'email':email}, context_instance=RequestContext(request))
                 
-    return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': all_contigs, 'form_errors': form_errors}, context_instance=RequestContext(request))
+    return render_to_response('tool_annotation.html', {'email_form': email_form, 'all_contigs': contigs, 'form_errors': form_errors}, context_instance=RequestContext(request))
     
     
 #gets all the pictures generated from the Perl script and saves them to the appropriate contigs in the database
@@ -164,6 +165,8 @@ def save_images(folder):
 #contig tool, retrieves new contigs for cosmids in the pool
 @login_required
 def ContigTool(request):
+    #track errors with dict
+    form_errors = {}
     context = {'pool':Pooled_Sequencing.objects.all()}
     #display details for the selected pool 
     if request.method == "POST":
@@ -185,34 +188,41 @@ def ContigTool(request):
                     joined.append(cosmid)
                 else:
                     notjoined.append(cosmid)
-            
           
-            context = {'poolselect': int(pool_id), 'pool': pool,'detail': details, 'joined': joined, 'notjoined': notjoined} #'cosmids': cosmids, 'filtered': filter_cos, - used to test this relationship in the template
-        
-        #contigs selected are sent through the pipeline to call perl script
-        #returns list of list of the results of the script for display 
-        if 'submit' in request.POST:
-            pool = request.POST['poolhidden']
-            cos = request.POST.getlist('cos')
-            cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values("cosmid_name")
-            results = contig_pipeline(pool, cos_selected)
-            entries = []
-            for row in results:
-                #cosmid name, strand location, contig name
-                entry = row[0:3]
-                #percent identity
-                entry.append(row[5])
-                #end tag length
-                entry.append(row[7])
-                #contig length
-                entry.append(row[12])
-                #match type
-                entry.append(row[13])
-                entries.append(entry)
-            #send to submit page for contig selection 
-            var = RequestContext(request, {'results': entries})
-            return render_to_response('tool_contig_submit.html', var)
-                
+            context = {'poolselect': int(pool_id), 'pool': pool,'detail': details, 'joined': joined, 'notjoined': notjoined, 'errors':form_errors}
+            
+            #contigs selected are sent through the pipeline to call perl script
+            #returns list of list of the results of the script for display 
+            if 'submit' in request.POST:
+                cos = request.POST.getlist('cos')
+                #check the number of cosmids selected must have at least one to continue
+                length = len(cos)
+                if length == 0:
+                    form_errors['error_cosmid_zero'] = "Error: please select at least one cosmid to process."
+                    context = {'poolselect': int(pool_id), 'pool': pool,'detail': details, 'joined': joined, 'notjoined': notjoined, 'errors':form_errors}
+                    variables = RequestContext(request, context)
+                    return render_to_response('tool_contig.html', variables)
+                else:    
+                    pool = request.POST['poolhidden']
+                    cos_selected = Cosmid.objects.filter(cosmid_name__in = cos).values("cosmid_name")
+                    results = contig_pipeline(pool, cos_selected)
+                    entries = []
+                    for row in results:
+                        #cosmid name, strand location, contig name
+                        entry = row[0:3]
+                        #percent identity
+                        entry.append(row[5])
+                        #end tag length
+                        entry.append(row[7])
+                        #contig length
+                        entry.append(row[12])
+                        #match type
+                        entry.append(row[13])
+                        entries.append(entry)
+                    #send to submit page for contig selection 
+                    var = RequestContext(request, {'results': entries})
+                    return render_to_response('tool_contig_submit.html', var)
+
     variables = RequestContext(request, context)
     return render_to_response('tool_contig.html', variables)
 

@@ -61,7 +61,7 @@ class Pooled_Sequencing(models.Model):
     pool_comments = models.TextField("Comments", blank=True, null=True)
 
     def __unicode__(self):
-        return self.pk
+        return unicode(self.pk)
     
     class Meta:
         verbose_name_plural = 'Sequencing Pools'
