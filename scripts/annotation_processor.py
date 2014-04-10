@@ -82,6 +82,9 @@ def run():
                     new_orf = ORF.objects.create(orf_sequence = row[3].strip(), annotation = row[4].strip())
                 
                 try:
+                    con_orf = Contig_ORF_Join.objects.get('contig'= contig, 'orf'= new_orf)
+                    
+                except:
                     Contig_ORF_Join.objects.create(
                                                 contig = contig,
                                                 orf = new_orf,
@@ -92,8 +95,6 @@ def run():
                                                 predicted = 1,
                                                 prediction_score = float(row[8]),            
                                                 )
-                except:
-                    pass
             #get input email from command line 
             email = sys.argv[3]
             new_contigs = set(new_contigs)
