@@ -24,9 +24,6 @@ my $parentid = $ARGV[0];
 my $cwd = $ARGV[1];
 chdir("$cwd");
 
-open(my $out2, ">>", "orf_pred_out.txt")or die "Can't export to orf_pred_out$!\n";
-
-
 my $_contig_orf = retrieve("temp/storage/contig.$parentid") or die "Could not retrieve $!\n";
 my %contig_orf = %{$_contig_orf};
 (system('rm -rf ./query.sh')) if (-e './query.sh');
@@ -71,10 +68,6 @@ foreach my $predict_files(@files){
                                 $end = $e;
                                 $seq = $seq_o->seq();
                             }              # DELETE UP TO HERE
-                            print $out2 "-----------------------------------------------\n";
-                            #$contig_seq =~ /((?<=(.{3}))$seq)/;
-                            #$seq = $2 . $1;
-                            #print $out2 "\$2 is: $seq || \$1 is: $1\n\$seq is: $seq\n";
                         }
                     }
                     close($contig_fh);

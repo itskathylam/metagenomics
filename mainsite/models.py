@@ -67,7 +67,7 @@ class Pooled_Sequencing(models.Model):
         verbose_name_plural = 'Sequencing Pools'
 
 class Cosmid(models.Model):
-    cosmid_name = models.CharField(verbose_name="Cosmid Name", max_length=50)
+    cosmid_name = models.CharField(verbose_name="Cosmid Name", max_length=50, unique=True)
     host = models.ForeignKey(Host)
     researcher = models.ForeignKey(Researcher)
     library = models.ForeignKey(Library)
@@ -80,9 +80,6 @@ class Cosmid(models.Model):
     
     def __unicode__(self):
         return self.cosmid_name
-    
-    class Meta:
-        unique_together = ("cosmid_name", "researcher")
 
 class Primer(models.Model):
     
@@ -161,7 +158,7 @@ class Contig_ORF_Join(models.Model):
 
 
 class Subclone(models.Model):
-    subclone_name = models.CharField("Subclone Name", max_length=50)
+    subclone_name = models.CharField("Subclone Name", max_length=50, unique=True)
     cosmid = models.ForeignKey(Cosmid, verbose_name="Parent Cosmid Name")
     orf = models.ForeignKey(ORF, verbose_name="ORF ID")
     vector = models.ForeignKey(Vector, verbose_name="Vector Name")
@@ -174,9 +171,6 @@ class Subclone(models.Model):
     
     def __unicode__(self):
         return self.subclone_name
-    
-    class Meta:
-        unique_together = ("subclone_name", "researcher")
 
 class Substrate(models.Model):
     substrate_name = models.CharField("Substrate Name", max_length=100, unique=True)
@@ -210,6 +204,13 @@ class Cosmid_Assay(models.Model):
     class Meta:
         unique_together = ("cosmid", "host", "substrate", "antibiotic")
         verbose_name_plural = 'Cosmid Assays'
+        
+    #catch the unique_together constraint - return error message on the add page
+    def unique_error_message(self, model_class, unique_check):
+        if model_class == type(self) and unique_check == ("cosmid", "host", "substrate", "antibiotic"):
+            return 'Error: combination of subclone/host/substrate/antiobiotic is a duplicate.'
+        else:
+            return super(Cosmid_Assay, self).unique_error_message(model_class, unique_check)
     
 class Subclone_Assay(models.Model):
     subclone = models.ForeignKey(Subclone, verbose_name="Subclone Name")
@@ -225,3 +226,5 @@ class Subclone_Assay(models.Model):
     class Meta:
         unique_together = ("subclone", "host", "substrate", "antibiotic")
         verbose_name_plural = 'Subclone Assays'
+    
+    

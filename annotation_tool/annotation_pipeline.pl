@@ -7,7 +7,6 @@ if (abs_path('annotation_tool/annotation_pipeline.pl')) {
     $cwd = abs_path('annotation_tool/annotation_pipeline.pl');
 } elsif (abs_path('annotation_pipeline.pl')){
     $cwd = abs_path('annotation_pipeline.pl');
-    print "Here $cwd\n";
 }
 $cwd =~ s/\/annotation_pipeline.pl//;
 chdir("$cwd");
@@ -58,7 +57,7 @@ if (scalar(@ARGV == 1)) {
                 my $return = `ssh quever\@$server.sharcnet.ca perl /scratch/quever/metagenomics/sharc_mg_pipe.pl`;
                 
                 #my $return = listenSN();
-                print "Sharcnet pipeline status: $return \n";
+                print $log "Sharcnet pipeline status: $return \n";
                 
                 if ($return) {
                     chdir("$cwd");

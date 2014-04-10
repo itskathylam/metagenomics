@@ -202,6 +202,7 @@ if ((scalar(@ARGV)) == 3) {
                                                     -start  =>  $contig_orf{$scaffold}->[1]{'glimmer'}{$retrieve}{'start'},     # Start of range
                                                     -end    =>  $contig_orf{$scaffold}->[1]{'glimmer'}{$retrieve}{'end'},        # End of range
                                                     );
+                    print "HERE: $scaffold -- $retrieve -- $contig_orf{$scaffold}->[1]{'glimmer'}{$retrieve}{'start'}\n";
                     $glimmer_track->add_feature($feature);
                 }
             }
@@ -330,7 +331,7 @@ sub outputAnnoCSV{
         my $acc = $contig_orf{$scaf}->[2];
         print "HERE: $scaf and $acc\n";
         foreach my $orf(sort(keys(%{$contig_orf{$scaf}->[1]{'glimmer'}}))){
-            print $outcsv "$scaf, $orf, $acc, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'sequence'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'annotation'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'start'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'end'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'reading_frame'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'score'}\n";
+            print $outcsv "$scaf, $orf, $acc, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'sequence'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'annotation'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'start'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'end'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'reading_frame'}, $contig_orf{$scaf}->[1]{'glimmer'}{$orf}{'score'}, $contig_orf{$scaf}->[2]\n";
         }
     }
 }
