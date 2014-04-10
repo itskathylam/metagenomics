@@ -12,8 +12,8 @@
 
 {% block content %}
 
-<p><font color="red">Cosmids will not be displayed if two end-tags were not present,
-or if alignment of the cosmid endtags to the contig sequences did not meet the significance threshold </font></p>
+<p>Note: Cosmids will not be displayed if two end-tags were not present,
+or if alignment of the cosmid endtags to the contig sequences did not meet the significance threshold </p>
 
 <form action="{% url 'contig-tool-results' %}" method='POST'>
 {% csrf_token %}
