@@ -82,7 +82,7 @@ def run():
                     #new_orf.orf_sequence = orf_seq
                     new_orf = ORF.objects.create(orf_sequence = row[3].strip(), annotation = row[4].strip())
                 
-                if(Contig_ORF_Join.objects.filter('contig'= contig, 'orf'= new_orf) == None):
+                if(Contig_ORF_Join.objects.filter(contig=contig).filter(orf=new_orf) == None):
                     Contig_ORF_Join.objects.create(
                                                 contig = contig,
                                                 orf = new_orf,
