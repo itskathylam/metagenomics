@@ -75,6 +75,9 @@
                 Accession: {{ list.contig_accession }}<br>
                 <label>Sequence: <br>
                 <textarea rows="15" cols="70" readonly=true>{{ list.contig_sequence }}</textarea></label><br><br>
+                    {% if orfs %}
+                        <h3>Open reading frames in {{ list.contig_name }}</h3>
+                    {% endif %}
                     {% if 'contig' not in blank %}
                         <div class="link" style="max-height:100px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
                         <img src="{{ STATIC_URL }}tempdisplay/{{ list.contig_name }}contig.png">
@@ -102,8 +105,7 @@
                     {% endif %}
                 <br>
                     
-            {% if orfresults %}
-                <h3>Open reading frames in {{ list.contig_name }}</h3>
+            {% if orfs %}
                 <p><a href="{% url 'orf-contig-add' %}">Add new ORF</a></p>
                 <table>
                     <tr>

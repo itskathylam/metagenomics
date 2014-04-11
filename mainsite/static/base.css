@@ -25,6 +25,10 @@ img.viewall {
     top: 15px;    
 }
 
+h3 {
+    font-family: verdana, arial, sans-serif;
+}
+
 h2 {
     margin: 0px 10px 20px 10px;
     display: inline;
