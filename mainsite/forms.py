@@ -4,6 +4,7 @@ from mainsite.models import *
 from django.forms import widgets
 from django.contrib.auth.models import User
 from django.forms.models import BaseFormSet, inlineformset_factory
+from django.core.exceptions import ValidationError
 import pdb
 
 #from django.contrib.auth.forms import SetPasswordForm
@@ -54,8 +55,19 @@ class SubcloneAssayForm(ModelForm):
 
 #For cosmid assay search
 class CosmidAssayForm(ModelForm):
+    
     class Meta:
         model = Cosmid_Assay
+
+    #def clean(self):
+    #    data = self.cleaned_data
+    #    try:
+    #        Cosmid_Assay.objects.get(cosmid=data['cosmid'],host=data['host'],substrate=data['substrate'],antibiotic=data['antibiotic'])
+    #    except:
+    #        pass
+    #    else:
+    #       raise ValidationError('not unique combo') 
+    #    return data
 
 #For contig search
 class ContigSearchForm(ModelForm):
