@@ -75,34 +75,38 @@
                 Accession: {{ list.contig_accession }}<br>
                 <label>Sequence: <br>
                 <textarea rows="15" cols="70" readonly=true>{{ list.contig_sequence }}</textarea></label><br><br>
+                    {% if orfs %}
+                        <h3>Open reading frames in {{ list.contig_name }}</h3>
+                    {% endif %}
                     {% if 'contig' not in blank %}
-                        <div class="link" style="max-height:100px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
+                        <div class="link" style="max-height:100px;width:100%;overflow-y:hidden;overflow-x;scroll;border-style:solid;border-width:thin;">
                         <img src="{{ STATIC_URL }}tempdisplay/{{ list.contig_name }}contig.png">
                         </div>
                     {% endif %}
                     {% if 'align' not in blank %}
-                        <div class="link" style="max-height:100px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
+                        <div class="link" style="max-height:100px;width:100%;overflow:hidden;border-style:solid;border-width:thin;">
                         <img src="{{ STATIC_URL }}tempdisplay/{{ list.contig_name }}align.png">
                         </div>
                     {% endif %}
                     {% if 'genbank' not in blank %}
-                        <div class="link" style="max-height:250px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
+                        <div class="link" style="max-height:250px;width:100%;overflow-y:scroll;overflow-x:hidden;border-style:solid;border-width:thin;">
                         <img src="{{ STATIC_URL }}tempdisplay/{{ list.contig_name }}genbank.png">
                         </div>
                     {% endif %}
                     {% if 'predicted' not in blank %}
-                        <div class="link" style="max-height:250px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
+                        <div class="link" style="max-height:250px;width:100%;overflow-y:scroll;overflow-x:hidden;border-style:solid;border-width:thin;">
                         <img src="{{ STATIC_URL }}tempdisplay/{{ list.contig_name }}predicted.png">
                         </div>
                     {% endif %}
                     {% if 'manual' not in blank %}
-                        <div class="link" style="max-height:250px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
+                        <div class="link" style="max-height:250px;width:100%;overflow-y:scroll;overflow-x:hidden;border-style:solid;border-width:thin;">
                         <img src="{{ STATIC_URL }}tempdisplay/{{ list.contig_name }}manual.png">
                         </div>
                     {% endif %}
                 <br>
-                    
+
                 <h3>Open reading frames in {{ list.contig_name }}</h3>
+
                 <p><a href="{% url 'orf-contig-add' %}">Add new ORF</a></p>
                 <table>
                     <tr>

@@ -40,34 +40,36 @@
 
 {% block orfimg %}
 <div style="clear:both;">
+    {% if orfresults %}
+         <h3>Open reading frames in {{ name }}</h3>
+    {% endif %}
     {% if 'contig' not in blank %}
-        <div class="link" style="max-height:100px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
+        <div class="link" style="max-height:100px;width:100%;overflow-y:hidden;overflow-x:scroll;border-style:solid;border-width:thin;">
         <img src="{{ STATIC_URL }}tempdisplay/{{ name }}contig.png">
         </div>
     {% endif %}
     {% if 'align' not in blank %}
-        <div class="link" style="max-height:100px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
+        <div class="link" style="max-height:100px;width:100%;overflow:hidden;border-style:solid;border-width:thin;">
         <img src="{{ STATIC_URL }}tempdisplay/{{ name }}align.png">
         </div>
     {% endif %}
     {% if 'genbank' not in blank %}
-        <div class="link" style="max-height:150px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
+        <div class="link" style="max-height:250px;width:100%;overflow-y:scroll;overflow-x:hidden;border-style:solid;border-width:thin;">
         <img src="{{ STATIC_URL }}tempdisplay/{{ name }}genbank.png">
         </div>
     {% endif %}
     {% if 'predicted' not in blank %}
-        <div class="link" style="max-height:150px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
+        <div class="link" style="max-height:250px;width:100%;overflow-y:scroll;overflow-x:hidden;border-style:solid;border-width:thin;">
         <img src="{{ STATIC_URL }}tempdisplay/{{ name }}predicted.png">
         </div>
     {% endif %}
     {% if 'manual' not in blank %}
-        <div class="link" style="max-height:150px;width:100%;overflow:scroll;border-style:solid;border-width:thin;">
+        <div class="link" style="max-height:250px;width:100%;overflow-y:scroll;overflow-x:hidden;border-style:solid;border-width:thin;">
         <img src="{{ STATIC_URL }}tempdisplay/{{ name }}manual.png">
         </div>
     {% endif %}
     
     {% if orfresults %}
-    <p>Open reading frames in {{ name }}</p>
     <p><a href="{% url 'orf-contig-add' %}">Add new ORF</a></p>
     <table>
         <tr>
