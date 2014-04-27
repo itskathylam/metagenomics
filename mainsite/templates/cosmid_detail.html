@@ -104,8 +104,9 @@
                         </div>
                     {% endif %}
                 <br>
-                    
-            {% if orfs %}
+
+                <h3>Open reading frames in {{ list.contig_name }}</h3>
+
                 <p><a href="{% url 'orf-contig-add' %}">Add new ORF</a></p>
                 <table>
                     <tr>
@@ -140,7 +141,6 @@
                         </tr>
                     {% endif %}
                 {% endfor %}
-            {% endif %}
                 </table>
         </div>
     {% endfor %}

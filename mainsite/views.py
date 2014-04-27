@@ -263,7 +263,7 @@ def read_csv(file_location):
         for row in reader:
             rows.append(row)
     csvfile.closed
-    #system("rm %s" %file_location)
+    system("rm %s" %file_location)
     return rows
 
 #this function is only called by other views, not directly associated with a URL
@@ -328,7 +328,7 @@ def orf_data(contig_list):
 def orf_data_update(contig_list):
     contig_id = Contig.objects.filter(contig_name__in = contig_list).values('id')
     contigs = Contig.objects.filter(contig_name__in = contig_list).values_list('id','contig_name', 'contig_sequence', 'blast_hit_accession')
-    orfs = Contig_ORF_Join.objects.filter(contig__in = contig_id).values_list('contig','orf','start', 'stop', 'complement', 'predicted','prediction_score')
+    orfs = Contig_ORF_Join.objects.filter(contig__in = contig_id).values_list('contig','orf','start','stop','complement', 'predicted','prediction_score')
     anno = ORF.objects.filter(contig__in = contig_id).values_list('id','annotation', 'orf_sequence')
     
     write_lib_update(contigs, orfs, anno)
@@ -382,9 +382,8 @@ def write_lib_update(contigs, orfs, anno):
                             data.write('\'' + contig + '-' + str(count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
                             data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
                             annotation = ann if ann != None else ''
-                            data.write('annotation=>\'' + annotation + '\',\n sequence =>\'' + seqs + '\'\n},')
+                            data.write('annotation=>\'' + annotation + '\',\n sequence =>\'' + seqs + '\'\n}},')
                 if predic == 0:
-                    data.write('}},\'' + accession + '\'];\n')
                     data.write('\'genbank\' => {},\n')
                     data.write('\'manual\' =>{')
                     for o_id, ann, seqs in anno:
@@ -395,8 +394,8 @@ def write_lib_update(contigs, orfs, anno):
                             data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
                             annotation = ann if ann != None else ''
                             data.write('annotation=>\'' + annotation + '\',\n sequence =>\'' + seqs + '\'\n},')
-        data.write('}},\'' + accession + '\'];\n')
-        data.write('return(\%contig_orf);} \n1;')
+            data.write('}},\'' + accession + '\'];\n')
+            data.write('return(\%contig_orf);} \n1;')
         data.closed
     f.closed
 
@@ -1159,13 +1158,18 @@ def OrfDetail(request, pk):
     for c in contigorfs:
         contigids.append(c.contig_id)
     contigs = Contig.objects.filter(id__in = contigids)
+    
     return render_to_response('orf_detail.html', {'orf': orf, 'contigs': contigs} , context_instance=RequestContext(request))
 
+def OrfEditResults(request, contig_name):
+    contig = list(contig_name)
+    orf_data_update(contig)
+    system("perl annotation_tool/annotation_pipeline.pl -update")
+    save_images("tmp")
+    
+    return render_to_response('orf_edit_results.html',{'con':contig_name}, context_instance=RequestContext(request))
+
 #the 5 classes below all use the generic DetailView to generate a detailed listing of the requested object from the database
-class OrfDetailView(DetailView): #can delete this view
-    model = ORF
-    template_name = 'orf_detail.html'
- 
 class SubcloneAssayDetailView(DetailView):
     model = Subclone_Assay
     template_name = 'subclone_assay_detail.html'
@@ -1267,22 +1271,21 @@ class ORFEditView(UpdateView):
     slug_field = 'pk'
     slug_url_kwarg = 'pk'
     template_name = 'orf_edit.html'
-    success_url = reverse_lazy('orf-list')
+    success_url = reverse_lazy('orf-edit-success')
 
     def get_object(self, queryset=None):
         orf_object = ORF.objects.get(id=self.kwargs['pk'])
         return orf_object
     
-    #run annotation tool to update the stored images
+    #run annotation tool to update the stored images in the success url
     def get_success_url(self):
-        orf = self.get_object().id
+        orf = self.get_object()
+        orf = str(orf)
         contig_id = ORF.objects.filter(id = orf).values("contig")
-        contig = Contig.objects.filter(id = contig_id).values("contig_name")
-        orf_data_update(contig)
-        system("perl annotation_tool/annotation_pipeline.pl -update")
-        save_images("tmp")
-        return ('/orf/' + orf)
-    
+        contig = Contig.objects.get(id = contig_id)
+        contig_name = str(contig.contig_name)
+        
+        return ('/edit/orf/success/' + contig_name)
 
 class ContigEditView(UpdateView):
     model = Contig
@@ -1294,12 +1297,8 @@ class ContigEditView(UpdateView):
         contig_object = Contig.objects.get(id=self.kwargs['pk'])
         return contig_object
     
-    #run annotation tool to update the stored images
     def get_success_url(self):
         contig = self.get_object().contig_name
-        orf_data_update(contig)
-        system("perl annotation_tool/annotation_pipeline.pl -update")
-        save_images("tmp")
         return ('/contig/' + contig)
     
     
@@ -1307,20 +1306,19 @@ class ContigEditView(UpdateView):
 class ContigORFDeleteView(DeleteView):
     model=Contig_ORF_Join
     template_name = 'contig_orf_delete.html'
-    success_url = reverse_lazy('contig-list')
+    success_url = reverse_lazy('orf-edit-success')
     
     def get_object(self, queryset=None):
         con_orf_object = Contig_ORF_Join.objects.get(id=self.kwargs['pk'])
         return con_orf_object
     
-    #run annotation tool to update the stored images
+    #run annotation tool to update the stored images in the success url
     def get_success_url(self):
         contig_obj = self.get_object().contig
-        contig = Contig.objects.filter(contig_name = contig_obj).values("contig_name")
-        orf_data_update(contig)
-        system("perl annotation_tool/annotation_pipeline.pl -update")
-        save_images("tmp")
-        return ('/contig/' + contig_obj.contig_name)
+        contig = Contig.objects.get(contig_name = contig_obj)
+        contig_name = str(contig.contig_name)
+        
+        return ('/edit/orf/success/' + contig_name)
     
     
 class ORFContigListView(ListView):
@@ -1348,7 +1346,8 @@ class CosmidAssayCreateView(CreateView):
     
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        data = form.cleaned_data
+        #data = form.cleaned_data
+
         try:
             Cosmid_Assay.objects.get(cosmid=data['cosmid'],host=data['host'],substrate=data['substrate'],antibiotic=data['antibiotic'])
         except:
@@ -1357,16 +1356,6 @@ class CosmidAssayCreateView(CreateView):
             form.errors['__all__'] = form.error_class(['Error: Combination of cosmid/host/substrate/antiobiotic is a duplicate.'])
             return super(CosmidAssayCreateView, self).form_invalid(form)
         return super(CosmidAssayCreateView, self).form_valid(form) 
-        
-        #Phil - im not sure what this is for so ive commented it. Email in cosmid assay??
-        #try:
-        #    self.object.full_clean()
-        #    
-        #except ValidationError:
-        #    form._errors["email"] = ErrorList([u"You already have an email with that name man."])
-        #    return super(CosmidAssayCreateView, self).form_invalid(form)
-        #
-        #return super(CosmidAssayCreateView, self).form_valid(form) 
 
 class SubcloneAssayCreateView(CreateView):
     model = Subclone_Assay
@@ -1534,8 +1523,10 @@ def ORFContigCreate(request):
                         #save and redirect to contig's detailview
                         new_contig_orf.save()
                         
-                        #update images in database with the new contig_orf  
-                        orf_data_update(new_contig_orf)
+                        #update images in database with the new contig_orf
+                        new_con_list = []
+                        new_con_list.append(new_contig_orf)
+                        orf_data_update(new_con_list)
                         system("perl annotation_tool/annotation_pipeline.pl -update")
                         save_images("tmp")
                         

@@ -45,6 +45,8 @@ urlpatterns = patterns('',
     url(r'^edit/contig/(?P<pk>\d+)$', permission_required('mainsite.cosmid.can_change_contig')(ContigEditView.as_view()), name='contig-edit'),
     url(r'^edit/cosmid/endtags/(?P<cosmid_name>.*)$', permission_required('mainsite.cosmid.can_change_cosmid')(CosmidEndTagEditView.as_view()), name='cosmid-end-tag-edit'), #cannot add decorator
     
+    url(r'^edit/orf/success/(?P<contig_name>.*)$', OrfEditResults, name='orf-edit-success'),
+    
     #Delete views (DeleteViews)
     url(r'^delete/contig-orf/(?P<pk>\d+)$', login_required(ContigORFDeleteView.as_view()), name='contig-orf-delete'),
     
