@@ -5,9 +5,512 @@
 {% endblock %}
 
 {% block subtitle %}
-<h2 class="add">Subtitle</h2>
+<h2>End User Documentation</h2>
 {% endblock %}
 
 {% block content %}
-    <p>User doc.</p>
+<p>Copyright 2014 by Katelyn Davis, Kathy Lam, Nina Nissan, Rene Quevedo, and Philip Rees.  All rights reserved. This material may not be published or distributed without permission.</p>
+
+<h3>Table of Contents</h3>
+
+<ol>
+<li><a href="#overview">Website motivation and overview</a>
+<ul>
+<li><a href="#purpose">1.1  Purpose and benefits</a></li>
+<li><a href="#research">1.2  Description of research activities</a></li>
+<ul>
+<li><a href="#screening">1.2.1  Function-based screening of metagenomic libraries</a></li>
+<li><a href="#biochemical">1.2.2  Biochemical assays and targeted sub-cloning of Cosmid clone genes</a></li>
+<li><a href="#pooled">1.2.3  Pooled Illumina sequencing of Cosmid clones</a></li>
+</ul></li>
+<li><a href="#motivation">1.3  Motivation for web-accessible database and custom analysis tools</a>
+<ul>
+<li><a href="#data">1.3.1  Data storage needs</a></li>
+<li><a href="#analysis">1.3.2  Data analysis needs</a></li>
+</ul></li>
+<li><a href="#relationship">1.4  Summary of data relationships</a></li>
+<li><a href="#scope">1.5  Scope and limitations</a></li>
+</ul></li><br>
+<li><a href="#administration">Website administration</a>
+<ul>
+<li><a href="#user">2.1  User accounts</a></li>
+<li><a href="#browser">2.2  Web browser recommendations</a></li>
+<li><a href="#login">2.3  Login and user settings</a></li>
+<li><a href="#permissions">2.4  User permissions</a></li>
+</ul></li><br>
+<li><a href="#content">Website content and navigation</a>
+<ul>
+<li><a href="#navigation">3.1  Navigation summary</a></li>
+<li><a href="#homepage">.2  Homepage</a></li>
+<li><a href="#viewall">3.3  View All pages</a>
+<ul>
+<li><a href="#main">3.3.1  Main data</a></li>
+<li><a href="#static">3.3.2  Static Data</a></li>
+<li><a href="#sort">3.3.3  Sorting table data</a></li>
+<li><a href="#export">3.3.4  Exporting table data</a></li>
+</ul></li>
+<li><a href="#detail">3.4  Detail pages</a>
+<ul>
+<li>3.4.1  Cosmid and Contig detail pages</a></li>
+<li>3.4.2  Other detail pages</a></li>
+</ul>
+</li>
+<li>3.5  Search pages</a>
+<ul>
+<li>3.5.1  Basic search</a></li>
+<li>3.5.2  Advanced search</a></li>
+<li>3.5.3  Local BLAST search</a></li>
+</ul></li>
+<li>3.6  Add pages</a>
+<ul>
+<li>3.6.1  Add a Cosmid</a></li>
+<li>3.6.2  Add a Subclone, Subclone Assay or Cosmid Assay</a></li>
+<li>3.6.3  Add an ORF</a></li>
+<li>3.6.4  Add a FASTA file of Contigs</a></li>
+<li>3.6.5  Static data</a></li>
+</ul></li>
+<li>3.7  Edit pages</a></li>
+</ul>
+</li><br>
+
+<li>Website custom tools</a>
+<ul>
+<li>4.1  Contig retrieval tool</a></li>
+<li>4.2  ORF finding and annotation tool</a>
+<ul>
+<li>4.2.1 Usage of the tool</a></li>
+<li>4.2.2 Viewing the Data</a></li>
+<li>4.2.3 Re-generation of image upon adding, editing, or removing ORFs from a Contig</a></li>
+</ul></li>
+</ul>
+</li><br>
+
+<li>Maintenance and troubleshooting</a>
+<ul>
+<li>5.1  Server specifications and details</a></li>
+<li>5.2  Common errors and troubleshooting</a>
+<ul>
+<li>5.2.1  Contig retrieval tool</a></li>
+<li>5.2.2  ORF prediction and annotation tool</a></li>
+<li>5.2.3  Errors resulting from adding information to the database</a></li>
+<li>5.2.4  404 error</a></li>
+<li>5.2.5  403 error</a></li>
+<li>5.2.6  500 error</a></li>
+</ul></li>
+</ul>
+</li><br>
+
+<li>Technical details</a>
+<ul>
+<li>6.1  Database</a>
+<ul>
+<li>6.1.1  Database entity-relationship diagram</a></li>
+<li>6.1.2  Website-database communication through Django</a></li>
+</ul></li>
+<li>6.2  Communication between the Metagenomics and SHARCNET servers</a>
+<ul>
+<li>6.2.1 Setting up a connection</a></li>
+</ul></li>
+<li>6.3  Contig retrieval tool</a>
+<ul>
+<li>6.3.1  Generation of user-specified database information</a></li>
+<li>6.3.2  Execution of the Contig retrieval tool</a></li>
+<li>6.3.3  Processing the returned data</a></li>
+</ul></li>
+<li>6.4  ORF finding and annotation tool</a>
+<ul>
+<li>6.4.1  ORF finding and annotation tool</a></li>
+<li>6.4.2  Complete annotations from scratch</a>
+<ul>
+<li>6.4.2.1  Generation of user-specified request</a></li>
+<li>6.4.2.2  Complete annotations from scratch</a></li>
+</ul></li>
+<li>6.4.3  Updated user annotations</a>
+<ul>
+<li>6.4.3.1  Generation of user-specified request</a></li>
+<li>6.4.3.2  Updated user annotations</a></li>
+</ul></li>
+<li>6.4.4  Processing the returned data</a></li>
+</ul></li>
+</ul>
+</li>
+<br>
+<li>References</a></li>
+</ol><br>
+
+<ul>
+    <li>Appendix 1:  Definition of acronyms</li>
+    <li>Appendix 2:  Field requirements for data entry</li>
+</ul>
+
+
+<a id="overview"><h3>1  Website motivation and overview</h3></a>  
+<a id="purpose"<h4>1.1  Purpose and benefits</h4></a>
+<p>
+This website is specifically designed for use by members of the laboratory group of  Trevor C. Charles at the University of Waterloo. Its interface can be easily understood by those with intimate knowledge of data obtained from the Charles Laboratory research activities. Briefly, the website provides researchers with two important functions: 
+</p>
+<ul>
+<li>a web interface to a database so that members can easily store and modify their data</li>
+<li>a suite of custom tools to allow members to analyze their data, particularly DNA sequence data</li>
+</ul>
+<p>
+The following Section 1.2  briefly describes the nature of research conducted in the Charles laboratory. It provides the minimum amount of background necessary to understand the functions available on the website. However, if you are already familiar the research activities of the laboratory group, please skip the following section.
+</p>
+<a id="research"><h5>1.2  Description of research activities</h5></a>
+<p>
+The Charles laboratory is a bacterial genetics research group. One of their research goals is to examine bacterial communities at the DNA level in order to  discover novel genes. These discoveries are interesting in their own right, from an academic point of view, but can also be useful for industrial applications. 
+</p>
+<p>
+They are particularly interested in soil communities because soil is the most diverse environment on Earth in terms of bacterial species. The lab, working with other groups, has started an endeavour to sample soils from diverse environments across Canada (http://www.cm2bl.org). 
+</p>
+<a id="screening"><h6>1.2.1  Function-based screening of metagenomic libraries</h6></a>
+<p>
+Using the collects oil samples, the lab extracts the environmental DNA and clones it into cosmid vectors to make DNA libraries. Figure 1-1 depicts the construction of a metagenomic library; the library is described as "metagenomic" because the genetic material is derived from more than one organism. The libraries are housed in E. coli cells, which can be frozen and stored indefinitely.
+</p>
+
+
+ 
+
+      Figure 1-1: Construction of a metagenomic library from an environmental soil sample
+
+<p>
+Once a metagenomic library is made, the lab will begin screening it for interesting functions. Specifically, the genes carried on the DNA can be expressed in surrogate bacterial hosts, such as E. coli ; the surrogate host expresses the foreign genes, and any gene functions are conferred onto the host. For example, it is possible to look for genes that confer antibiotic resistance (Figure 1-2): the library-containing E. coli cells can simply be grown on media containing the antibiotic of interest; only those cells that carry a resistance gene will be able to survive and form a colony on the media. The colony can be isolated using traditional microbiological approaches, and the cosmid DNA can be purified from the E. coli  to characterize further.
+</p>
+
+ 
+
+
+Figure 1-2: Example of a function-based screen of a metagenomic library to find antibiotic resistance genes
+
+<p>
+By using a purely function-based approach, novel genes can be discovered that have low sequence similarity to already known genes, and which may not have been found using only a sequence-based homology approach. After identifying clones from a screen, the lab tries to identify which gene carried on the clone is responsible for the function of interest. However, the cloned DNA is very large (on average, over 30,000 base pairs) and can therefore carry many genes. To find the gene(s) of interest, it is necessary to: (1)  perform subcloning and biochemical assays (Section 1.2.2), and, most importantly, (2) to analyze the cloned DNA at the sequence level (Section 1.2.3).
+</p>
+<a id="biochemical"><h6>1.2.2  Biochemical assays and targeted sub-cloning of Cosmid clone genes</h6></a>
+<p>
+Once a cosmid is isolated from E. coli,  it can be studied further. Specific genes can be extracted from the cosmid and cloned into new vectors to generate subclones. Both cosmids and subclones can be subjected to function-based biochemical assays to confirm the gene functions of interest, and to get various measures on the proteins expressed from the genes.
+</p>
+<a id="pooled"><h6>1.2.3  Pooled Illumina sequencing of Cosmid clones</h6></a>
+<p>
+The Charles lab uses an economical strategy for sequencing their cosmid clones: a pooled sequencing strategy (Figure 1-3). This strategy is a hybrid Sanger/Illumina sequencing approach. As part of the sequencing strategy, end sequences for every clone are generated by Sanger-sequencing; these sequences are called "end-tags" to describe their role in the downstream sequence retrieval process in which clones are matched to contigs. In the pooled sequencing method, clones are sequenced together and the lab relies on the post-sequencing assembly process to generate contigs that represent individual clones. After assembly, contigs exist in a pool; to retrieve a specific clone's contig, they use the clone's end-tags to query the pool. 
+</p>
+<p>
+Currently, the end-tag-based contig retrieval is done manually using BLAST. It is a slow and tedious procedure to perform for the large number of clones that is sequenced in one pool.
+</p>
+ 
+
+     Figure 1-3: Pooled Illumina sequencing of Cosmids with subsequent Contig retrieval using Cosmid end-tags
+<a id="motivation"><h5>1.3  Motivation for web-accessible database and custom analysis tools</h5></a>
+<p>
+The Charles laboratory is a relatively small bacterial genetics lab, lacking expertise in bioinformatics. However, they are quickly accumulating genera experimental data and sequence data more quickly than they are able to deal with. At this moment, they are in particular need of an effective way to: (1) store and access their data, and (2) analyze their data. 
+</p>
+<a id="data"><h6>1.3.1  Data storage needs</h6></a>
+<p>
+The Charles lab requires an organized data management system. Currently, metadata and experimental data are scattered in personal files and lab books; furthermore, sequence data are frequently stored in Microsoft Word Excel files. Unfortunately, both of these storage methods are disorganized, unsustainable and may lead to data loss. This is an undesirable outcome for the lab.
+</p>
+<p>
+With a web-accessible content management system, the lab would be in a position to better handle their meta- and sequence data. Data would be stored, organized, sortable, queryable, and easily understood by current and new lab members. This would provide a huge advantage to the lab, and aid in lab research productivity. 
+</p>
+<a id="analysis"><h6>1.3.2  Data analysis needs</h6></a>
+<p>
+In addition to a data management system, the lab is in particular need of a data analysis pipeline. This pipeline is necessary to be able to handle high-throughput Illumina sequencing data from sequencing Cosmids (see Section 1.2.3). Given the lab's goal of identifying novel genes from Cosmids, an automated method is required to identify possible gene functions in sequence data.
+</p>
+<p>
+Custom tools that assist in: (1)  handling Illumina sequencing data, and (2) finding potential genes and gene functions, would be of great benefit to Charles lab members.  It would help them move their research forward more quickly, not to mention enabling them to handle and analyze their sequence data independently  without external assistance. 
+</p>
+<a id="relationship"><h5>1.4  Summary of data relationships</h5></a>
+<p>
+The following statements quickly summarize the note-worthy relationships between objects commonly referenced in the website content and in this user manual. In particular, the user should be familiar with these relationships in order to understand how the custom tools operate.
+</p>
+<ul>
+<li>Cosmids have End-Tag sequences</li>
+<li>Cosmids are assigned to Sequencing Pools for pooled sequencing</li>
+<li>Contigs are a result of pooled sequencing and are always associated with a Sequencing Pool</li>
+<li>Cosmids can be associated with specific Contigs, through their End-Tags</li>
+<li>The Contig sequence represents the cloned DNA carried on the Cosmid</li>
+<li>Contigs can be associated with more than one Cosmid</li>
+<li>ORFs are found on (i.e. are subsequences) of Contigs</li>
+<li>Specific ORFs are cloned from Cosmids to generate Subclones</li>
+<li>Subclones can be subjected to a Subclone Assay</li>
+<li>Cosmids can be subjected to a Cosmid Assay</li>
+</ul>
+<p>
+Information regarding the entity-relationship diagram (Figure 6-1) is provided in Section 6.1.1.
+</p>
+<a id="scope"><h5>1.5  Scope and limitations</h5></a>
+<p>
+A few limitations currently exist, due to the time limitations of this project.
+</p>
+<ul>
+<li>All data can only be added as individual records, except for Contigs</li>
+<li>The Local BLAST search only has most common parameters available, not all parameters</li>
+<li>There is automated analysis of Contig DNA sequence data, but not of end-tag sequence data</li>
+<li>There is currently no way to edit sets of a records; for example, it is not possible to associate multiple Cosmids with a sequencing pool without editing each Cosmid individually</li>
+</ul>
+
+<a id="administration"><h3>Website administration</h3></a>
+<a id="user"><h4>2.1  User accounts</h4></a>
+<p>
+Users must have an account to access the website. In order to obtain an account, a request must be made to the Principal Investigator, Trevor Charles.
+</p>
+<a id="browser"><h4>2.2  Web browser recommendations</h4></a>
+<p>The website is best viewed in Google Chrome or Mozilla Firefox web browsers; however, it should function in all common web browsers as of April 2014. The website navigation and content were designed to be viewed at a resolution of 1024x768 or higher; at lower resolutions, navigation controls and content may not display appropriately.
+</p>
+<a id="login"><h4>2.3  Login and user settings</h4></a>
+<p>
+To access the website, open a web-browser and go to the URL www.metagenomics.uwaterloo.ca. You will be immediately prompted for your account information (Figure 2-1). Enter your username and password to access the website.
+</p>
+ 
+Figure 2-1: Logging in to the website at www.metagenomics.uwaterloo.ca
+<p>
+Once you have logged in, any of your user settings can be edited by clicking on the gear in the upper right corner of any page (Figure 2-2). You will be redirected to a page where you are able to edit: your first name, last name, username and e-mail address. To change your password, follow the Change Password  link.  
+</p>
+
+Figure 2-2: Page header with user settings and logout at the top right-hand corner.
+
+<p>
+To logout from the website, click the logout icon in the top right-hand corner of any page (Figure 2-2). For security reasons, we recommend that users log out after every session.
+</p>
+<a id="permissions"><h4>2.4  User permissions</h4></a>
+<p>
+Although all users may view data, not all users may be able to edit database content or execute tools that affect or operate on database content. Depending on your account permissions, you will have different privileges within the website. These permissions are controlled by website administrator.  Please refer to Section 3.7 for more details.
+</p>
+<a id="content"><h3>Website content and navigation</h3></a>
+<h4>3.1  Navigation summary</h4>
+<p>
+The navigation menu is available on all pages on the website. It provides the following menu options: Home, Add, Search, View, Tools, and Help. Each menu option has further sub-options which become visible when the option is hovered over; Figure 3-1 shows all available options from the navigation bar.
+</p> 
+Figure 3-1: Full view of navigation bar menu options: Add, Search, View All, Tools, and Help.
+
+<p>
+The menu options are summarized in this Section 3.1, and are discussed in detail in the remaining Sections 3.2 to 3.7. Each detailed section provides instructions on the use of sub-options. 
+</p>
+<p>
+The menu options in the main navigation bar are accompanied by navigation icons, most of which are described in more detail in Table 3-1, along with other relevant icons found on the website. All icons listed can be found on select page headings on the website to remind users about the nature of the action that they are performing.
+</p>
+
+Table 3-1: Description of navigation icons
+Icon	Name	Description
+ 	Home icon	Return to homepage
+ 	Add icon	Add new data to database; includes both manual data entry and uploading of sequence data files
+ 	Search icon	Search all data in the database; includes general key-word search, advanced field-based searches, and sequence-based BLAST search
+ 	View All icon	View table-based summaries of data records in the database; sorted by categories
+ 	Detail icon	View a specific record in the database; linked to from the View All pages
+ 	Edit icon	Edit a specific record in the database; linked to from the Detail pages
+ 	Tool icon	Use custom tools to analyze Cosmid-related sequence data; includes retrieving sequence data from Illumina sequencing, as well as executing gene prediction and annotation on sequence data
+
+ 
+<a id="homepage"><h4>3.2  Homepage</h4></a>
+<p>
+The Homepage is where users will be redirected upon logging in to the site. It displays a brief overview of the function of Metagenomic Clone Bank.  From here, you can navigate the site and access all features that your authentication level allows you.  Different tasks are made available depending on the amount of permissions granted for your account. 
+</p>
+<a id="viewall"><h4>3.3  View All pages</h4></a>
+<p>
+The View All  option under the main navigation menu allows you to view all of the entries for a specific category of data. The following categories of data are available:
+</p>
+<ul>
+<li>Cosmids</li>
+<li>Subclones</li>
+<li>Cosmid Assays</li>
+<li>Subclone Assays</li>
+<li>Contigs</li>
+<li>ORFs</li>
+<li>Static Data (contains further options)</li>
+</ul>
+<p>
+The first 6 categories constitute the main data while the last category contains static data. The difference between these are discussed below.
+</p>
+<a id="static"></a><h5>3.3.1  Static Data</h5></a>
+<p>
+Static Data is a field that is unique to the View All  menu option.  These are data that are used as reference data throughout the website. They are added by a website administrator, and are carefully maintained and curated. 
+</p>
+<p>
+The following are categories of static data:
+</p>
+<ul>
+<li>Primers</li>
+<li>Hosts</li>
+<li>Functional Screens</li>
+<li>Libraries</li>
+<li>Researchers</li>
+<li>Substrates</li>
+<li>Vectors</li>
+<li>Sequencing Pools</li>
+<li>Antibiotics</li>
+</ul>
+
+<p>
+Figure 3-2 shows a View All page for one of the static data categories. 
+Figure 3-2: An example of a static data page
+</p>
+<a id="main"><h5>3.3.2  Main data</h5></a>
+<p>Main data are records that are added to the database by active users. These constitute the bulk of the data of the Charles Lab, and the View All pages will likely be constantly changing as a result. To  combat the large number of records, all View All pages are paginated for ease of viewing.
+</p>
+ 
+Figure 3-3: View All page for Cosmid records
+
+
+<a id="sort"><h5>3.3.3  Sorting table data</h5></a>
+<p>
+The information displayed in the table is not sorted by default (Figure 3-4).  Non-static tables can be sorted by any column where the heading is underlined in white. To sort by a given column simply click on the column heading and you will be directed to the first page of the now sorted results (Figure 3-5). Columns that contain solely numerical data will be sorted numerically, all other columns will be sorted alphanumerically. An example of sorting can be seen below.
+</p>
+ 
+Figure 3-4 : Default unsorted Cosmid table
+
+ 
+ Figure 3-5: Cosmid table after having been sorted by library.
+
+<a id="export"><h5>3.3.4  Exporting table data</h5></a>
+<p>
+From any table-based page, the table of information can be exported. Simply click on the download  icon (recall the export icon from icons discussed in Section 3.1). This will download a file to your computer in the standard comma separated value (CSV) format:
+</p>
+Figure 3-6: Example of an exported CSV file, using data from Figure 3-5.
+
+<a id="detail"><h4>3.4  Detail pages</h4></a>
+<p>
+From any table-based page, including both View All pages or Search results pages, it is possible to click on a specific record to navigate to a page with more detailed information. Figure 3-7 shows an example using Cosmids, but this navigation is set up for all of the table-based pages:
+</p>
+<ul>
+<li>Cosmid</li>
+<li>Subclone</li>
+<li>Cosmid Assay</li>
+<li>Subclone Assay</li>
+<li>Open Reading Frame (ORF)</li>
+<li>Contigs</li>
+</ul>
+ 
+  Figure 3-7: Click on the Cosmid name to navigate to a Cosmid Detail page from the View All Cosmids page 
+
+<a id="cosmiddetail"><h5>3.4.1  Cosmid and Contig detail pages</h5></a>
+<p>
+The most important Detail pages are the Cosmid Detail page (Figure 3-8) and the Contig Detail page. The latter is very similar to the former, except that the same Contig can be associated with different Cosmids (as explained in Section 1.2.3 on pooled sequencing, as well as in Section 4.1 on the Contig Retrieval Tool).
+</p>
+<p>
+The Cosmid Detail page is likely the main way that users will be viewing their data. It contains the following:
+</p>
+<ul>
+<li>a summary of Cosmid information, including end-tag sequences</li>
+<li>associated Contigs and their sequences -- up to two Contigs from execution of the Contig Retrieval tool (Section 4.1)</li>
+<li>ORF information in the form of images and records -- from execution of the ORF Finding and Annotation tool (Section 4.2)</li>
+</ul>
+<a id="otherdetail"><h4>3.4.2  Other detail pages</h4></a>
+<p>
+The remaining Detail pages are much more straight-forward than either Cosmid or Contig, and do not require much in the way of explanation. They simple list various features of each record.
+</p>
+
+Figure 3-8: Cosmid Detail page
+
+<a id="search"><h4>3.5  Search pages</h4></a>
+<p>
+All informations on the database can be accessed via the Search menu item on the navigation bar.  The search functionality is divided based on the type of information that you are interested in viewing. The following is a list of all searchable categories:
+</p>
+<ul>
+<li>Cosmid</li>
+<li>Subclone</li>
+<li>Cosmid Assay</li>
+<li>Subclone Assay</li>
+<li>Open Reading Frame (ORF)</li>
+<li>Contigs</li>
+</ul>
+<p>
+For each category, there are several types of searches available: Basic Search, Advanced Search and Local BLAST. Several options of the Basic Search and the Advanced Search are identical to the functionality of the View All (Section 3.3) pages, specifically sorting (Section 3.3.3) and exporting (Section 3.3.4).
+</p>
+<a id="basic"><h5>3.5.1  Basic search</h5></a>
+<p>
+This will perform a simple keyword search of all fields associated with the category. For example, you can type in a Cosmid name, host name and a researcher's name and search. This will search all possible fields for all keywords that you enter. In general, all values that are associated with each record are searched.  However, to see a list of all searchable fields, refer to the Advanced Search tab (Section 3.5.2).
+</p>
+ 
+ Figure 3-9: Basic search of Cosmid records
+<a id="advanced"><h5>3.5.2  Advanced search</h5></a>
+<p>
+Advanced search allows you to search by specific values for each given field (Figure 3-10). For example, you can search for Cosmids by typing in a Cosmid name,  then selecting a host and a researcher.  Each submitted value will only be searched for in its designated field.  
+</p>
+
+Figure 3-10: Advanced search of Cosmid records
+<a id="blast"><h5>3.5.3  Local BLAST search</h5></a>
+<p>
+The local BLAST search is only available for entries that are associated with sequences -- that is, Cosmids, Subclones, Contigs and ORFs. This search utilizes a locally installed version of BLAST. If you know exactly which type of record you are looking for (e.g., Cosmid, Contig, etc.), you can click on the appropriate field under the Search menu option and run a specific BLAST search. An example for Cosmid is shown in Figure 3-11.
+</p>
+ 
+Figure 3-11: BLAST search of Cosmid sequences, which includes End-Tag, Contig, and ORF sequences.
+<p>
+If you would like to search all sequence-based fields (that is, all of Cosmids, Contigs, Subclones, and ORFs), you can use a general BLAST search using the Sequences (BLAST)  page, again under the main Search menu option.  
+</p>
+<p>
+For all local BLAST searches the following parameters are available: 
+</p>
+<ul>
+<li>E-value cut-off: The statistical significance threshold for reporting matches against the sequences in the database.</li>
+<li>Word size: BLAST uses this value as the minimum length of bases to align for the query and subject sequence on its "first pass".  If there are any aligned areas, further BLAST algorithms are used to extend this initial alignment to obtain a more complete match.  Increasing this value will result in more sensitive queries returned at the cost of processing time. Conversely, decreasing this value with result in a less sensitive query but will return quicker results.</li>
+<li>Nucleotide match score: The value that the BLAST algorithm assigns to matching bases during sequence alignment.</li>
+<li>Nucleotide mismatch score: The value that the BLAST algorithm assigns to bases that do not match (mismatch) during sequence alignment.</li>  
+<li>Gap open penalty: This is the value BLAST uses to subtract from a score if a gap is introduced to the sequence alignment.</li>
+<li>Gap extension penalty: This is similar to 'Gap Open Penalty' except that this value is used to subtract from a score when a gap is extended.</li>
+</ul>
+<p>
+In a biological context, it is more likely to have several large gaps that result from extension of one gap opening, rather than many smaller dispersed gaps.  In other words, the 'cost' of extending a gap is generally considered to be less than it is to initially introduce a new gap. More information regarding BLAST can be found at the NCBI website about  BLAST parameters and the BLAST algorithm. 
+</p>
+<p>
+After you perform a BLAST search, you will be redirected to a results page (Figure 3-12). You will be able to see a list of sequences that have sequence similarity to your query sequence. The results include: the hit name, hit length, e-value of the HSP, and the alignment length.
+</p>
+Figure 3-12: Example of BLAST results after querying with a Contig sequence.
+<a id="add"><h4>3.6  Add pages</h4></a>
+<p>
+Through the main navigation menu, any type of information can be added to the database by accessing the appropriate page through the Add menu option. The data that can be added are discussed in detail in the following subsections, and are summarized in the list below. For specific information regarding the requirements of each field see Appendix 2.
+</p>
+<ul>
+<li>Cosmid</li> 
+<li>Subclone</li>
+<li>Cosmid Assay</li>
+<li>Subclone Assay</li>
+<li>ORF</li>
+<li>Contigs</li>
+</ul>
+<a id="addcosmid"><h5>3.6.1  Add a Cosmid</h5></a>
+<p>
+The Add Cosmid page is likely to be the most heavily used Add page on this website (Figure 3-13). Though only several fields are required for addition of a Cosmid to the website, it is recommended that you add as much information as possible. This includes end-tag sequence data and sequencing pool information, if known. Upon clicking "Add", you will be redirected to the Detail View for the Cosmid you have just added (recall Section 3.4).
+</p>
+
+Figure 3-13: Add Cosmid page.
+
+<a id="addothers"><h5>3.6.2  Add a Subclone, Subclone Assay or Cosmid Assay</h5></a>
+<p>
+The three Add pages for Subclone, Subclone Assay and Cosmid Assay have very similar forms and are all straight-forward as they contain fewer fields (unlike the Add Cosmid form). Upon clicking "Add", you will be redirected to the View All page for the respective category type (recall Section 3.3).
+</p>
+
+Figure 3-14: Add Subclone page.
+
+<a id="addorf"><h5>3.6.3  Add an ORF</h5></a>
+<p>
+Although Contigs can be submitted for automatic ORF finding and annotation (Section 4.2), there may be instances when you wish to add an ORF manually. To do so, use the Add ORF form (Figure 3-15). After selecting a Contig and the correct a strand, inputting an ORF sequence, and clicking "Add",  the website will validate that the ORF sequence you specified is found on the Contig. It will also automatically save the start and stop positions t be used for Contig image generation (see Section 4.2 for more details on image generation).
+</p>
+ 
+Figure 3-15: Add Open Reading Frame page.
+
+<a id="addfasta"><h5>3.6.4  Add a FASTA file of Contigs</h5></a>
+<p>
+New sequence information obtained from an Illumina pooled sequencing run can be added through the Add Contigs form. In order to add a set of Contigs, the user must first select the appropriate sequencing pool that the Contigs are to be associated with. This sequencing pool must be added prior to the Contigs, and must be done by an administrator. Once the user has selected a pool and their desired FASTA file containing all of the Contig sequences, clicking "Add" will ensure the file is in proper FASTA format and, if so, will store all information in the database. If the uploaded FASTA file is not in the proper FASTA format, an error will be returned.
+</p>
+ 
+Figure 3-16: Add Contigs page.
+<a id="staticdata"><h5>3.6.5  Static data</h5></a>
+<p>
+As mentioned in Section 3.3.2, reference data cannot be added by the typical user because these data require careful curation and validation.
+</p>
+ 
+<a id="edit"><h4>3.7  Edit pages</h4></a>
+<p>
+From any Detail page, you can navigate to the respective Edit page. For example, to edit a particular ORF, locate the ORF record of interest (e.g., Figure 3-17) and look for the edit icon under the Links section of the page. You will be directed to a page where you can make changes (Figure 3-18).
+</p>
+
+ 
+Figure 3-17: Detail page for ORF record.
+
+<p>
+Much of the information found on the website is editable. However, in some special cases, information can not be edited. For example, the ORF sequence cannot be edited by any users (Figure 3-18); this is because it has been identified by software from the ORF Finding and Annotation tool.
+</p>
+
+ 
+Figure 3-18: Edit page for ORF record.
+
+
 {% endblock %}
