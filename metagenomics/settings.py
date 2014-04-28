@@ -25,7 +25,7 @@ ADMINS = (
 SECRET_KEY = '+&j+f^vg!w7ijq3f4$g5_jlg^+tqiqp^pk)@-=^-xkd135t#ji'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 TEMPLATE_DEBUG = True
 
