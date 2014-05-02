@@ -29,7 +29,7 @@ import os
 from os import system, listdir
 import pdb
 import base64
-from operator import attrgetter
+from operator import attrgetter, itemgetter
 import operator
 import re
 import base64 #used to convert pngs to base64 for database storage
@@ -325,12 +325,12 @@ def orf_data(contig_list):
     write_lib(contigs, orfs, anno)
 
 #retieve data to write to library file for annotations update when contig/orf updates or deletes
-def orf_data_update(contig_list):
-    contig_id = Contig.objects.filter(contig_name__in = contig_list).values('id')
-    contigs = Contig.objects.filter(contig_name__in = contig_list).values_list('id','contig_name', 'contig_sequence', 'blast_hit_accession')
+def orf_data_update(contig):
+    contig_id = Contig.objects.filter(contig_name = contig).values('id')
+    contigs = Contig.objects.filter(contig_name = contig).values_list('id','contig_name', 'contig_sequence', 'blast_hit_accession')
     orfs = Contig_ORF_Join.objects.filter(contig__in = contig_id).values_list('contig','orf','start','stop','complement', 'predicted','prediction_score')
     anno = ORF.objects.filter(contig__in = contig_id).values_list('id','annotation', 'orf_sequence')
-    
+   
     write_lib_update(contigs, orfs, anno)
     
 #this function is only called by other views, not directly associated with a URL
@@ -373,23 +373,29 @@ def write_lib_update(contigs, orfs, anno):
             data.write('$contig_orf{' + contig + '}\n = [\'' + sequence + '\',\n')
             data.write('{\'glimmer\' => {')
             count = 0
+            sorted(orfs, key=itemgetter(5), reverse=True)
+            length = len(orfs)
             for con_id, orf_id, start, stop, comp, predic, score in orfs:
-                if predic == 1:
+                length = length - 1
+                if predic == True:
                     for o_id, ann, seqs in anno:
                         if c_id == con_id and o_id == orf_id:
                             count += 1
-                            comp = -1 if comp == 1 else 1
+                            comp = -1 if comp == True else 1
                             data.write('\'' + contig + '-' + str(count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
                             data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
                             annotation = ann if ann != None else ''
-                            data.write('annotation=>\'' + annotation + '\',\n sequence =>\'' + seqs + '\'\n}},')
-                if predic == 0:
+                            data.write('annotation=>\'' + annotation + '\',\n sequence =>\'' + seqs + '\'\n},')
+                if predic == True and length == 0:
+                    data.write('\'genbank\' => {},\n')
+                    data.write('\'manual\' =>{},\n')
+                if predic == False:
                     data.write('\'genbank\' => {},\n')
                     data.write('\'manual\' =>{')
                     for o_id, ann, seqs in anno:
                         if c_id == con_id and o_id == orf_id:
                             count += 1
-                            comp = -1 if comp == 1 else 1
+                            comp = -1 if comp == True else 1
                             data.write('\'' + contig + '-' + str(count) + '\' => \n { start =>' + str(start) + ',\n end =>' + str(stop) + ',\n')
                             data.write('reading_frame =>' + str(comp) + ',\n score =>\'' + str(score) + '\',\n')
                             annotation = ann if ann != None else ''
@@ -1108,6 +1114,33 @@ def CosmidDetail(request, cosmid_name):
     
     return render_to_response('cosmid_detail.html', {'blank': blankimg, 'pids': pids, 'primers': primerresults, 'endtags': etresult, 'orfids': orfids, 'seq': seq, 'contigid': contigresults, 'orfs': orfresults, 'contigs': contigresults, 'cosmidpk': c_id, 'name': name, 'host': host, 'researcher': researcher, 'library': library, 'screen': screen, 'ec_collection': ec_collection, 'media': original_media, 'pool': pool, 'lab_book': lab_book, 'cosmid_comments': cosmid_comments}, context_instance=RequestContext(request))
 
+#retrieve CosmidDetailView queryset to export as csv
+@login_required
+def detail_queryset(response):
+    orfs = ORF.objects.all()
+    joins = Contig_ORF_Join.objects.all()
+    response = HttpResponse(content_type ='text/csv')
+    response['Content-Disposition'] = 'attachment;filename="export.csv"'
+    writer = csv.writer(response)
+    headers = ['ID', 'Annotation', 'Sequence', 'Accession', 'Start', 'Stop', 'Complement', 'Predicted', 'Prediction Score']
+    writer.writerow(headers)
+
+    for obj in joins:
+        row = []
+        row.append(obj.orf)
+        for orf in orfs:
+            if orf.id == obj.orf.id:
+                row.append(orf.annotation)
+                row.append(orf.orf_sequence)
+        row.append(str(obj.orf_accession))
+        row.append(str(obj.start))
+        row.append(str(obj.stop))
+        row.append(str(obj.complement))
+        row.append(str(obj.predicted))
+        row.append(str(obj.prediction_score))
+        writer.writerow(row)
+    return response
+
 def GenerateImage(contig):
     #get the picture and make a file.
     binaryimage = {'contig': contig.image_contig, 'align': contig.image_align, 'genbank': contig.image_genbank, 'predicted': contig.image_predicted, 'manual': contig.image_manual}
@@ -1162,10 +1195,14 @@ def OrfDetail(request, pk):
     return render_to_response('orf_detail.html', {'orf': orf, 'contigs': contigs} , context_instance=RequestContext(request))
 
 def OrfEditResults(request, contig_name):
-    contig = list(contig_name)
+    contig = contig_name
     orf_data_update(contig)
     system("perl annotation_tool/annotation_pipeline.pl -update")
     save_images("tmp")
+    
+    if request.method == 'POST':
+        
+        return HttpResponseRedirect('/contig/' + contig_name)
     
     return render_to_response('orf_edit_results.html',{'con':contig_name}, context_instance=RequestContext(request))
 
@@ -1593,7 +1630,6 @@ def ContigPoolCreate(request):
 
 #force download csv file of input queryset(Nina)
 def queryset_export_csv(qs):
-    import csv
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment;filename="export.csv"'
     writer = csv.writer(response)

@@ -158,3 +158,139 @@ Retrieving Genbank information and updating Blast alignments...
 Generating graphics...
 Images have been generated!
  Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 3298
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 3356
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 3466
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 3476
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 13430
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete
+********************************
+Updating Contig Annotations
+********************************
+ParentID: 13475
+Retrieving Genbank information and updating Blast alignments...
+Generating graphics...
+Images have been generated!
+ Annotation update complete

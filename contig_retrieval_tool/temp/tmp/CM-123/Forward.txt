@@ -349,11 +349,7 @@ Effective search space used: 5139782584
 
 
   Database: testdb
-<<<<<<< HEAD:contig_retrieval_tool/temp/tmp/CM-123/Forward.txt
-    Posted date:  Apr 10, 2014  8:27 PM
-=======
-    Posted date:  Apr 10, 2014  8:06 PM
->>>>>>> 09f8293300c8d7c95fd19d3ddede6c9b2c430c56:contig_retrieval_tool/temp/tmp/CM-69/Forward.txt
+    Posted date:  Apr 22, 2014  8:33 PM
   Number of letters in database: 6,585,561
   Number of sequences in database:  563
 
