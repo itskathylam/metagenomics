@@ -10,6 +10,8 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from django.conf import settings
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 ADMINS = (
@@ -23,7 +25,7 @@ ADMINS = (
 SECRET_KEY = '+&j+f^vg!w7ijq3f4$g5_jlg^+tqiqp^pk)@-=^-xkd135t#ji'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 TEMPLATE_DEBUG = True
 
@@ -49,7 +51,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
-ALLOWED_HOSTS = ['*']
+# Use '*' for testing only
+ALLOWED_HOSTS = ['metagenomics.uwaterloo.ca']
 
 LOGIN_URL = '/login/'
 
@@ -112,6 +115,24 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/ (Kathy)
 STATIC_URL = '/static/'
 
-# For uploaded files
-MEDIA_ROOT = '/media/'
-MEDIA_URL = '/media/'
+#SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+#STATICFILES_DIRS = (
+#  os.path.join(SITE_ROOT, 'static/'),
+#)
+
+#STATIC_ROOT = "/var/www/clone-bank/static"
+STATICFILES_DIRS = (
+    "/home/kathy/metagenomics/metagenomics/mainsite/static",
+    "/home/kathy/metagenomics/metagenomics/mainsite/static/tempdisplay",
+    "/home/kathy/metagenomics/metagenomics/mainsite/static/icons",
+    "/home/kathy/metagenomics/metagenomics/blast_tool",
+    "/home/kathy/metagenomics/metagenomics/annotation_tool",
+    "/home/kathy/metagenomics/metagenomics/contig_tool",
+)
+
+## For uploaded files
+#MEDIA_ROOT = '/media/'
+#MEDIA_URL = '/media/'
+
+#for admin media
+ADMIN_MEDIA_PREFIX = '/static/'

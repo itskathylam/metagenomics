@@ -36,6 +36,19 @@ class ContigORFJoinForm(ModelForm):
         labels = {
             'complement': ('*ORF on Contig complement?'),
         }
+    
+    #only show contigs that have been associated with cosmids
+    def __init__(self, *args, **kwargs):
+        super(ContigORFJoinForm, self).__init__(*args, **kwargs)
+        
+        contig_names = []
+        cosmids = Cosmid.objects.all().select_related('contig')
+        for cosmid in cosmids:
+            for contig in cosmid.contig_set.all():
+                contig_names.append(contig.contig_name)
+        self.fields['contig'].queryset = Contig.objects.filter(contig_name__in=contig_names).order_by('contig_name')
+    
+
 
 #For Subclone search
 class SubcloneForm(ModelForm):
@@ -58,16 +71,6 @@ class CosmidAssayForm(ModelForm):
     
     class Meta:
         model = Cosmid_Assay
-
-    #def clean(self):
-    #    data = self.cleaned_data
-    #    try:
-    #        Cosmid_Assay.objects.get(cosmid=data['cosmid'],host=data['host'],substrate=data['substrate'],antibiotic=data['antibiotic'])
-    #    except:
-    #        pass
-    #    else:
-    #       raise ValidationError('not unique combo') 
-    #    return data
 
 #For contig search
 class ContigSearchForm(ModelForm):

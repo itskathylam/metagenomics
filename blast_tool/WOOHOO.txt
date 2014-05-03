@@ -1,0 +1,2 @@
+makeblastdb: 2.2.29+
+Package: blast 2.2.29, build Apr 10 2014 14:48:03

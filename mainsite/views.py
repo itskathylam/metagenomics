@@ -26,7 +26,7 @@ from Bio.SeqRecord import SeqRecord
 import types
 import StringIO
 import os
-from os import system, listdir
+from os import system, listdir, path
 import pdb
 import base64
 from operator import attrgetter, itemgetter
@@ -415,10 +415,10 @@ def BlastSearch(request):
 @login_required
 def BlastResults(request):
 
-    #change directory to blast_tool
-    old_dir = os.getcwd()
-    new_dir = old_dir + '/blast_tool/'
-    os.chdir(new_dir)
+    #change directory to blast_tool, which is not in mainsite, but in parent
+    old_dir = os.path.dirname(os.path.realpath(__file__))
+    path_components = os.path.split(old_dir)
+    os.chdir(path_components[0] + '/blast_tool/')
     
     #get parameters, and write to file
     e = request.POST.get('expect_threshold')
@@ -468,13 +468,19 @@ def BlastResults(request):
             SeqIO.write(seqrecord, out, "fasta")
             
     out.close()
+
+    os.system("touch kathy.txt")
     
     #makeblastdb to create BLAST database of files from fastafile
-    system("makeblastdb -in blast_db.fa -out blast_db.db -dbtype nucl")
+    os.system("/usr/lib/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin/makeblastdb -version > WOOHOO.txt")
+    os.system("makeblastdb -version > out.txt")
+    
+    os.system("whoami > whoami.txt")
+    os.system("groups > groups.txt")
+    os.system("/usr/lib/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin/makeblastdb -in blast_db.fa -out blast_db.db -dbtype nucl")
 
     #run blast command with query, parameters, and created database
-    cmd = NcbiblastnCommandline(query="blast_query.fa", db="blast_db.db", evalue=float(e), word_size=int(w), reward=int(ma), penalty=int(mi), gapopen=int(go), gapextend=int(ge), outfmt=5, out="blast_results.xml")
-    system(str(cmd))
+    os.system("/usr/lib/ncbi-blast-2.2.29+-src/c++/ReleaseMT/bin/blastn -query blast_query.fa -db blast_db.db -evalue " + e + " -word_size " + w + " -reward " + ma + " -penalty " + mi + " -gapopen " + go + " -gapextend " + ge + " -outfmt 5 -out blast_results.xml")
     
     #parse xml file
     try:
@@ -513,9 +519,9 @@ def BlastResults(request):
                 result['hsp'] = hsp
                 results_list.append(result)
     
-    #change directory back to old dir
+    #clean up and change directory back to old dir
     os.chdir(old_dir)
-            
+    
     return render_to_response('blast_results.html', {'results_list': results_list, 'query': seq}, context_instance=RequestContext(request))
 
 #search forms
@@ -1149,9 +1155,11 @@ def GenerateImage(contig):
     for imgtype, img in binaryimage.items():
         if img:
             decodedimg = base64.b64decode(img)
-            writeimg = open("mainsite/static/tempdisplay/" + name +  imgtype + ".png", "wb")
+            curr_dir = os.path.dirname(os.path.realpath(__file__))
+            writeimg = open(curr_dir + "/static/tempdisplay/" + name + imgtype + ".png", "wb") 
             writeimg.write(decodedimg)
             writeimg.close()
+            
         else:
             blanks.append(imgtype)
     
@@ -1383,16 +1391,15 @@ class CosmidAssayCreateView(CreateView):
     
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        #data = form.cleaned_data
-
+        data = form.cleaned_data
         try:
             Cosmid_Assay.objects.get(cosmid=data['cosmid'],host=data['host'],substrate=data['substrate'],antibiotic=data['antibiotic'])
         except:
-            pass
+            return super(CosmidAssayCreateView, self).form_valid(form)
         else:
-            form.errors['__all__'] = form.error_class(['Error: Combination of cosmid/host/substrate/antiobiotic is a duplicate.'])
+            form.errors['__all__'] = form.error_class(['Error: Combination of cosmid/host/substrate/antibiotic is a duplicate.'])
             return super(CosmidAssayCreateView, self).form_invalid(form)
-        return super(CosmidAssayCreateView, self).form_valid(form) 
+         
 
 class SubcloneAssayCreateView(CreateView):
     model = Subclone_Assay
@@ -1405,11 +1412,10 @@ class SubcloneAssayCreateView(CreateView):
         try:
             Subclone_Assay.objects.get(subclone=data['subclone'],host=data['host'],substrate=data['substrate'],antibiotic=data['antibiotic'])
         except:
-            pass
+            return super(SubcloneAssayCreateView, self).form_valid(form)
         else:
-            form.errors['__all__'] = form.error_class(['Error: Combination of subclone/host/substrate/antiobiotic is a duplicate.'])
-            return super(CosmidAssayCreateView, self).form_invalid(form)
-        return super(CosmidAssayCreateView, self).form_valid(form)
+            form.errors['__all__'] = form.error_class(['Error: Combination of subclone/host/substrate/antibiotic is a duplicate.'])
+            return super(SubcloneAssayCreateView, self).form_invalid(form)
 
 # Create views for adding data to multiple models with the same template
 
