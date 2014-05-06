@@ -1,0 +1,117 @@
+BLASTN 2.2.29+
+
+
+Reference: Zheng Zhang, Scott Schwartz, Lukas Wagner, and Webb
+Miller (2000), "A greedy algorithm for aligning DNA sequences", J
+Comput Biol 2000; 7(1-2):203-14.
+
+
+
+Database: testdb
+           563 sequences; 6,585,561 total letters
+
+
+
+Query= testquery
+
+Length=661
+                                                                      Score     E
+Sequences producing significant alignments:                          (Bits)  Value
+
+lcl|pool1_scaffold196_1                                                1053   0.0  
+lcl|pool1_scaffold42_1                                                58.4    1e-08
+lcl|pool1_scaffold258_1                                               58.4    1e-08
+
+
+>lcl|pool1_scaffold196_1 
+Length=9979
+
+ Score =  1053 bits (570),  Expect = 0.0
+ Identities = 581/590 (98%), Gaps = 0/590 (0%)
+ Strand=Plus/Minus
+
+Query  70    TTTGTACAAAAAAGCAGGCTGGATCCCACCTCGTGGAGAAGATCGAGAAGATAACCGCCT  129
+             ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Sbjct  9979  TTTGTACAAAAAAGCAGGCTGGATCCCACCTCGTGGAGAAGATCGAGAAGATAACCGCCT  9920
+
+Query  130   ACGTGGAGGAATCCCGGAACCGGGAGGAAACGGAGCGCAAACGGAAAGAGGAAGCGGAAA  189
+             ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Sbjct  9919  ACGTGGAGGAATCCCGGAACCGGGAGGAAACGGAGCGCAAACGGAAAGAGGAAGCGGAAA  9860
+
+Query  190   GCCCTGCGACCAAGGGACGGAAAGCCGACCCGAAGTGGATGACGCACAAGGAGGTGTGCG  249
+             ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Sbjct  9859  GCCCTGCGACCAAGGGACGGAAAGCCGACCCGAAGTGGATGACGCACAAGGAGGTGTGCG  9800
+
+Query  250   AGGCGCTGGACATCAGCCACCGCACCCTGCACCGCTACCGCCAGAAGCATATCATTCCCT  309
+             ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Sbjct  9799  AGGCGCTGGACATCAGCCACCGCACCCTGCACCGCTACCGCCAGAAGCATATCATTCCCT  9740
+
+Query  310   ATTCGATGATCGGGCGGCAGATACGCTATCCCCGGCAGGCTGTCGAGAGCCTGCGTGAGC  369
+             ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Sbjct  9739  ATTCGATGATCGGGCGGCAGATACGCTATCCCCGGCAGGCTGTCGAGAGCCTGCGTGAGC  9680
+
+Query  370   GGTGGATGGTGGAGACGCCCGCCGCCAAGATCGACCGGATGATAGCGGAACATCCCCTGC  429
+             ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Sbjct  9679  GGTGGATGGTGGAGACGCCCGCCGCCAAGATCGACCGGATGATAGCGGAACATCCCCTGC  9620
+
+Query  430   ATAACCGAAAAAACGGCNGCTATGGTAAGAAAGGAAGAANTGCTGGCAAGAACCAGTAAC  489
+             ||||||||||||||||| ||||||||||||||||||||| ||||||||||||||||||||
+Sbjct  9619  ATAACCGAAAAAACGGCAGCTATGGTAAGAAAGGAAGAAGTGCTGGCAAGAACCAGTAAC  9560
+
+Query  490   GGGCTGGACGTGTTCCGCCACTACCTGCCCGTGAAGTGGCGGGTGGGCAGGAACTTCCTG  549
+             ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+Sbjct  9559  GGGCTGGACGTGTTCCGCCACTACCTGCCCGTGAAGTGGCGGGTGGGCAGGAACTTCCTG  9500
+
+Query  550   AACCCGCTGTANGCCGACTGTAAGGCTTCGTGCAACGTGTATTACGACCGNCGGAGCGGT  609
+             ||||||||||| |||||| | ||||||||||||||||||||||||||||| |||||||||
+Sbjct  9499  AACCCGCTGTACGCCGACAGCAAGGCTTCGTGCAACGTGTATTACGACCGCCGGAGCGGT  9440
+
+Query  610   ACGTACCGGATGAAGGACTTCGGCNACGGGGACTATTCGGNANACTGTTT  659
+             |||||||||||||||||||||||| ||||||||||||||| | |||||||
+Sbjct  9439  ACGTACCGGATGAAGGACTTCGGCAACGGGGACTATTCGGGAGACTGTTT  9390
+
+
+>lcl|pool1_scaffold42_1 
+Length=32512
+
+ Score = 58.4 bits (31),  Expect = 1e-08
+ Identities = 31/31 (100%), Gaps = 0/31 (0%)
+ Strand=Plus/Plus
+
+Query  68  ACTTTGTACAAAAAAGCAGGCTGGATCCCAC  98
+           |||||||||||||||||||||||||||||||
+Sbjct  1   ACTTTGTACAAAAAAGCAGGCTGGATCCCAC  31
+
+
+>lcl|pool1_scaffold258_1 
+Length=39283
+
+ Score = 58.4 bits (31),  Expect = 1e-08
+ Identities = 31/31 (100%), Gaps = 0/31 (0%)
+ Strand=Plus/Plus
+
+Query  68  ACTTTGTACAAAAAAGCAGGCTGGATCCCAC  98
+           |||||||||||||||||||||||||||||||
+Sbjct  1   ACTTTGTACAAAAAAGCAGGCTGGATCCCAC  31
+
+
+
+Lambda      K        H
+    1.33    0.621     1.12 
+
+Gapped
+Lambda      K        H
+    1.28    0.460    0.850 
+
+Effective search space used: 4193326456
+
+
+  Database: testdb
+    Posted date:  May 2, 2014  6:57 PM
+  Number of letters in database: 6,585,561
+  Number of sequences in database:  563
+
+
+
+Matrix: blastn matrix 1 -2
+Gap Penalties: Existence: 0, Extension: 2.5

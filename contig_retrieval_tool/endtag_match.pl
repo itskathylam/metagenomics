@@ -23,6 +23,11 @@ use Cwd 'chdir';
 #$" = "\n";
 
 my %contig_orf;
+
+my $parentid = $ARGV[0];
+my $cwd = $ARGV[1];
+chdir("$cwd");
+
 if (scalar(@ARGV) == 2) {
      
     #-----------------------------------------------------------------------#
@@ -36,14 +41,13 @@ if (scalar(@ARGV) == 2) {
     #                   Private Variables                                   #
     #-----------------------------------------------------------------------#
     
-    my $parentid = $ARGV[0];
-    my $cwd = $ARGV[1];
-    chdir("$cwd");
-    my $_contig_retrieval = retrieve("temp/storage/write.$parentid") or die "Could not retrieve $!\n";
+    
+    
+    my $_contig_retrieval = retrieve("$cwd/temp/storage/write.$parentid") or die "Could not retrieve $!\n";
     my %_contig_retrieval = %{$_contig_retrieval};
     my $row_count = 0;
     my %_graphic_output;
-    open(my $_outcsv, ">>", "tmp/out/retrieval.csv") or die "Could not export to CSV file, $!\n";
+    open(my $_outcsv, ">", "$cwd/tmp/out/retrieval.csv") or die "Could not export to CSV file, $!\n";
 
     
     
@@ -256,9 +260,9 @@ if (scalar(@ARGV) == 2) {
         delete $comp_storage{'R'};
         delete $comp_storage{'F'};
     }
-    system("rm -rf .temp/storage/write*");
-    store (\%contig_orf, "temp/storage/contig.$$") or die "Could not store \%contig_orf\n";
-    store (\%_contig_retrieval, "temp/storage/write.$$") or die "could not store";
+    system("rm -rf $cwd/.temp/storage/write*");
+    store (\%contig_orf, "$cwd/temp/storage/contig.$$") or die "Could not store \%contig_orf\n";
+    store (\%_contig_retrieval, "$cwd/temp/storage/write.$$") or die "could not store";
     print $$;
 }
 
@@ -275,7 +279,7 @@ sub writeContigFasta{
                                             'genbank'   => {},
                                             'manual'    => {}
                                    }];
-        my $filename = 'temp/data/' . $scaf_name . '.fa';
+        my $filename = "$cwd/temp/data/" . $scaf_name . '.fa';
         open(my $out_file, ">", $filename) or die "Could not create $filename : $!\n";
         print $out_file '>' . $scaf_name . "\n";
         print $out_file $scaf_seq . "\n";

@@ -47,14 +47,14 @@ if (scalar(@ARGV == 1)) {
                 system("echo \"$cwd\" > .message");
                 `tar -cvf $filename.tar temp/ tmp/ .message`;
                 
-                # Transfer of temp/ folder to sharcnet: /scratch/quever/metagenomics
+                # Transfer of temp/ folder to sharcnet: /scratch/kathylam/metagenomics
                 print $log "Transfering contig information to Sharcnet...\n";
-                `scp $filename.tar quever\@$server.sharcnet.ca:/scratch/quever/metagenomics/`;
+                `scp $filename.tar kathylam\@$server.sharcnet.ca:/scratch/kathylam/metagenomics/`;
                 
                 # Running of the sharcnet pipeline to obtain the annotations by blasting each
                 # contig and predicted ORF
                 print $log "Transfer Complete.\n Executing sharcnet BLAST pipeline...\n";
-                my $return = `ssh quever\@$server.sharcnet.ca perl /scratch/quever/metagenomics/sharc_mg_pipe.pl`;
+                my $return = `ssh kathylam\@$server.sharcnet.ca perl /scratch/kathylam/metagenomics/sharc_mg_pipe.pl`;
                 
                 #my $return = listenSN();
                 print $log "Sharcnet pipeline status: $return \n";

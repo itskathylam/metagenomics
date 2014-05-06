@@ -263,7 +263,7 @@ def read_csv(file_location):
         for row in reader:
             rows.append(row)
     csvfile.closed
-    system("rm %s" %file_location)
+    #system("rm %s" %file_location)
     return rows
 
 #this function is only called by other views, not directly associated with a URL
@@ -274,15 +274,28 @@ def contig_pipeline(pool, cos_selected):
     c_id =  Cosmid.objects.filter(cosmid_name__in = cos_selected).values('id')
     seqs = End_Tag.objects.filter(cosmid = c_id).select_related('cosmid__primer')
     
+    old_dir = os.path.dirname(os.path.realpath(__file__))
+    path_components = os.path.split(old_dir)
+    path = path_components[0] + '/contig_retrieval_tool/'
+    os.chdir(path)
     write_fasta(contigs)
     write_csv(seqs)
-    system("perl contig_retrieval_tool/retrieval_pipeline.pl primers_1.csv primers_2.csv contigs.fa")
-    return read_csv("contig_retrieval_tool/tmp/out/retrieval.csv")
+    command = '/usr/bin/perl ' + path +'retrieval_pipeline.pl ' + path + 'primers_1.csv ' + path + 'primers_2.csv ' + path + 'contigs.fa'
+    #command = 'touch ' + path + 'tmp/out/retrieval.csv'
+    x = os.system(command)
+    if (x == 0):
+        os.system("touch " + path + "success")
+    else:
+        os.system("touch " + path + "fail")
+    return read_csv(path + 'tmp/out/retrieval.csv')
 
 #this function is only called by other views, not directly associated with a URL
 #writes a csv file for the input sequences 
 def write_csv(seqs):
-    with open("contig_retrieval_tool/primers_1.csv" , 'w') as f1:
+    old_dir = os.path.dirname(os.path.realpath(__file__))
+    path_components = os.path.split(old_dir)
+    os.chdir(path_components[0] + '/contig_retrieval_tool/')
+    with open("primers_1.csv" , 'w') as f1:
         csv1 = File(f1)
         for entry in seqs:
             cos = entry.cosmid.cosmid_name
@@ -293,7 +306,7 @@ def write_csv(seqs):
     csv1.closed
     f1.closed
     
-    with open("contig_retrieval_tool/primers_2.csv" , 'w') as f2:
+    with open("primers_2.csv" , 'w') as f2:
         csv2 = File(f2)
         for entry in seqs:
             cos = entry.cosmid.cosmid_name
@@ -303,17 +316,22 @@ def write_csv(seqs):
                 csv2.write(cos + ',' + primer + ',' + seq + '\n')
     csv2.closed
     f2.closed
+    os.chdir(old_dir)
 
 #this function is only called by other views, not directly associated with a URL
 #writes contigs to fasta file(text.fa)    
 def write_fasta(contigs):
-    with open('contig_retrieval_tool/contigs.fa', 'w') as f:
+    old_dir = os.path.dirname(os.path.realpath(__file__))
+    path_components = os.path.split(old_dir)
+    os.chdir(path_components[0] + '/contig_retrieval_tool/')
+    with open('contigs.fa', 'w') as f:
         fasta = File(f)
         contigs = list(contigs)
         for contig, seq in contigs:
             fasta.write('>' + contig + '\n' + seq + '\n')
         fasta.closed
         f.closed
+    os.chdir(old_dir)
 
 #retieve data to write to library file for annotations tool to run 
 def orf_data(contig_list):
