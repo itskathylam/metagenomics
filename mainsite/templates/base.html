@@ -14,7 +14,6 @@
                 <span style="vertical-align: bottom">{{ user.first_name }} {{ user.last_name }}</span><br>
                 <a href="/user/settings"><img style="width:40px; padding:10px" title="Settings" src="{{ STATIC_URL }}/icons/gear2-256.png" alt="user settings"/></a>
                 <a href="{% url 'logout' %}"><img style="width:40px; padding:10px" title="Logout" src="{{ STATIC_URL }}/icons/power256.png" alt="logout"/></a>
-                
             </div>
             
             <nav>
@@ -86,8 +85,7 @@
                     </ul>
                 </li>
                 <li><a href="">Help<img src="{{ STATIC_URL }}icons/help.png"alt="help"></a>
-                    <ul>
-                        <li><a href="/help/faq">FAQ</a></li>                  
+                    <ul>               
                         <li><a href="/help/userdoc">User Documentation</a></li>           
                     </ul>
                 </li>

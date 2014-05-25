@@ -67,13 +67,13 @@ def UserSettings(request):
         form = UserForm(initial={'first_name': request.user.first_name, 'last_name': request.user.last_name, 'username': request.user.username, 'email': request.user.email})
     return render_to_response('usersettings.html', {'form': form, 'form_errors': form_errors}, context_instance=RequestContext(request))
 
-@login_required
-def Faq(request):
-    return (render(request, 'faq.html'))
+#@login_required
+#def Faq(request):
+#    return (render(request, 'faq.html'))
 
 @login_required
 def UserDoc(request):
-    return (render(request, 'userdoc.html'))
+    return (render(request, 'faq.html'))
 
 #annotation form for contig-orf retrieval
 @login_required
