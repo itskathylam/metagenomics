@@ -78,12 +78,14 @@
                         </li>
                     </ul>
                 </li>
+                {% if perms.mainsite.add_contig_or_f_join %}
                 <li><a href="">Tools<img src="{{ STATIC_URL }}icons/tools.png"alt="tools"></a>
                     <ul>
                         <li><a href="/tools/contig">Contig Retrieval Tool</a></li>                  
                         <li><a href="/tools/annotation">Gene Annotation Tool</a></li>           
                     </ul>
                 </li>
+                {% endif %}
                 <li><a href="">Help<img src="{{ STATIC_URL }}icons/help.png"alt="help"></a>
                     <ul>               
                         <li><a href="/help/userdoc">User Documentation</a></li>           

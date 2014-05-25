@@ -2,33 +2,38 @@
 use warnings;
 use strict;
 use Cwd qw/abs_path chdir/;
+use File::Basename;
 my $cwd;
+
 if (abs_path('contig_retrieval_tool/retrieval_pipeline.pl')) {
     $cwd = abs_path('contig_retrieval_tool/retrieval_pipeline.pl');
 } elsif (abs_path('retrieval_pipeline.pl')){
     $cwd = abs_path('retrieval_pipeline.pl');
 }
 $cwd =~ s/\/retrieval_pipeline.pl//;
-chdir("$cwd");
+
+
+
+my $dir_path = dirname($cwd) . '/contig_retrieval_tool';
+print "$cwd\n";
+print "$dir_path\n";
+chdir("$dir_path");
 
 my $server = 'saw';
 my $filename = 'mg_temp';
 if (scalar(@ARGV) == 3) {
-    open(my $log, ">>", "log.txt");
+    open(my $log, ">", "log.txt");
     if (setup() == 1) {
         my ($f_file, $r_file, $database) = @ARGV;
-        $f_file = $cwd . '/' . $f_file;
-        $r_file = $cwd . '/' . $r_file;
-        $database = $cwd . '/' . $database;
         
         print $log "********************************\nExecution of Contig Retrieval Pipeline\n********************************\n";
         print $log "Executing Endtag Setup\n";
-        my $pid = `perl endtag_setup.pl $f_file $r_file $database $cwd`;
+        my $pid = `/usr/bin/perl $dir_path/endtag_setup.pl $f_file $r_file $database $dir_path`;
         
         print "$pid and $cwd\n";
         #10961 and /home/rene/metagenomics/contig_retrieval_tool
         print $log "Matching the contigs to the cosmids\n";
-        $pid = `perl endtag_match.pl $pid $cwd`;
+        $pid = `/usr/bin/perl $dir_path/endtag_match.pl $pid $dir_path`;
         print $log "Contigs Retrieval Complete\n";     
 
         system('rm -rf testdb*');

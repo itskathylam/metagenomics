@@ -126,6 +126,6 @@ urlpatterns = patterns('',
     url(r'^export/contig', contig_queryset),
     url(r'^export/cosmid_endtag', cosmid_endtag_queryset),
     url(r'^export/orf_contig', orf_contig_queryset),
-   
+    url(r'^export/cosmid_detail', detail_queryset),
     
 )
